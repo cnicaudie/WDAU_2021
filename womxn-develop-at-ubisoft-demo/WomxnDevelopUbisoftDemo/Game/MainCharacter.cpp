@@ -86,6 +86,8 @@ void MainCharacter::ComputeVelocity()
     const float DEAD_ZONE = 5.0f;
     const float SLOWDOWN_RATE = 0.9f;
 
+    const float JUMP_FORCE = 350.0f;
+
     if (m_IsUsingJoystick)
     {
         m_Velocity.x = GetScaledAxis(m_JoystickIndex, Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
@@ -127,19 +129,19 @@ void MainCharacter::ComputeVelocity()
         {
             m_Velocity.y = fmin(m_Velocity.y + SPEED_INC, SPEED_MAX);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::Up))
+        else if (Keyboard::isKeyPressed(Keyboard::Up)) // Jump
         {
-            m_Velocity.y = fmax(m_Velocity.y - SPEED_INC, -SPEED_MAX);
-        }
-        else
-        {
-            m_Velocity.y *= SLOWDOWN_RATE;
+            m_Velocity.y = -JUMP_FORCE;
         }
     }
 }
 
 void MainCharacter::Move(float deltaTime) 
 {
+    // Apply gravity force
+    const float GRAVITY = 9.8f;
+    m_Velocity.y += GRAVITY;
+
     // Keep the oldPosition
     sf::Vector2f oldPosition = m_Position;
     

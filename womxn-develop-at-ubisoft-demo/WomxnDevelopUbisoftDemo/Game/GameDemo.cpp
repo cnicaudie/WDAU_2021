@@ -7,7 +7,7 @@ GameDemo::GameDemo()
     : Game{ "Game Demo" }
     , m_MainCharacter{}
     , m_Door{ 900, 600, 100, 200 }
-    , m_Wall{ 500, 500, 300, 100 }
+    , m_Wall{ 500, 500, 500, 100 }
     , m_IsFinished{ false }
 {
     m_EndgameTextFont.loadFromFile("Assets\\arial.ttf");
