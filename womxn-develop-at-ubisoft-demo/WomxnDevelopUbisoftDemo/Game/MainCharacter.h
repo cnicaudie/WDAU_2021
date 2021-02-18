@@ -11,7 +11,7 @@ public:
 	void Update(float deltaTime);
 	void ComputeVelocity();
 	void Move(float deltaTime);
-	bool CheckCollision();
+	bool CheckCollision(const sf::Vector2f& nextPosition);
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void StartEndGame();
@@ -29,6 +29,9 @@ private:
 	sf::Vector2f m_Position; 
 	sf::Vector2f m_Velocity;
 	bool m_IsPlayingEndGame;
+
+	bool m_IsGrounded;
+	bool m_IsJumping;
 
 	std::vector<Wall> m_Walls;
 };

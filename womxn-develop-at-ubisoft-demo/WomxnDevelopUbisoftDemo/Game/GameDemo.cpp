@@ -7,7 +7,9 @@ GameDemo::GameDemo()
     : Game{ "Game Demo" }
     , m_MainCharacter{}
     , m_Door{ 900, 600, 100, 200 }
-    , m_Wall{ 500, 500, 500, 100 }
+    , m_Ground{ 400, 700, 500, 25 }
+    , m_Wall{ 200, 500, 25, 200 }
+    , m_Platform{ 400, 500, 100, 25 }
     , m_IsFinished{ false }
 {
     m_EndgameTextFont.loadFromFile("Assets\\arial.ttf");
@@ -22,7 +24,7 @@ GameDemo::GameDemo()
 
     m_EndgameSound.setBuffer(m_EndgameSoundBuffer);
 
-    std::vector<Wall> walls{ m_Wall };
+    std::vector<Wall> walls{ m_Wall, m_Ground, m_Platform };
     m_MainCharacter.InitColliders(walls);
 }
 
@@ -30,7 +32,9 @@ void GameDemo::Update(float deltaTime)
 {
     m_MainCharacter.Update(deltaTime);
     m_Door.Update(deltaTime);
+    m_Ground.Update(deltaTime);
     m_Wall.Update(deltaTime);
+    m_Platform.Update(deltaTime);
 
     if (!m_IsFinished)
     {
@@ -52,6 +56,8 @@ void GameDemo::Render(sf::RenderTarget& target)
     target.draw(m_Door);
     target.draw(m_MainCharacter);
     target.draw(m_Wall);
+    target.draw(m_Ground);
+    target.draw(m_Platform);
 
     if (m_IsFinished)
     {

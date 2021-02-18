@@ -21,6 +21,11 @@ private:
     sf::Sound m_EndgameSound;
     MainCharacter m_MainCharacter;
     Door m_Door;
+
+    // For test purposes
+    Wall m_Ground;
     Wall m_Wall;
+    Wall m_Platform;
+
     bool m_IsFinished;
 };

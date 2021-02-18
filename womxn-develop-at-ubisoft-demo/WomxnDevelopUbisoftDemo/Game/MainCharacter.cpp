@@ -34,6 +34,7 @@ namespace
 
 MainCharacter::MainCharacter()
     : m_IsPlayingEndGame(false), m_Position(250.0f, 250.0f), m_IsUsingJoystick(false), m_JoystickIndex(0), m_WasButtonPressed(false)
+    , m_IsGrounded(false), m_IsJumping(false)
 {
     m_Texture.loadFromFile(".\\Assets\\red_ball.bmp");
 
@@ -86,8 +87,9 @@ void MainCharacter::ComputeVelocity()
     const float DEAD_ZONE = 5.0f;
     const float SLOWDOWN_RATE = 0.9f;
 
-    const float JUMP_FORCE = 350.0f;
-
+    const float JUMP_FORCE = 400.0f;
+    
+    // Compute the velocity based on the user input
     if (m_IsUsingJoystick)
     {
         m_Velocity.x = GetScaledAxis(m_JoystickIndex, Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
@@ -129,60 +131,77 @@ void MainCharacter::ComputeVelocity()
         {
             m_Velocity.y = fmin(m_Velocity.y + SPEED_INC, SPEED_MAX);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::Up)) // Jump
+        else if (Keyboard::isKeyPressed(Keyboard::Up) && !m_IsJumping) // Jump
         {
             m_Velocity.y = -JUMP_FORCE;
+            m_IsGrounded = false;
+            m_IsJumping = true;
         }
     }
 }
 
 void MainCharacter::Move(float deltaTime) 
 {
-    // Apply gravity force
     const float GRAVITY = 9.8f;
-    m_Velocity.y += GRAVITY;
+
+    // Apply gravity
+    if (!m_IsGrounded) {
+        m_Velocity.y += GRAVITY;
+    }
 
     // Keep the oldPosition
     sf::Vector2f oldPosition = m_Position;
     
     // Try to move on the X axis
     sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
-    m_Position += tempVelocity * deltaTime;
-    SetCenter(m_Position);
-
-    // Cancel the movement if a collision is detected
-    if (CheckCollision()) 
+    if (!CheckCollision(m_Position + tempVelocity * deltaTime)) 
     {
-        m_Position = oldPosition;
-        SetCenter(m_Position);
+        m_Position += tempVelocity * deltaTime;
     }
-    else
+    else // Collided with wall
     {
-        // Keep track of the correct movement
-        oldPosition = m_Position;
+        m_Velocity.x = 0.0f; // Reset horizontal velocity
     }
 
     // Try to move on the Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_Velocity.y;
-    m_Position += tempVelocity * deltaTime;
-    SetCenter(m_Position);
-    
-    // Cancel the movement if a collision is detected
-    if (CheckCollision()) {
-        m_Position = oldPosition;
-        SetCenter(m_Position);
+    if (!CheckCollision(m_Position + tempVelocity * deltaTime)) 
+    {
+        m_Position += tempVelocity * deltaTime;
+    } 
+    else if (tempVelocity.y < 0) // Collided with ceiling
+    {
+        m_Velocity.y = 0.0f; // Reset vertical velocity
+    }
+    else // Collided with ground
+    {
+        m_IsGrounded = true;
+        m_IsJumping = false;
     }
 
-    // Sets the final position of the sprite
+    SetCenter(m_Position);
     m_Sprite.setPosition(m_Position);
 }
 
-bool MainCharacter::CheckCollision() {
-    for (Wall w : m_Walls) {
-        return IsColliding(w);
+class Dummy : public BoxCollideable {
+public:
+    Dummy(const sf::Vector2f& position, const sf::Vector2f& size) {
+        SetBoundingBox(position, size);
     }
-    return false;
+};
+
+bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
+    sf::Vector2f size(m_BoundingBox.width, m_BoundingBox.height);
+    Dummy d(nextPosition, size);
+
+    bool isColliding = false;
+    for (Wall w : m_Walls) {
+        if (w.IsColliding(d)) {
+            isColliding = true;
+        }
+    }
+    return isColliding;
 }
 
 void MainCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const
