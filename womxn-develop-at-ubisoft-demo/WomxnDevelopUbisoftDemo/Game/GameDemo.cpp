@@ -1,10 +1,13 @@
 #include "stdafx.h"
 #include "GameDemo.h"
 
+#include <vector>
+
 GameDemo::GameDemo()
     : Game{ "Game Demo" }
-    , m_Door{ 900, 600, 100, 200 }
     , m_MainCharacter{}
+    , m_Door{ 900, 600, 100, 200 }
+    , m_Wall{ 500, 500, 300, 100 }
     , m_IsFinished{ false }
 {
     m_EndgameTextFont.loadFromFile("Assets\\arial.ttf");
@@ -18,18 +21,21 @@ GameDemo::GameDemo()
     m_EndgameSoundBuffer.loadFromFile("Assets\\Test.wav");
 
     m_EndgameSound.setBuffer(m_EndgameSoundBuffer);
+
+    std::vector<Wall> walls{ m_Wall };
+    m_MainCharacter.InitColliders(walls);
 }
 
 void GameDemo::Update(float deltaTime)
 {
     m_MainCharacter.Update(deltaTime);
     m_Door.Update(deltaTime);
+    m_Wall.Update(deltaTime);
 
     if (!m_IsFinished)
     {
-        if (m_Door.IsColliding(m_MainCharacter))
         //if (m_Door.Contains(m_MainCharacter.GetCenter()))
-        //if (m_Door.Contains(m_MainCharacter))
+        if (m_Door.Contains(m_MainCharacter))
         {
             m_EndgameSound.play();
 
@@ -45,6 +51,7 @@ void GameDemo::Render(sf::RenderTarget& target)
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_Door);
     target.draw(m_MainCharacter);
+    target.draw(m_Wall);
 
     if (m_IsFinished)
     {

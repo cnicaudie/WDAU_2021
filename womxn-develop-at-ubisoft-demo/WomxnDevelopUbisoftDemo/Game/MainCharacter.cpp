@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <Game/MainCharacter.h>
+#include <iostream>
 
 using namespace sf;
 
@@ -55,6 +56,31 @@ void MainCharacter::Update(float deltaTime)
         return;
     }
 
+    ComputeVelocity();
+
+    Move(deltaTime);
+    
+    // Reduces scale when pressing space (crouch feature ?)
+    if (Keyboard::isKeyPressed(Keyboard::Space))
+    {
+        if (!m_WasButtonPressed)
+        {
+            m_Sprite.setScale(0.8f, 0.8f);
+            m_WasButtonPressed = true;
+        }
+    }
+    else
+    {
+        if (m_WasButtonPressed)
+        {
+            m_Sprite.setScale(1.0f, 1.0f);
+            m_WasButtonPressed = false;
+        }
+    }
+}
+
+void MainCharacter::ComputeVelocity()
+{
     const float SPEED_MAX = 150.0f;
     const float SPEED_INC = 10.0f;
     const float DEAD_ZONE = 5.0f;
@@ -109,30 +135,53 @@ void MainCharacter::Update(float deltaTime)
         {
             m_Velocity.y *= SLOWDOWN_RATE;
         }
-
-        if (Keyboard::isKeyPressed(Keyboard::Space))
-        {
-            if (!m_WasButtonPressed)
-            {
-                m_Sprite.setScale(0.8f, 0.8f);
-                m_WasButtonPressed = true;
-            }
-        }
-        else
-        {
-            if (m_WasButtonPressed)
-            {
-                m_Sprite.setScale(1.0f, 1.0f);
-                m_WasButtonPressed = false;
-            }
-        }
     }
-
-    m_Position += m_Velocity * deltaTime;
-    m_Sprite.setPosition(m_Position);
-    SetCenter(m_Position);
 }
 
+void MainCharacter::Move(float deltaTime) 
+{
+    // Keep the oldPosition
+    sf::Vector2f oldPosition = m_Position;
+    
+    // Try to move on the X axis
+    sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
+    m_Position += tempVelocity * deltaTime;
+    SetCenter(m_Position);
+
+    // Cancel the movement if a collision is detected
+    if (CheckCollision()) 
+    {
+        m_Position = oldPosition;
+        SetCenter(m_Position);
+    }
+    else
+    {
+        // Keep track of the correct movement
+        oldPosition = m_Position;
+    }
+
+    // Try to move on the Y axis
+    tempVelocity.x = 0.0f;
+    tempVelocity.y = m_Velocity.y;
+    m_Position += tempVelocity * deltaTime;
+    SetCenter(m_Position);
+    
+    // Cancel the movement if a collision is detected
+    if (CheckCollision()) {
+        m_Position = oldPosition;
+        SetCenter(m_Position);
+    }
+
+    // Sets the final position of the sprite
+    m_Sprite.setPosition(m_Position);
+}
+
+bool MainCharacter::CheckCollision() {
+    for (Wall w : m_Walls) {
+        return IsColliding(w);
+    }
+    return false;
+}
 
 void MainCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
