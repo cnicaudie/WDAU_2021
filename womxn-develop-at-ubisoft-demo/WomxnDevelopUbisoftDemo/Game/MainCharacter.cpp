@@ -61,6 +61,12 @@ void MainCharacter::Update(float deltaTime)
 
     Move(deltaTime);
     
+    /* Shoot
+    if (Keyboard::isKeyPressed(Keyboard::S) {
+
+    }
+    */
+
     // Reduces scale when pressing space (crouch feature ?)
     if (Keyboard::isKeyPressed(Keyboard::Space))
     {
@@ -127,16 +133,16 @@ void MainCharacter::ComputeVelocity()
             m_Velocity.x *= SLOWDOWN_RATE;
         }
 
-        if (Keyboard::isKeyPressed(Keyboard::Down))
-        {
-            m_Velocity.y = fmin(m_Velocity.y + SPEED_INC, SPEED_MAX);
-        }
-        else if (Keyboard::isKeyPressed(Keyboard::Up) && !m_IsJumping) // Jump
+        if (Keyboard::isKeyPressed(Keyboard::Up) && m_IsGrounded) // Jump
         {
             m_Velocity.y = -JUMP_FORCE;
             m_IsGrounded = false;
-            m_IsJumping = true;
-        }
+            //m_IsJumping = true;
+        } 
+        /*else if (Keyboard::isKeyPressed(Keyboard::Down))
+        {
+            m_Velocity.y = fmin(m_Velocity.y + SPEED_INC, SPEED_MAX);
+        }*/
     }
 }
 
@@ -145,59 +151,85 @@ void MainCharacter::Move(float deltaTime)
     const float GRAVITY = 9.8f;
 
     // Apply gravity
-    if (!m_IsGrounded) {
-        m_Velocity.y += GRAVITY;
-    }
+    m_Velocity.y += GRAVITY;
 
     // Try to move on the X axis
     sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
-    if (!CheckCollision(m_Position + tempVelocity * deltaTime)) 
+    if (!CheckCollision(tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
-    }
-    else // Collided with wall
-    {
-        m_Velocity.x = 0.0f; // Reset horizontal velocity
     }
 
     // Try to move on the Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_Velocity.y;
-    if (!CheckCollision(m_Position + tempVelocity * deltaTime)) 
+    if (!CheckCollision(tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
-    } 
-    else if (tempVelocity.y < 0) // Collided with ceiling
-    {
-        m_Velocity.y = 0.0f; // Reset vertical velocity
-    }
-    else // Collided with ground
-    {
-        m_IsGrounded = true;
-        m_IsJumping = false;
+        // Uncomment next line to avoid 1 jump when falling
+        //m_IsGrounded = false;
     }
 
     SetCenter(m_Position);
     m_Sprite.setPosition(m_Position);
 }
 
-class Dummy : public BoxCollideable {
-public:
-    Dummy(const sf::Vector2f& position, const sf::Vector2f& size) {
-        SetBoundingBox(position, size);
-    }
-};
-
 bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
-    sf::Vector2f size(m_BoundingBox.width, m_BoundingBox.height);
-    Dummy d(nextPosition, size);
-
     bool isColliding = false;
-    for (Wall w : m_Walls) {
-        if (w.IsColliding(d)) {
+
+    sf::FloatRect otherCollider;
+
+    // Set up the player's future bounding box
+    sf::FloatRect playerCollider = m_BoundingBox;
+    playerCollider.left += nextPosition.x;
+    playerCollider.top += nextPosition.y;
+
+    // Search for a collision
+    for (Wall w : m_Walls) 
+    {
+        otherCollider = w.GetBoundingBox();
+
+        if (playerCollider.intersects(otherCollider))
+        {
             isColliding = true;
+
+            // Check the direction of the collision 
+
+            // Bottom collision
+            if (playerCollider.top < otherCollider.top && playerCollider.top + playerCollider.height < otherCollider.top +  otherCollider.height)
+            {
+                m_IsGrounded = true;
+                m_Velocity.y = 0.f;
+                m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
+                //std::cout << "Bottom collision" << std::endl;
+            }
+
+            // Top collision
+            else if (playerCollider.top > otherCollider.top && playerCollider.top + playerCollider.height > otherCollider.top + otherCollider.height)
+            {
+                m_Velocity.y = 0.f;
+                m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2) + 0.5f;
+                //std::cout << "Top collision" << std::endl;
+            }
+
+            // Right collision
+            else if (playerCollider.left < otherCollider.left && playerCollider.left + playerCollider.width < otherCollider.left + otherCollider.width) 
+            {
+                m_Velocity.x = 0.f;
+                m_Position.x = otherCollider.left - (m_BoundingBox.width / 2) - 0.5f;
+                //std::cout << "Right collision" << std::endl;
+            }
+            
+            // Left collision
+            else if (playerCollider.left > otherCollider.left && playerCollider.left + playerCollider.width > otherCollider.left + otherCollider.width) 
+            {
+                m_Velocity.x = 0.f;
+                m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2) + 0.5f;
+                //std::cout << "Left collision" << std::endl;
+            }
         }
     }
+    
     return isColliding;
 }
 

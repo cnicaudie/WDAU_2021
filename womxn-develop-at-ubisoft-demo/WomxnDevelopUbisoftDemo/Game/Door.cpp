@@ -17,7 +17,7 @@ Door::Door(float xCenterPos, float yCenterPos, float width, float height)
 	m_Rectangle.setPosition(center);
 
 	m_Rectangle.setFillColor(sf::Color(0, 0, 0, 0));
-	m_Rectangle.setOutlineThickness(1);
+	m_Rectangle.setOutlineThickness(5);
 	m_Rectangle.setOutlineColor(sf::Color{ static_cast<uint8_t>(m_rColor * 255.0f), static_cast<uint8_t>(m_gColor * 255.0f), static_cast<uint8_t>(m_bColor * 255.0f) });
 }
 

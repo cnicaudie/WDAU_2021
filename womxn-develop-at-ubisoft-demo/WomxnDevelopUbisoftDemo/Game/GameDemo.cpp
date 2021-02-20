@@ -30,6 +30,7 @@ GameDemo::GameDemo()
 
     sf::Vector2f viewSize{ 1024, 768 };
     m_cameraView.setSize(viewSize);
+    m_cameraView.zoom(1.5f);
     m_cameraView.setCenter(m_MainCharacter.GetCenter());
     //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
     m_Window.setView(m_cameraView);
