@@ -27,5 +27,8 @@ private:
     Wall m_Wall;
     Wall m_Platform;
 
+    // View
+    sf::View m_cameraView;
+
     bool m_IsFinished;
 };

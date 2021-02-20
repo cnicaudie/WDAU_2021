@@ -11,6 +11,7 @@ GameDemo::GameDemo()
     , m_Wall{ 200, 500, 25, 200 }
     , m_Platform{ 400, 500, 100, 25 }
     , m_IsFinished{ false }
+    , m_cameraView{}
 {
     m_EndgameTextFont.loadFromFile("Assets\\arial.ttf");
 
@@ -26,11 +27,23 @@ GameDemo::GameDemo()
 
     std::vector<Wall> walls{ m_Wall, m_Ground, m_Platform };
     m_MainCharacter.InitColliders(walls);
+
+    sf::Vector2f viewSize{ 1024, 768 };
+    m_cameraView.setSize(viewSize);
+    m_cameraView.setCenter(m_MainCharacter.GetCenter());
+    //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
+    m_Window.setView(m_cameraView);
 }
 
 void GameDemo::Update(float deltaTime)
 {
     m_MainCharacter.Update(deltaTime);
+    
+    // Move the camera view according to the player's position
+    m_cameraView.setCenter(m_MainCharacter.GetCenter());
+    m_Window.setView(m_cameraView);
+    
+    // TODO : Clean that
     m_Door.Update(deltaTime);
     m_Ground.Update(deltaTime);
     m_Wall.Update(deltaTime);
@@ -53,8 +66,10 @@ void GameDemo::Update(float deltaTime)
 void GameDemo::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
-    target.draw(m_Door);
     target.draw(m_MainCharacter);
+    
+    // TODO : Clean that
+    target.draw(m_Door);
     target.draw(m_Wall);
     target.draw(m_Ground);
     target.draw(m_Platform);

@@ -149,9 +149,6 @@ void MainCharacter::Move(float deltaTime)
         m_Velocity.y += GRAVITY;
     }
 
-    // Keep the oldPosition
-    sf::Vector2f oldPosition = m_Position;
-    
     // Try to move on the X axis
     sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
     if (!CheckCollision(m_Position + tempVelocity * deltaTime)) 
