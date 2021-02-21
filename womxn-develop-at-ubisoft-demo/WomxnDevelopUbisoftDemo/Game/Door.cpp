@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <Game/Door.h>
+#include "Door.h"
 
 
 Door::Door(float xCenterPos, float yCenterPos, float width, float height)

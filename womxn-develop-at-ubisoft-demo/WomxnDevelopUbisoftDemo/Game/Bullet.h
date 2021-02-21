@@ -2,7 +2,7 @@
 
 class Bullet : public sf::Drawable, BoxCollideable {
 public: 
-	Bullet(sf::Texture* texture, const sf::Vector2f& dir, const sf::Vector2f pos);
+	Bullet(const sf::Texture& texture, const sf::Vector2f& dir, const sf::Vector2f pos);
 	~Bullet();
 	
 	void Update(float deltaTime);

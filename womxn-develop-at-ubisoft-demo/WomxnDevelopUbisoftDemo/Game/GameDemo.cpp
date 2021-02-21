@@ -38,20 +38,20 @@ GameDemo::GameDemo()
 
 void GameDemo::Update(float deltaTime)
 {
-    m_MainCharacter.Update(deltaTime);
-    
-    // Move the camera view according to the player's position
-    m_cameraView.setCenter(m_MainCharacter.GetCenter());
-    m_Window.setView(m_cameraView);
-    
-    // TODO : Clean that
-    m_Door.Update(deltaTime);
-    m_Ground.Update(deltaTime);
-    m_Wall.Update(deltaTime);
-    m_Platform.Update(deltaTime);
-
     if (!m_IsFinished)
     {
+        m_MainCharacter.Update(deltaTime);
+    
+        // Move the camera view according to the player's position
+        m_cameraView.setCenter(m_MainCharacter.GetCenter());
+        m_Window.setView(m_cameraView);
+    
+        // TODO : Clean that
+        m_Door.Update(deltaTime);
+        m_Ground.Update(deltaTime);
+        m_Wall.Update(deltaTime);
+        m_Platform.Update(deltaTime);
+
         //if (m_Door.Contains(m_MainCharacter.GetCenter()))
         if (m_Door.Contains(m_MainCharacter))
         {

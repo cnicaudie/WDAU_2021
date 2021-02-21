@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Engine/Game.h>
-#include <Game/Door.h>
-#include <Game/MainCharacter.h>
-#include <Game/Wall.h>
+#include "Door.h"
+#include "MainCharacter.h"
+#include "Wall.h"
 
 class GameDemo : public Game
 {

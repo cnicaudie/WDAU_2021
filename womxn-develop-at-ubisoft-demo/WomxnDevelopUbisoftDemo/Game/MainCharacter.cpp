@@ -1,5 +1,7 @@
 #include <stdafx.h>
-#include <Game/MainCharacter.h>
+
+#include "MainCharacter.h"
+
 #include <iostream>
 
 using namespace sf;
@@ -87,7 +89,7 @@ void MainCharacter::Update(float deltaTime)
     if (Keyboard::isKeyPressed(Keyboard::S) && m_canShoot) {
         m_canShoot = false;
         m_shootCooldown = 0.f;
-        m_Bullets.emplace_back(&m_BulletTexture, sf::Vector2f(1.f, 0.f), m_Position);
+        m_Bullets.emplace_back(m_BulletTexture, sf::Vector2f(1.f, 0.f), m_Position);
         //std::cout << "Number of bullets : " << m_Bullets.size() << std::endl;
     }
 

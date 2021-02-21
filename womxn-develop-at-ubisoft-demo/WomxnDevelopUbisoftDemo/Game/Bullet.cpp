@@ -1,14 +1,16 @@
 #include <stdafx.h>
-#include <Game/Bullet.h>
+
+#include "Bullet.h"
+
 #include <cmath>
 #include <iostream>
 
-Bullet::Bullet(sf::Texture* texture, const sf::Vector2f& dir, const sf::Vector2f pos)
+Bullet::Bullet(const sf::Texture& texture, const sf::Vector2f& dir, const sf::Vector2f pos)
 	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f)
 {
-	const sf::Vector2f size(static_cast<float>(texture->getSize().x), static_cast<float>(texture->getSize().y));
+	const sf::Vector2f size(static_cast<float>(texture.getSize().x), static_cast<float>(texture.getSize().y));
 
-	m_Sprite.setTexture(*texture);
+	m_Sprite.setTexture(texture);
 	m_Sprite.setOrigin(size * 0.5f);
 	m_Sprite.setPosition(pos);
 	m_Sprite.scale(sf::Vector2f(0.5f, 0.5f));

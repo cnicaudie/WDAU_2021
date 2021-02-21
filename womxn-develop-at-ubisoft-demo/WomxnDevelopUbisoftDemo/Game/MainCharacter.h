@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Game/Wall.h>
-#include <Game/Bullet.h>
+#include "Wall.h"
+#include "Bullet.h"
+
 #include <vector>
 
 class MainCharacter : public sf::Drawable, public BoxCollideable

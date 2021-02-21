@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Game/Wall.h"
+#include "Wall.h"
 
 Wall::Wall(float xCenterPos, float yCenterPos, float width, float height)
 {
