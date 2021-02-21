@@ -34,9 +34,13 @@ namespace
 
 MainCharacter::MainCharacter()
     : m_IsPlayingEndGame(false), m_Position(250.0f, 250.0f), m_IsUsingJoystick(false), m_JoystickIndex(0), m_WasButtonPressed(false)
-    , m_IsGrounded(false), m_IsJumping(false)
+    , m_IsGrounded(false), m_IsJumping(false), m_canShoot(true), m_shootCooldown(5.f), m_Bullets()
 {
-    m_Texture.loadFromFile(".\\Assets\\red_ball.bmp");
+    m_Texture.loadFromFile(".\\Assets\\blue_ball.bmp");
+    m_Texture.setSmooth(true);
+
+    m_BulletTexture.loadFromFile(".\\Assets\\red_ball.bmp");
+    m_BulletTexture.setSmooth(true);
 
     const sf::Vector2f size(static_cast<float>(m_Texture.getSize().x), static_cast<float>(m_Texture.getSize().y));
 
@@ -49,7 +53,6 @@ MainCharacter::MainCharacter()
     m_IsUsingJoystick = GetFirstJoystickIndex(m_JoystickIndex);
 }
 
-
 void MainCharacter::Update(float deltaTime)
 {
     if (m_IsPlayingEndGame)
@@ -60,12 +63,38 @@ void MainCharacter::Update(float deltaTime)
     ComputeVelocity();
 
     Move(deltaTime);
-    
-    /* Shoot
-    if (Keyboard::isKeyPressed(Keyboard::S) {
 
+    // Update shooting cooldown
+    if (m_shootCooldown >= 0.5f) {
+        m_canShoot = true;
     }
-    */
+    else {
+        //std::cout << m_shootCooldown << std::endl;
+        m_shootCooldown += 1.f * deltaTime;
+    }
+    
+    // Erase bullets if they crossed a certain distance
+    int bulletNumber = 0;
+    for (Bullet& b : m_Bullets) {
+        if (b.GetDistance() > 400.f) {
+            m_Bullets.erase(m_Bullets.begin() + bulletNumber);
+            //std::cout << "Erased bullet !"<< std::endl;
+        }
+        bulletNumber++;
+    }
+
+    // Shoot a bullet when pressing S key
+    if (Keyboard::isKeyPressed(Keyboard::S) && m_canShoot) {
+        m_canShoot = false;
+        m_shootCooldown = 0.f;
+        m_Bullets.emplace_back(&m_BulletTexture, sf::Vector2f(1.f, 0.f), m_Position);
+        //std::cout << "Number of bullets : " << m_Bullets.size() << std::endl;
+    }
+
+    // Update the bullets
+    for (auto& b : m_Bullets) {
+        b.Update(deltaTime);
+    }
 
     // Reduces scale when pressing space (crouch feature ?)
     if (Keyboard::isKeyPressed(Keyboard::Space))
@@ -236,6 +265,10 @@ bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
 void MainCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(m_Sprite);
+
+    for (auto& b : m_Bullets) {
+        target.draw(b);
+    }
 }
 
 void MainCharacter::StartEndGame()
