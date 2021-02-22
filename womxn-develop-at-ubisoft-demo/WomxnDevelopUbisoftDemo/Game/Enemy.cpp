@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Enemy.h"
 
-#include <iostream>
-
 Enemy::Enemy()
 	: m_HealthPoints(100), m_Position(500.0f, 655.5f), m_wasDamaged(false), m_damageCooldown(2.f)
 {

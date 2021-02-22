@@ -1,10 +1,10 @@
 #include <stdafx.h>
 
-#include <Game/GameDemo.h>
+#include <Game/GameManager.h>
 
 int main()
 {
-    GameDemo game{};
+    GameManager game{};
     game.RunGameLoop();
 
     return EXIT_SUCCESS;

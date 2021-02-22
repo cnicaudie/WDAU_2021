@@ -3,7 +3,6 @@
 #include "Bullet.h"
 
 #include <cmath>
-#include <iostream>
 
 Bullet::Bullet(const sf::Texture& texture, const sf::Vector2f& dir, const sf::Vector2f pos)
 	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f)

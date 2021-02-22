@@ -11,7 +11,7 @@ public:
 	void Damage();
 
 private:
-	sf::Texture m_Texture;
+	sf::Texture m_Texture; // TODO : Get texture from constructor 
 	sf::Sprite m_Sprite;
 	sf::Vector2f m_Position;
 	int m_HealthPoints;

@@ -1,10 +1,5 @@
 #include <stdafx.h>
-
-#include "MainCharacter.h"
-
-#include <iostream>
-
-using namespace sf;
+#include "Player.h"
 
 // Joystick helpers
 namespace
@@ -12,10 +7,12 @@ namespace
     bool GetFirstJoystickIndex(unsigned int& index)
     {
         index = 0;
-        while (index < Joystick::Count)
+        while (index < sf::Joystick::Count)
         {
-            if (Joystick::isConnected(index) && Joystick::hasAxis(index, Joystick::Axis::X) && Joystick::hasAxis(index, Joystick::Axis::Y))
+            if (sf::Joystick::isConnected(index) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
+            {
                 return true;
+            }
 
             index++;
         }
@@ -25,18 +22,27 @@ namespace
 
     float GetScaledAxis(unsigned int index, sf::Joystick::Axis axis, float deadZone, float scale)
     {
-        float value = (Joystick::getAxisPosition(index, axis) / 100.0f) * scale;
-        if (value >= -deadZone && value <= deadZone)
+        float value = (sf::Joystick::getAxisPosition(index, axis) / 100.0f) * scale;
+        if (value >= -deadZone && value <= deadZone) 
+        {
             return 0.0f;
+        }
 
         return value;
     }
 }
 
 
-MainCharacter::MainCharacter()
-    : m_IsPlayingEndGame(false), m_Position(250.0f, 250.0f), m_IsUsingJoystick(false), m_JoystickIndex(0), m_WasButtonPressed(false)
-    , m_IsGrounded(false), m_canShoot(true), m_shootCooldown(5.f), m_Bullets(), m_AmmunitionsNumber(10)
+Player::Player()
+    : m_IsUsingJoystick(false)
+    , m_JoystickIndex(0)
+    , m_WasButtonPressed(false)
+    , m_Position(250.0f, 250.0f)
+    , m_IsGrounded(false)
+    , m_canShoot(true)
+    , m_shootCooldown(5.f)
+    , m_AmmunitionsNumber(10)
+    , m_Bullets()
 {
     m_Texture.loadFromFile(".\\Assets\\blue_ball.bmp");
     m_Texture.setSmooth(true);
@@ -55,85 +61,24 @@ MainCharacter::MainCharacter()
     m_IsUsingJoystick = GetFirstJoystickIndex(m_JoystickIndex);
 }
 
-void MainCharacter::Update(float deltaTime)
+void Player::Update(float deltaTime)
 {
-    if (m_IsPlayingEndGame)
-    {
-        return;
-    }
-
     ComputeVelocity();
 
     Move(deltaTime);
 
-    // Update shooting cooldown
-    if (m_shootCooldown >= 0.5f) {
-        m_canShoot = true;
-    }
-    else {
-        //std::cout << m_shootCooldown << std::endl;
-        m_shootCooldown += 1.f * deltaTime;
+    UpdateShootingCooldown(deltaTime);
+    
+    UpdateBullets(deltaTime);
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && m_canShoot && m_AmmunitionsNumber > 0) {
+        Shoot();
     }
     
-    // Erase bullets if they crossed a certain distance
-    int bulletNumber = 0;
-    for (Bullet& b : m_Bullets) {
-        if (b.GetDistance() > 400.f) {
-            m_Bullets.erase(m_Bullets.begin() + bulletNumber);
-            //std::cout << "Erased bullet !"<< std::endl;
-        }
-        bulletNumber++;
-    }
-
-    // Shoot a bullet when pressing S key
-    if (Keyboard::isKeyPressed(Keyboard::S) && m_canShoot && m_AmmunitionsNumber > 0) {
-        m_canShoot = false;
-        m_AmmunitionsNumber--;
-        m_shootCooldown = 0.f;
-        m_Bullets.emplace_back(m_BulletTexture, sf::Vector2f(1.f, 0.f), m_Position);
-        //std::cout << "Number of bullets : " << m_Bullets.size() << std::endl;
-    }
-
-    // Update the bullets
-    for (auto& b : m_Bullets) {
-        b.Update(deltaTime);
-    }
-
     // Reduces scale when pressing space (crouch feature ?)
-    if (Keyboard::isKeyPressed(Keyboard::Space))
-    {
-        if (!m_WasButtonPressed)
-        {
-            m_Sprite.setScale(0.8f, 0.8f);
-            m_WasButtonPressed = true;
-        }
-    }
-    else
-    {
-        if (m_WasButtonPressed)
-        {
-            m_Sprite.setScale(1.0f, 1.0f);
-            m_WasButtonPressed = false;
-        }
-    }
-}
-
-void MainCharacter::ComputeVelocity()
-{
-    const float SPEED_MAX = 150.0f;
-    const float SPEED_INC = 10.0f;
-    const float DEAD_ZONE = 5.0f;
-    const float SLOWDOWN_RATE = 0.9f;
-
-    const float JUMP_FORCE = 400.0f;
-    
-    // Compute the velocity based on the user input
-    if (m_IsUsingJoystick)
-    {
-        m_Velocity.x = GetScaledAxis(m_JoystickIndex, Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
-        m_Velocity.y = GetScaledAxis(m_JoystickIndex, Joystick::Axis::Y, DEAD_ZONE, SPEED_MAX);
-
-        if (Joystick::isButtonPressed(m_JoystickIndex, 0))
+    // TODO : Clean that
+    if (m_IsUsingJoystick) {
+        if (sf::Joystick::isButtonPressed(m_JoystickIndex, 0))
         {
             if (!m_WasButtonPressed)
             {
@@ -150,13 +95,93 @@ void MainCharacter::ComputeVelocity()
             }
         }
     }
+    else 
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        {
+            if (!m_WasButtonPressed)
+            {
+                m_Sprite.setScale(0.8f, 0.8f);
+                m_WasButtonPressed = true;
+            }
+        }
+        else
+        {
+            if (m_WasButtonPressed)
+            {
+                m_Sprite.setScale(1.0f, 1.0f);
+                m_WasButtonPressed = false;
+            }
+        }
+    }
+}
+
+void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(m_Sprite);
+
+    for (auto& b : m_Bullets) {
+        target.draw(b);
+    }
+}
+
+void Player::UpdateShootingCooldown(float deltaTime)
+{
+    if (m_shootCooldown >= 0.5f) {
+        m_canShoot = true;
+    }
+    else {
+        m_shootCooldown += 1.f * deltaTime;
+    }
+}
+
+void Player::UpdateBullets(float deltaTime)
+{
+    // Erase bullets if they crossed a certain distance
+    int bulletNumber = 0;
+    for (Bullet& b : m_Bullets) {
+        if (b.GetDistance() > 400.f) {
+            m_Bullets.erase(m_Bullets.begin() + bulletNumber);
+        }
+        bulletNumber++;
+    }
+
+    // Update the bullets
+    for (auto& b : m_Bullets) {
+        b.Update(deltaTime);
+    }
+}
+
+void Player::Shoot()
+{
+    m_canShoot = false;
+    m_AmmunitionsNumber--;
+    m_shootCooldown = 0.f;
+    m_Bullets.emplace_back(m_BulletTexture, sf::Vector2f(1.f, 0.f), m_Position);
+}
+
+void Player::ComputeVelocity()
+{
+    const float SPEED_MAX = 200.0f;
+    const float SPEED_INC = 10.0f;
+    const float DEAD_ZONE = 5.0f;
+    const float SLOWDOWN_RATE = 0.9f;
+
+    const float JUMP_FORCE = 400.0f;
+    
+    // Compute the velocity based on the user input
+    if (m_IsUsingJoystick)
+    {
+        m_Velocity.x = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
+        m_Velocity.y = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::Y, DEAD_ZONE, SPEED_MAX);
+    }
     else
     {
-        if (Keyboard::isKeyPressed(Keyboard::Right))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         {
             m_Velocity.x = fmin(m_Velocity.x + SPEED_INC, SPEED_MAX);
         }
-        else if (Keyboard::isKeyPressed(Keyboard::Left))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
             m_Velocity.x = fmax(m_Velocity.x - SPEED_INC, -SPEED_MAX);
         }
@@ -165,20 +190,15 @@ void MainCharacter::ComputeVelocity()
             m_Velocity.x *= SLOWDOWN_RATE;
         }
 
-        if (Keyboard::isKeyPressed(Keyboard::Up) && m_IsGrounded) // Jump
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && m_IsGrounded) // Jump
         {
             m_Velocity.y = -JUMP_FORCE;
             m_IsGrounded = false;
-            //m_IsJumping = true;
-        } 
-        /*else if (Keyboard::isKeyPressed(Keyboard::Down))
-        {
-            m_Velocity.y = fmin(m_Velocity.y + SPEED_INC, SPEED_MAX);
-        }*/
+        }
     }
 }
 
-void MainCharacter::Move(float deltaTime) 
+void Player::Move(float deltaTime) 
 {
     const float GRAVITY = 9.8f;
 
@@ -206,7 +226,7 @@ void MainCharacter::Move(float deltaTime)
     m_Sprite.setPosition(m_Position);
 }
 
-bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
+bool Player::CheckCollision(const sf::Vector2f& nextPosition) {
     bool isColliding = false;
 
     sf::FloatRect otherCollider;
@@ -233,7 +253,6 @@ bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
                 m_IsGrounded = true;
                 m_Velocity.y = 0.f;
                 m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-                //std::cout << "Bottom collision" << std::endl;
             }
 
             // Top collision
@@ -241,7 +260,6 @@ bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
             {
                 m_Velocity.y = 0.f;
                 m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2) + 0.5f;
-                //std::cout << "Top collision" << std::endl;
             }
 
             // Right collision
@@ -249,7 +267,6 @@ bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
             {
                 m_Velocity.x = 0.f;
                 m_Position.x = otherCollider.left - (m_BoundingBox.width / 2) - 0.5f;
-                //std::cout << "Right collision" << std::endl;
             }
             
             // Left collision
@@ -257,7 +274,6 @@ bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
             {
                 m_Velocity.x = 0.f;
                 m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2) + 0.5f;
-                //std::cout << "Left collision" << std::endl;
             }
         }
     }
@@ -265,16 +281,3 @@ bool MainCharacter::CheckCollision(const sf::Vector2f& nextPosition) {
     return isColliding;
 }
 
-void MainCharacter::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    target.draw(m_Sprite);
-
-    for (auto& b : m_Bullets) {
-        target.draw(b);
-    }
-}
-
-void MainCharacter::StartEndGame()
-{
-    m_IsPlayingEndGame = true;
-}
