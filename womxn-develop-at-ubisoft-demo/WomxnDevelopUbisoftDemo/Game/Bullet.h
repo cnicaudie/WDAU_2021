@@ -1,6 +1,6 @@
 #pragma once
 
-class Bullet : public sf::Drawable, BoxCollideable {
+class Bullet : public sf::Drawable, public BoxCollideable {
 public: 
 	Bullet(const sf::Texture& texture, const sf::Vector2f& dir, const sf::Vector2f pos);
 	~Bullet();

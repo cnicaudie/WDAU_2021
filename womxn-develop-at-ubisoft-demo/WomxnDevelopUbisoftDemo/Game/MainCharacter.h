@@ -16,6 +16,7 @@ public:
 	void StartEndGame();
 
 	inline void InitColliders(const std::vector<Wall>& walls) { m_Walls = walls; };
+	inline const std::vector<Bullet>& GetBullets() { return m_Bullets; };
 
 private:
 	void ComputeVelocity();
@@ -35,9 +36,9 @@ private:
 	bool m_IsPlayingEndGame;
 
 	bool m_IsGrounded;
-	bool m_IsJumping;
 	bool m_canShoot;
 	float m_shootCooldown;
+	int m_AmmunitionsNumber;
 
 	std::vector<Wall> m_Walls;
 	std::vector<Bullet> m_Bullets;

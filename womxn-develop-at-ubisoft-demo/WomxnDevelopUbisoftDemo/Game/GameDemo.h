@@ -4,6 +4,7 @@
 #include "Door.h"
 #include "MainCharacter.h"
 #include "Wall.h"
+#include "Enemy.h"
 
 class GameDemo : public Game
 {
@@ -20,6 +21,7 @@ private:
     sf::SoundBuffer m_EndgameSoundBuffer;
     sf::Sound m_EndgameSound;
     MainCharacter m_MainCharacter;
+    Enemy m_Enemy;
     Door m_Door;
 
     // For test purposes

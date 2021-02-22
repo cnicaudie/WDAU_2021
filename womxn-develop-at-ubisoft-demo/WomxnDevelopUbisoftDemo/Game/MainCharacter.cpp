@@ -36,7 +36,7 @@ namespace
 
 MainCharacter::MainCharacter()
     : m_IsPlayingEndGame(false), m_Position(250.0f, 250.0f), m_IsUsingJoystick(false), m_JoystickIndex(0), m_WasButtonPressed(false)
-    , m_IsGrounded(false), m_IsJumping(false), m_canShoot(true), m_shootCooldown(5.f), m_Bullets()
+    , m_IsGrounded(false), m_canShoot(true), m_shootCooldown(5.f), m_Bullets(), m_AmmunitionsNumber(10)
 {
     m_Texture.loadFromFile(".\\Assets\\blue_ball.bmp");
     m_Texture.setSmooth(true);
@@ -86,8 +86,9 @@ void MainCharacter::Update(float deltaTime)
     }
 
     // Shoot a bullet when pressing S key
-    if (Keyboard::isKeyPressed(Keyboard::S) && m_canShoot) {
+    if (Keyboard::isKeyPressed(Keyboard::S) && m_canShoot && m_AmmunitionsNumber > 0) {
         m_canShoot = false;
+        m_AmmunitionsNumber--;
         m_shootCooldown = 0.f;
         m_Bullets.emplace_back(m_BulletTexture, sf::Vector2f(1.f, 0.f), m_Position);
         //std::cout << "Number of bullets : " << m_Bullets.size() << std::endl;

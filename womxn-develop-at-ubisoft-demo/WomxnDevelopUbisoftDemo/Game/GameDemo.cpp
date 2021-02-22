@@ -2,10 +2,12 @@
 #include "GameDemo.h"
 
 #include <vector>
+#include <iostream>
 
 GameDemo::GameDemo()
     : Game{ "Game Demo" }
     , m_MainCharacter{}
+    , m_Enemy{}
     , m_Door{ 900, 600, 100, 200 }
     , m_Ground{ 400, 700, 500, 25 }
     , m_Wall{ 200, 500, 25, 200 }
@@ -41,6 +43,7 @@ void GameDemo::Update(float deltaTime)
     if (!m_IsFinished)
     {
         m_MainCharacter.Update(deltaTime);
+        m_Enemy.Update(deltaTime);
     
         // Move the camera view according to the player's position
         m_cameraView.setCenter(m_MainCharacter.GetCenter());
@@ -61,6 +64,16 @@ void GameDemo::Update(float deltaTime)
             m_Door.StartEndGame();
             m_IsFinished = true;
         }
+
+        for (const Bullet& b : m_MainCharacter.GetBullets()) {
+            if (b.IsColliding(m_Enemy)) {
+                std::cout << "Touched enemy" << std::endl;
+                // TODO : destroy ball and damage enemy
+                m_Enemy.Damage();
+                // TODO : have a list of enemies and check if they're dead
+                // if so detroy them
+            }
+        }
     }
 }
 
@@ -68,6 +81,7 @@ void GameDemo::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_MainCharacter);
+    target.draw(m_Enemy);
     
     // TODO : Clean that
     target.draw(m_Door);
@@ -93,6 +107,16 @@ void GameDemo::RenderDebugMenu(sf::RenderTarget& target)
 
         ImGui::Text("X: %f", mainCharCenterPos.x);
         ImGui::Text("Y: %f", mainCharCenterPos.y);
+    }
+
+    if (ImGui::CollapsingHeader("Mouse position"))
+    {
+        // TODO : Use this to manage the shooting direction
+        const sf::Vector2i& mousePixelPosition = sf::Mouse::getPosition(m_Window);
+        const sf::Vector2f& mouseWorldPosition = m_Window.mapPixelToCoords(mousePixelPosition);
+
+        ImGui::Text("X: %f", mouseWorldPosition.x);
+        ImGui::Text("Y: %f", mouseWorldPosition.y);
     }
 
     if (ImGui::CollapsingHeader("Game status"))
