@@ -216,6 +216,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Game\Player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Wall.cpp" />
+    <ClCompile Include="UI\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\external\imgui-master\imgui.h" />
@@ -230,6 +231,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Player.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Game\Wall.h" />
+    <ClInclude Include="UI\UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

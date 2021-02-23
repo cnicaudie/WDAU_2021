@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Wall.h"
 #include "Enemy.h"
+#include <UI/UIManager.h>
 
 class GameManager : public Game
 {
@@ -16,11 +17,7 @@ public:
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
 private:
-    // End Game (TODO : Move that in UI)
-    sf::Font m_EndgameTextFont;
-    sf::Text m_EndgameText;
-    sf::SoundBuffer m_EndgameSoundBuffer;
-    sf::Sound m_EndgameSound;
+    bool m_IsGameOver;
 
     // Player
     Player m_Player;
@@ -37,7 +34,8 @@ private:
     Wall m_Platform;
 
     // View
-    sf::View m_cameraView;
+    sf::View m_CameraView;
 
-    bool m_IsGameOver;
+    // UI Elements
+    UIManager m_UiManager;
 };
