@@ -1,19 +1,19 @@
 #include <stdafx.h>
-
 #include "Bullet.h"
-
 #include <cmath>
 
-Bullet::Bullet(const sf::Texture& texture, const sf::Vector2f& dir, const sf::Vector2f pos)
+Bullet::Bullet(const TextureManager& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos)
 	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f)
 {
-	const sf::Vector2f size(static_cast<float>(texture.getSize().x), static_cast<float>(texture.getSize().y));
-
-	m_Sprite.setTexture(texture);
-	m_Sprite.setOrigin(size * 0.5f);
+	sf::Vector2f textureSize = textureManager.GetTextureSizeFromName("BULLET");
+	
+	m_Sprite.setTexture(textureManager.GetTextureFromName("BULLET"));
+	m_Sprite.setOrigin(textureSize * 0.5f);
 	m_Sprite.setPosition(pos);
 	m_Sprite.scale(sf::Vector2f(0.5f, 0.5f));
-	SetBoundingBox(pos, size);
+	
+	SetBoundingBox(pos, textureSize);
+	std::cout << "Bullet created !" << std::endl;
 }
 
 Bullet::~Bullet() {

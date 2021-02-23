@@ -3,7 +3,7 @@
 class Enemy : public sf::Drawable, public BoxCollideable 
 {
 public:
-	Enemy();
+	Enemy(const TextureManager& textureManager);
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

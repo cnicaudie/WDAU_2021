@@ -3,9 +3,9 @@
 class UIManager : public sf::Drawable
 {
 public:
-	UIManager();
+    UIManager();
 
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void StartEndGame();
 
 private:

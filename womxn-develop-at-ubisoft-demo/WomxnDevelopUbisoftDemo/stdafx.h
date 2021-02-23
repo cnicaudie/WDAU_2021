@@ -9,6 +9,7 @@
 
 #include <Engine/Game.h>
 #include <Engine/Collision.h>
+#include <Engine/TextureManager.h>
 
 #include <iostream>
 #include <vector>

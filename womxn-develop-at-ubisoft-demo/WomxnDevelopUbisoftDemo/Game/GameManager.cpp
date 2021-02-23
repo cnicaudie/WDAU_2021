@@ -3,15 +3,16 @@
 
 GameManager::GameManager()
     : Game{ "Game Demo" }
-    , m_IsGameOver{ false }
-    , m_Player{}
-    , m_Enemy{}
+    , m_UiManager{}
+    , m_TextureManager{}
+    , m_Player{ m_TextureManager }
+    , m_Enemy{ m_TextureManager }
     , m_Door{ 900, 600, 100, 200 }
     , m_Ground{ 400, 700, 500, 25 }
     , m_Wall{ 200, 500, 25, 200 }
     , m_Platform{ 400, 500, 100, 25 }
     , m_CameraView{}
-    , m_UiManager{}
+    , m_IsGameOver{ false }
 {
     std::vector<Wall> walls{ m_Wall, m_Ground, m_Platform };
     m_Player.InitColliders(walls);

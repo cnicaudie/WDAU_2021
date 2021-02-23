@@ -1,21 +1,17 @@
 #include "stdafx.h"
 #include "Enemy.h"
 
-Enemy::Enemy()
+Enemy::Enemy(const TextureManager& textureManager)
 	: m_HealthPoints(100), m_Position(500.0f, 655.5f), m_wasDamaged(false), m_damageCooldown(2.f)
 {
-	m_Texture.loadFromFile(".\\Assets\\blue_ball.bmp");
-	m_Texture.setSmooth(true);
-	
-	const sf::Vector2f size(static_cast<float>(m_Texture.getSize().x), static_cast<float>(m_Texture.getSize().y));
+	sf::Vector2f textureSize = textureManager.GetTextureSizeFromName("ENEMY");
 
-	m_Sprite.setTexture(m_Texture);
-	m_Sprite.setOrigin(size * 0.5f);
+	m_Sprite.setTexture(textureManager.GetTextureFromName("ENEMY"));
+	m_Sprite.setOrigin(textureSize * 0.5f);
 	m_Sprite.setPosition(m_Position);
-
 	m_Sprite.setColor(sf::Color::Green);
 
-	SetBoundingBox(m_Position, size);
+	SetBoundingBox(m_Position, textureSize);
 
 }
 

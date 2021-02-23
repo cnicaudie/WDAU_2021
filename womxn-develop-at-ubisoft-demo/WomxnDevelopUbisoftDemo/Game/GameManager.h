@@ -17,25 +17,19 @@ public:
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
 private:
-    bool m_IsGameOver;
-
-    // Player
+    UIManager m_UiManager;
+    TextureManager m_TextureManager; 
+    
     Player m_Player;
-
-    // Enemies
     Enemy m_Enemy;
 
-    // Map elements
     Door m_Door;
-
     // For test purposes
     Wall m_Ground;
     Wall m_Wall;
     Wall m_Platform;
 
-    // View
     sf::View m_CameraView;
-
-    // UI Elements
-    UIManager m_UiManager;
+    
+    bool m_IsGameOver;
 };

@@ -33,8 +33,9 @@ namespace
 }
 
 
-Player::Player()
-    : m_IsUsingJoystick(false)
+Player::Player(const TextureManager& textureManager)
+    : m_TextureManager{ textureManager }
+    , m_IsUsingJoystick(false)
     , m_JoystickIndex(0)
     , m_WasButtonPressed(false)
     , m_Position(250.0f, 250.0f)
@@ -42,21 +43,15 @@ Player::Player()
     , m_canShoot(true)
     , m_shootCooldown(5.f)
     , m_AmmunitionsNumber(10)
-    , m_Bullets()
+    , m_Bullets{}
 {
-    m_Texture.loadFromFile(".\\Assets\\blue_ball.bmp");
-    m_Texture.setSmooth(true);
+    sf::Vector2f textureSize = textureManager.GetTextureSizeFromName("PLAYER");
 
-    m_BulletTexture.loadFromFile(".\\Assets\\red_ball.bmp");
-    m_BulletTexture.setSmooth(true);
-
-    const sf::Vector2f size(static_cast<float>(m_Texture.getSize().x), static_cast<float>(m_Texture.getSize().y));
-
-    m_Sprite.setTexture(m_Texture);
-    m_Sprite.setOrigin(size * 0.5f);
+    m_Sprite.setTexture(textureManager.GetTextureFromName("PLAYER"));
+    m_Sprite.setOrigin(textureSize * 0.5f);
     m_Sprite.setPosition(m_Position);
 
-    SetBoundingBox(m_Position, size);
+    SetBoundingBox(m_Position, textureSize);
 
     m_IsUsingJoystick = GetFirstJoystickIndex(m_JoystickIndex);
 }
@@ -120,7 +115,7 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(m_Sprite);
 
-    for (auto& b : m_Bullets) {
+    for (const Bullet& b : m_Bullets) {
         target.draw(b);
     }
 }
@@ -147,7 +142,7 @@ void Player::UpdateBullets(float deltaTime)
     }
 
     // Update the bullets
-    for (auto& b : m_Bullets) {
+    for (Bullet& b : m_Bullets) {
         b.Update(deltaTime);
     }
 }
@@ -157,7 +152,7 @@ void Player::Shoot()
     m_canShoot = false;
     m_AmmunitionsNumber--;
     m_shootCooldown = 0.f;
-    m_Bullets.emplace_back(m_BulletTexture, sf::Vector2f(1.f, 0.f), m_Position);
+    m_Bullets.emplace_back(m_TextureManager, sf::Vector2f(1.f, 0.f), m_Position);
 }
 
 void Player::ComputeVelocity()
