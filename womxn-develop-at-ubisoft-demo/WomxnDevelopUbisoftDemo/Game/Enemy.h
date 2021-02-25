@@ -3,7 +3,7 @@
 class Enemy : public sf::Drawable, public BoxCollideable 
 {
 public:
-	Enemy(const TextureManager& textureManager);
+	Enemy(const std::shared_ptr<TextureManager>& textureManager);
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -11,11 +11,12 @@ public:
 	void Damage();
 
 private:
-	sf::Texture m_Texture; // TODO : Get texture from constructor 
 	sf::Sprite m_Sprite;
 	sf::Vector2f m_Position;
 	int m_HealthPoints;
 
-	bool m_wasDamaged;
-	float m_damageCooldown;
+	bool m_WasDamaged;
+	float m_DamageCooldown;
+
+	bool m_IsDead;
 };

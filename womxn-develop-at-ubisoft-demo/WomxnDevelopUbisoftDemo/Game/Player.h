@@ -2,17 +2,18 @@
 
 #include "Wall.h"
 #include "Bullet.h"
+#include <memory>
 
 class Player : public sf::Drawable, public BoxCollideable
 {
 public:	
-	Player(const TextureManager& textureManager);
+	Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
 	
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	
 	void InitColliders(const std::vector<Wall>& walls) { m_Walls = walls; };
-	const std::vector<Bullet>& GetBullets() { return m_Bullets; };
+	std::vector<Bullet>& GetBullets() { return m_Bullets; };
 
 private:
 	void UpdateShootingCooldown(float deltaTime);
@@ -24,8 +25,8 @@ private:
 	void Move(float deltaTime);
 
 	//====================//
-
-	TextureManager m_TextureManager;
+	std::shared_ptr<InputManager> m_InputManager;
+	std::shared_ptr<TextureManager> m_TextureManager;
 	sf::Sprite m_Sprite;
 
 	// TODO : Manage input in an Input manager
@@ -38,8 +39,8 @@ private:
 	
 	bool m_IsGrounded;
 
-	bool m_canShoot;
-	float m_shootCooldown;
+	bool m_CanShoot;
+	float m_ShootCooldown;
 	int m_AmmunitionsNumber;
 
 	// TODO : Use a better way to access collideable objects on the map

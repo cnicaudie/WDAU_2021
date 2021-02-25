@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "Player.h"
+#include <cmath>
 
 // Joystick helpers
 namespace
@@ -33,21 +34,22 @@ namespace
 }
 
 
-Player::Player(const TextureManager& textureManager)
-    : m_TextureManager{ textureManager }
+Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
+    : m_InputManager{ inputManager }
+    , m_TextureManager{ textureManager }
     , m_IsUsingJoystick(false)
     , m_JoystickIndex(0)
     , m_WasButtonPressed(false)
     , m_Position(250.0f, 250.0f)
     , m_IsGrounded(false)
-    , m_canShoot(true)
-    , m_shootCooldown(5.f)
+    , m_CanShoot(true)
+    , m_ShootCooldown(5.f)
     , m_AmmunitionsNumber(10)
     , m_Bullets{}
 {
-    sf::Vector2f textureSize = textureManager.GetTextureSizeFromName("PLAYER");
+    sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("PLAYER");
 
-    m_Sprite.setTexture(textureManager.GetTextureFromName("PLAYER"));
+    m_Sprite.setTexture(textureManager->GetTextureFromName("PLAYER"));
     m_Sprite.setOrigin(textureSize * 0.5f);
     m_Sprite.setPosition(m_Position);
 
@@ -66,7 +68,7 @@ void Player::Update(float deltaTime)
     
     UpdateBullets(deltaTime);
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && m_canShoot && m_AmmunitionsNumber > 0) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && m_CanShoot && m_AmmunitionsNumber > 0) {
         Shoot();
     }
     
@@ -122,25 +124,16 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Player::UpdateShootingCooldown(float deltaTime)
 {
-    if (m_shootCooldown >= 0.5f) {
-        m_canShoot = true;
+    if (m_ShootCooldown >= 0.5f) {
+        m_CanShoot = true;
     }
     else {
-        m_shootCooldown += 1.f * deltaTime;
+        m_ShootCooldown += 1.f * deltaTime;
     }
 }
 
 void Player::UpdateBullets(float deltaTime)
 {
-    // Erase bullets if they crossed a certain distance
-    int bulletNumber = 0;
-    for (Bullet& b : m_Bullets) {
-        if (b.GetDistance() > 400.f) {
-            m_Bullets.erase(m_Bullets.begin() + bulletNumber);
-        }
-        bulletNumber++;
-    }
-
     // Update the bullets
     for (Bullet& b : m_Bullets) {
         b.Update(deltaTime);
@@ -149,10 +142,18 @@ void Player::UpdateBullets(float deltaTime)
 
 void Player::Shoot()
 {
-    m_canShoot = false;
+    const sf::Vector2f mousePos = m_InputManager->GetMousePosition();
+    const sf::Vector2f bulletDirection = mousePos - m_Position;
+    
+    // TODO : Make a normalize function in a MathUtils file
+    float magnitude = std::sqrt(bulletDirection.x * bulletDirection.x + bulletDirection.y * bulletDirection.y);
+    sf::Vector2f normalizedMousePos = bulletDirection / magnitude;
+    
+    m_CanShoot = false;
     m_AmmunitionsNumber--;
-    m_shootCooldown = 0.f;
-    m_Bullets.emplace_back(m_TextureManager, sf::Vector2f(1.f, 0.f), m_Position);
+    std::cout << "Ammunitions left : " << m_AmmunitionsNumber << std::endl;
+    m_ShootCooldown = 0.f;
+    m_Bullets.emplace_back(m_TextureManager, normalizedMousePos, m_Position);
 }
 
 void Player::ComputeVelocity()
@@ -196,8 +197,6 @@ void Player::ComputeVelocity()
 void Player::Move(float deltaTime) 
 {
     const float GRAVITY = 9.8f;
-
-    // Apply gravity
     m_Velocity.y += GRAVITY;
 
     // Try to move on the X axis

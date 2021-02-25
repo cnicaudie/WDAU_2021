@@ -17,8 +17,9 @@ public:
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
 private:
+    std::shared_ptr<InputManager> m_InputManager;
+    std::shared_ptr<TextureManager> m_TextureManager;
     UIManager m_UiManager;
-    TextureManager m_TextureManager; 
     
     Player m_Player;
     Enemy m_Enemy;

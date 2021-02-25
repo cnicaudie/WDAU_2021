@@ -3,9 +3,10 @@
 
 GameManager::GameManager()
     : Game{ "Game Demo" }
+    , m_InputManager{ std::make_shared<InputManager>() }
+    , m_TextureManager{ std::make_shared<TextureManager>() }
     , m_UiManager{}
-    , m_TextureManager{}
-    , m_Player{ m_TextureManager }
+    , m_Player{ m_InputManager, m_TextureManager }
     , m_Enemy{ m_TextureManager }
     , m_Door{ 900, 600, 100, 200 }
     , m_Ground{ 400, 700, 500, 25 }
@@ -27,6 +28,8 @@ GameManager::GameManager()
 
 void GameManager::Update(float deltaTime)
 {
+    m_InputManager->UpdateMousePosition(m_Window);
+    
     if (!m_IsGameOver)
     {
         m_Player.Update(deltaTime);
@@ -42,22 +45,28 @@ void GameManager::Update(float deltaTime)
         m_Wall.Update(deltaTime);
         m_Platform.Update(deltaTime);
 
-        if (m_Door.Contains(m_Player.GetCenter()))
         //if (m_Door.Contains(m_Player))
+        if (m_Door.Contains(m_Player.GetCenter()))
         {
             m_UiManager.StartEndGame();
             m_Door.StartEndGame();
             m_IsGameOver = true;
         }
 
-        for (const Bullet& b : m_Player.GetBullets()) {
-            if (b.IsColliding(m_Enemy)) {
-                std::cout << "Touched enemy" << std::endl;
-                // TODO : destroy ball and damage enemy
-                m_Enemy.Damage();
-                // TODO : have a list of enemies and check if they're dead
-                // if so detroy them
+        int bulletNumber = 0;
+        auto& bullets = m_Player.GetBullets();
+        for (Bullet& b : bullets) {
+            bool bulletHadCollision = b.IsColliding(m_Enemy);
+            if (b.GetDistance() > 400.f || bulletHadCollision) {
+                bullets.erase(bullets.begin() + bulletNumber);
             }
+
+            if (bulletHadCollision) {
+                std::cout << "Touched enemy" << std::endl;
+                m_Enemy.Damage();
+            }
+
+            bulletNumber++;
         }
     }
 }
@@ -93,9 +102,7 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 
     if (ImGui::CollapsingHeader("Mouse position"))
     {
-        // TODO : Use this to manage the shooting direction
-        const sf::Vector2i& mousePixelPosition = sf::Mouse::getPosition(m_Window);
-        const sf::Vector2f& mouseWorldPosition = m_Window.mapPixelToCoords(mousePixelPosition);
+        const sf::Vector2f& mouseWorldPosition = m_InputManager->GetMousePosition();
 
         ImGui::Text("X: %f", mouseWorldPosition.x);
         ImGui::Text("Y: %f", mouseWorldPosition.y);
