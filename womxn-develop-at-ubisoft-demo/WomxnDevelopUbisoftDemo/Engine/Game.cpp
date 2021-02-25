@@ -7,6 +7,7 @@ static const sf::Vector2u APP_INIT_WINDOW_SIZE{ 1024, 768 };
 
 Game::Game(const char* windowTitle)
     : m_Window{ sf::VideoMode(APP_INIT_WINDOW_SIZE.x, APP_INIT_WINDOW_SIZE.y), windowTitle, sf::Style::Titlebar | sf::Style::Close }
+    , m_InputManager{ std::make_shared<InputManager>() }
 {
     m_Window.setVerticalSyncEnabled(true);
     m_Window.setFramerateLimit(static_cast<uint32_t>(APP_MAX_FRAMERATE));
@@ -35,27 +36,91 @@ void Game::RunGameLoop()
         {
             switch (event.type)
             {
-            case sf::Event::Closed:
-            {
-                m_Window.close();
-                break;
-            }
-            case sf::Event::KeyPressed:
-            {
-                if (event.key.code == sf::Keyboard::Escape)
+                case sf::Event::Closed:
                 {
                     m_Window.close();
+                    break;
                 }
-                else if (event.key.code == sf::Keyboard::F1)
+                
+                case sf::Event::Resized:
                 {
-                    toggleImGui = !toggleImGui;
+                    break;
                 }
-                break;
-            }
-            case sf::Event::Resized:
-            {
-                break;
-            }
+
+                // ==== Inputs management 
+
+                case sf::Event::KeyPressed:
+                {
+                    m_InputManager->AddAction(event.key.code);
+
+                    if (event.key.code == sf::Keyboard::Escape)
+                    {
+                        m_Window.close();
+                    }
+                    else if (event.key.code == sf::Keyboard::F1)
+                    {
+                        toggleImGui = !toggleImGui;
+                    }
+                    break;
+                }
+
+                case sf::Event::KeyReleased:
+                {
+                    m_InputManager->RemoveAction(event.key.code);
+                    break;
+                }
+
+                case sf::Event::MouseButtonPressed:
+                {
+                    m_InputManager->AddAction(event.mouseButton.button);
+                    break;
+                }
+
+                case sf::Event::MouseButtonReleased:
+                {
+                    m_InputManager->RemoveAction(event.mouseButton.button);
+                    break;
+                }
+
+                case sf::Event::JoystickConnected: 
+                {
+                    if (!m_InputManager->IsUsingJoystick()) 
+                    {
+                        m_InputManager->SetJoystickIndex(event.joystickConnect.joystickId);
+                    }
+                    break;
+                }
+
+                case sf::Event::JoystickDisconnected:
+                {
+                    if (m_InputManager->IsUsingJoystick())
+                    {
+                        m_InputManager->ResetJoystick();
+                    }
+                    break;
+                }
+
+                case sf::Event::JoystickButtonPressed:
+                {
+                    m_InputManager->AddAction(event.joystickButton.joystickId, event.joystickButton.button);
+                    break;
+                }
+
+                case sf::Event::JoystickButtonReleased:
+                {
+                    m_InputManager->RemoveAction(event.joystickButton.joystickId, event.joystickButton.button);
+                    break;
+                }
+
+                case sf::Event::JoystickMoved:
+                {
+                    // TODO
+                    break;
+                }
+
+                default:
+                    // TODO : Joystick didn't move ?
+                    break;
             }
 
             ImGui::SFML::ProcessEvent(event);

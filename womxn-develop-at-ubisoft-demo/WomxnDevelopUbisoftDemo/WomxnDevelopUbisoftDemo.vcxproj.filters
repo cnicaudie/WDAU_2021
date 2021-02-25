@@ -98,6 +98,9 @@
     <ClInclude Include="Engine\InputManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Action.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">

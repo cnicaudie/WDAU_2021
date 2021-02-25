@@ -3,7 +3,6 @@
 
 GameManager::GameManager()
     : Game{ "Game Demo" }
-    , m_InputManager{ std::make_shared<InputManager>() }
     , m_TextureManager{ std::make_shared<TextureManager>() }
     , m_UiManager{}
     , m_Player{ m_InputManager, m_TextureManager }
@@ -53,6 +52,7 @@ void GameManager::Update(float deltaTime)
             m_IsGameOver = true;
         }
 
+        // TODO : Clean that
         int bulletNumber = 0;
         auto& bullets = m_Player.GetBullets();
         for (Bullet& b : bullets) {

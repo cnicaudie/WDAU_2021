@@ -68,48 +68,17 @@ void Player::Update(float deltaTime)
     
     UpdateBullets(deltaTime);
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && m_CanShoot && m_AmmunitionsNumber > 0) {
+    if (m_InputManager->HasAction(SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0) {
         Shoot();
     }
     
-    // Reduces scale when pressing space (crouch feature ?)
-    // TODO : Clean that
-    if (m_IsUsingJoystick) {
-        if (sf::Joystick::isButtonPressed(m_JoystickIndex, 0))
-        {
-            if (!m_WasButtonPressed)
-            {
-                m_Sprite.setScale(0.8f, 0.8f);
-                m_WasButtonPressed = true;
-            }
-        }
-        else
-        {
-            if (m_WasButtonPressed)
-            {
-                m_Sprite.setScale(1.0f, 1.0f);
-                m_WasButtonPressed = false;
-            }
-        }
-    }
-    else 
+    if (m_InputManager->HasAction(Action::SQUEEZE))
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        {
-            if (!m_WasButtonPressed)
-            {
-                m_Sprite.setScale(0.8f, 0.8f);
-                m_WasButtonPressed = true;
-            }
-        }
-        else
-        {
-            if (m_WasButtonPressed)
-            {
-                m_Sprite.setScale(1.0f, 1.0f);
-                m_WasButtonPressed = false;
-            }
-        }
+        m_Sprite.setScale(0.8f, 0.8f);
+    }
+    else
+    {
+        m_Sprite.setScale(1.0f, 1.0f);
     }
 }
 
@@ -166,6 +135,7 @@ void Player::ComputeVelocity()
     const float JUMP_FORCE = 400.0f;
     
     // Compute the velocity based on the user input
+    // TODO : Make some test to find a generic solution for joystick/keyboard movement
     if (m_IsUsingJoystick)
     {
         m_Velocity.x = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
@@ -185,12 +155,12 @@ void Player::ComputeVelocity()
         {
             m_Velocity.x *= SLOWDOWN_RATE;
         }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && m_IsGrounded) // Jump
-        {
-            m_Velocity.y = -JUMP_FORCE;
-            m_IsGrounded = false;
-        }
+    }
+    
+    if (m_InputManager->HasAction(Action::JUMP) && m_IsGrounded)
+    {
+        m_Velocity.y = -JUMP_FORCE;
+        m_IsGrounded = false;
     }
 }
 

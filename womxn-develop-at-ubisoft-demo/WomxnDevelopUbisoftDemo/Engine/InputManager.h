@@ -1,35 +1,62 @@
 #pragma once
 
-#include <memory>
+#include <set>
+#include <Game/Action.h>
 
 class InputManager 
 {
 public:
 	InputManager();
 
-	InputManager(const InputManager& inputManager);
-
 	void UpdateMousePosition(const sf::RenderWindow& gameWindow);
 
-	inline const sf::Vector2f GetMousePosition() 
+	// ==== Keyboard 
+
+	void AddAction(sf::Keyboard::Key key);
+	void RemoveAction(sf::Keyboard::Key key);
+
+	// ==== Mouse 
+
+	void AddAction(sf::Mouse::Button button);
+	void RemoveAction(sf::Mouse::Button button);
+
+	// ==== Joystick
+
+	void AddAction(sf::Joystick::Axis joystickAxis, unsigned int joystickIndex, float position);
+	void RemoveAction(sf::Joystick::Axis joystickAxis, unsigned int joystickIndex, float position);
+
+	void AddAction(unsigned int joystickIndex, unsigned int button);
+	void RemoveAction(unsigned int joystickIndex, unsigned int button);
+
+	// ==== 
+
+	inline bool HasAction(Action action) const
 	{
-		return m_MousePosition;
+		return m_CurrentActions.find(action) != m_CurrentActions.end();
 	}
 
-	/*inline const sf::Keyboard::Key GetKey(std::string actionName)
-	{
-		return m_keyboardBind.at(actionName);
-	}
+	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; }
 
-	inline const sf::Joystick::Axis GetAxis(std::string actionName)
+	inline const bool IsUsingJoystick() const { return m_IsUsingJoystick; }
+
+	inline void SetJoystickIndex(unsigned int& index) { m_JoystickIndex = index; }
+
+	inline void ResetJoystick() 
 	{
-		return m_controllerBind.at(actionName);
-	}*/
+		m_IsUsingJoystick = false;
+		m_JoystickIndex = 0;
+	}
 
 private:
-	
 	sf::Vector2f m_MousePosition;
+	std::set<Action> m_CurrentActions;
+
+	std::map<sf::Keyboard::Key, Action> m_KeyboardBinding;
+	std::map<sf::Mouse::Button, Action> m_MouseBinding;
+
+	std::map<sf::Joystick::Axis, Action> m_JoystickBinding;
+	std::map<unsigned int, Action> m_JoystickButtonBinding;
 	
-	//std::map<std::string, sf::Keyboard::Key> m_keyboardBind;
-	//std::map<std::string, sf::Joystick::Axis> m_controllerBind;
+	bool m_IsUsingJoystick;
+	unsigned int m_JoystickIndex;
 };
