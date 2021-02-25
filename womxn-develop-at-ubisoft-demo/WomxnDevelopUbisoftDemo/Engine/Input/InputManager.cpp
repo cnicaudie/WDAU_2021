@@ -1,25 +1,28 @@
 #include <stdafx.h>
 #include "InputManager.h"
+#include <Engine/Input/KeyboardBinding.h>
+#include <Engine/Input/MouseBinding.h>
+
 
 InputManager::InputManager() 
 	: m_MousePosition()
 	, m_IsUsingJoystick(false)
 	, m_JoystickIndex(0)
 {
-	// Jump action
-	m_KeyboardBinding.emplace(sf::Keyboard::Up, Action::JUMP);
+	std::vector<std::shared_ptr<Binding>> jumpBinding{ std::make_shared<KeyboardBinding>(sf::Keyboard::Up) };
+	m_ActionBinding.emplace(Action::JUMP, jumpBinding);
+	
+	std::vector<std::shared_ptr<Binding>> squeezeBinding{ std::make_shared<KeyboardBinding>(sf::Keyboard::Space) };
+	m_ActionBinding.emplace(Action::SQUEEZE, squeezeBinding);
 
-	// Shoot action
-	m_MouseBinding.emplace(sf::Mouse::Button::Right, Action::SHOOT);
-
-	// Squeeze action 
-	m_KeyboardBinding.emplace(sf::Keyboard::Space, Action::SQUEEZE);
-	m_JoystickButtonBinding.emplace(0, Action::SQUEEZE);
-
+	std::vector<std::shared_ptr<Binding>> shootBinding{ std::make_shared<MouseBinding>(sf::Mouse::Button::Right) };
+	m_ActionBinding.emplace(Action::SHOOT, shootBinding);
+	
 
 	// TODO : How to know which button is which on the controller ? 
 	// TODO : Make test to find the right controls
 	// TODO : Eventually make a rebinding feature
+	//m_JoystickButtonBinding.emplace(0, Action::SQUEEZE);
 	//m_JoystickButtonBinding.emplace(1, Action::JUMP);
 
 	std::cout << "InputManager Created" << std::endl;
@@ -31,53 +34,44 @@ void InputManager::UpdateMousePosition(const sf::RenderWindow& gameWindow)
 	m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
 }
 
-// ==== Keyboard 
-
-void InputManager::AddAction(sf::Keyboard::Key key)
+void InputManager::AddAction(const std::shared_ptr<Binding>& key)
 {
-	if (m_KeyboardBinding.find(key) != m_KeyboardBinding.end())
+	for (auto it = m_ActionBinding.begin(); it != m_ActionBinding.end(); it++)
 	{
-		m_CurrentActions.insert(m_KeyboardBinding.at(key));
-	}
-}
-
-void InputManager::RemoveAction(sf::Keyboard::Key key)
-{
-	if (m_KeyboardBinding.find(key) != m_KeyboardBinding.end())
-	{
-		auto pos = m_CurrentActions.find(m_KeyboardBinding.at(key));
-		if (pos != m_CurrentActions.end())
+		for (std::shared_ptr<Binding>& b : it->second)
 		{
-			m_CurrentActions.erase(pos);
+			if (b->GetBinding() == key->GetBinding()) 
+			{
+				m_CurrentActions.insert(it->first);
+				return;
+			}
 		}
 	}
 }
 
-// ==== Mouse 
-
-void InputManager::AddAction(sf::Mouse::Button button)
+void InputManager::RemoveAction(const std::shared_ptr<Binding>& key)
 {
-	if (m_MouseBinding.find(button) != m_MouseBinding.end())
+	for (auto it = m_ActionBinding.begin(); it != m_ActionBinding.end(); it++)
 	{
-		m_CurrentActions.insert(m_MouseBinding.at(button));
-	}
-}
-
-void InputManager::RemoveAction(sf::Mouse::Button button)
-{
-	if (m_MouseBinding.find(button) != m_MouseBinding.end())
-	{
-		auto pos = m_CurrentActions.find(m_MouseBinding.at(button));
-		if (pos != m_CurrentActions.end())
+		for (std::shared_ptr<Binding>& b : it->second)
 		{
-			m_CurrentActions.erase(pos);
+			if (b->GetBinding() == key->GetBinding())
+			{
+				auto pos = m_CurrentActions.find(it->first);
+				if (pos != m_CurrentActions.end())
+				{
+					m_CurrentActions.erase(pos);
+				}
+				return;
+			}
 		}
 	}
 }
+
 
 // ==== Joystick
 
-// TODO : Adapt using elements in Player class
+/*// TODO : Adapt using elements in Player class
 void InputManager::AddAction(sf::Joystick::Axis joystickAxis, unsigned int joystickIndex, float position)
 {
 	if (m_JoystickBinding.find(joystickAxis) != m_JoystickBinding.end())
@@ -123,4 +117,4 @@ void InputManager::RemoveAction(unsigned int joystickIndex, unsigned int button)
 			}
 		}
 	}
-}
+}*/

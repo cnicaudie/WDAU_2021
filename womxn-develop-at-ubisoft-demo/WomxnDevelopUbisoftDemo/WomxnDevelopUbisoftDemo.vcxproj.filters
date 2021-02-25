@@ -50,8 +50,17 @@
     <ClCompile Include="Engine\TextureManager.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\InputManager.cpp">
-      <Filter>Engine</Filter>
+    <ClCompile Include="Engine\Input\Binding.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\InputManager.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\MouseBinding.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\KeyboardBinding.cpp">
+      <Filter>Engine\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,11 +104,20 @@
     <ClInclude Include="Engine\TextureManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\InputManager.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Action.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\Binding.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\InputManager.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\MouseBinding.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\KeyboardBinding.h">
+      <Filter>Engine\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +135,9 @@
     </Filter>
     <Filter Include="AI">
       <UniqueIdentifier>{bca247fe-bc66-42dc-aa4f-72bb09abbdda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{995b79ec-7317-49f4-a3e0-da13d7395213}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

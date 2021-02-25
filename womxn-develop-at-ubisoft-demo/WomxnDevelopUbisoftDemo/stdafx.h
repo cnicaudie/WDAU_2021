@@ -10,7 +10,7 @@
 #include <Engine/Game.h>
 #include <Engine/Collision.h>
 #include <Engine/TextureManager.h>
-#include <Engine/InputManager.h>
+#include <Engine/Input/InputManager.h>
 
 #include <Game/Action.h>
 

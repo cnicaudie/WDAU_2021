@@ -209,7 +209,10 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     </ClCompile>
     <ClCompile Include="Engine\Collision.cpp" />
     <ClCompile Include="Engine\Game.cpp" />
-    <ClCompile Include="Engine\InputManager.cpp" />
+    <ClCompile Include="Engine\Input\InputManager.cpp" />
+    <ClCompile Include="Engine\Input\Binding.cpp" />
+    <ClCompile Include="Engine\Input\KeyboardBinding.cpp" />
+    <ClCompile Include="Engine\Input\MouseBinding.cpp" />
     <ClCompile Include="Engine\TextureManager.cpp" />
     <ClCompile Include="Game\Bullet.cpp" />
     <ClCompile Include="Game\Door.cpp" />
@@ -226,7 +229,10 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\external\imgui-sfml-master\imgui-SFML.h" />
     <ClInclude Include="Engine\Collision.h" />
     <ClInclude Include="Engine\Game.h" />
-    <ClInclude Include="Engine\InputManager.h" />
+    <ClInclude Include="Engine\Input\InputManager.h" />
+    <ClInclude Include="Engine\Input\Binding.h" />
+    <ClInclude Include="Engine\Input\KeyboardBinding.h" />
+    <ClInclude Include="Engine\Input\MouseBinding.h" />
     <ClInclude Include="Engine\TextureManager.h" />
     <ClInclude Include="Game\Action.h" />
     <ClInclude Include="Game\Bullet.h" />

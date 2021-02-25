@@ -68,7 +68,7 @@ void Player::Update(float deltaTime)
     
     UpdateBullets(deltaTime);
 
-    if (m_InputManager->HasAction(SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0) {
+    if (m_InputManager->HasAction(Action::SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0) {
         Shoot();
     }
     

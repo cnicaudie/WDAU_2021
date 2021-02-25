@@ -2,6 +2,7 @@
 
 #include <set>
 #include <Game/Action.h>
+#include <Engine/Input/Binding.h>
 
 class InputManager 
 {
@@ -10,23 +11,16 @@ public:
 
 	void UpdateMousePosition(const sf::RenderWindow& gameWindow);
 
-	// ==== Keyboard 
-
-	void AddAction(sf::Keyboard::Key key);
-	void RemoveAction(sf::Keyboard::Key key);
-
-	// ==== Mouse 
-
-	void AddAction(sf::Mouse::Button button);
-	void RemoveAction(sf::Mouse::Button button);
+	void AddAction(const std::shared_ptr<Binding>& key);
+	void RemoveAction(const std::shared_ptr<Binding>& key);
 
 	// ==== Joystick
 
-	void AddAction(sf::Joystick::Axis joystickAxis, unsigned int joystickIndex, float position);
+	/*void AddAction(sf::Joystick::Axis joystickAxis, unsigned int joystickIndex, float position);
 	void RemoveAction(sf::Joystick::Axis joystickAxis, unsigned int joystickIndex, float position);
 
 	void AddAction(unsigned int joystickIndex, unsigned int button);
-	void RemoveAction(unsigned int joystickIndex, unsigned int button);
+	void RemoveAction(unsigned int joystickIndex, unsigned int button);*/
 
 	// ==== 
 
@@ -51,11 +45,11 @@ private:
 	sf::Vector2f m_MousePosition;
 	std::set<Action> m_CurrentActions;
 
-	std::map<sf::Keyboard::Key, Action> m_KeyboardBinding;
-	std::map<sf::Mouse::Button, Action> m_MouseBinding;
+	//std::map<sf::Joystick::Axis, Action> m_JoystickBinding;
+	//std::map<unsigned int, Action> m_JoystickButtonBinding;
 
-	std::map<sf::Joystick::Axis, Action> m_JoystickBinding;
-	std::map<unsigned int, Action> m_JoystickButtonBinding;
+	std::map<Action, std::vector<std::shared_ptr<Binding>>> m_ActionBinding;
+
 	
 	bool m_IsUsingJoystick;
 	unsigned int m_JoystickIndex;
