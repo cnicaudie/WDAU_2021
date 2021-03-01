@@ -13,5 +13,9 @@ TextureManager::TextureManager()
 	m_Textures.emplace("ENEMY", enemy);
 	m_Textures.emplace("BULLET", bullet);
 
-	std::cout << "Texture manager created" << std::endl;
+	sf::Texture tileset;
+	tileset.loadFromFile(".\\Assets\\tileset_test.png");
+	m_Textures.emplace("TILESET", tileset);
+
+	std::cout << "Texture manager created !" << std::endl;
 }

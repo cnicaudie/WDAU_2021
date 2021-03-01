@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Wall.h"
 #include "Enemy.h"
+#include "LevelManager.h"
 #include <UI/UIManager.h>
 
 class GameManager : public Game
@@ -19,6 +20,7 @@ public:
 private:
     std::shared_ptr<TextureManager> m_TextureManager;
     UIManager m_UiManager;
+    LevelManager m_LevelManager;
     
     Player m_Player;
     Enemy m_Enemy;

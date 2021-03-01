@@ -1,10 +1,11 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include "GameManager.h"
 
 GameManager::GameManager()
     : Game{ "Game Demo" }
     , m_TextureManager{ std::make_shared<TextureManager>() }
     , m_UiManager{}
+    , m_LevelManager { m_TextureManager }
     , m_Player{ m_InputManager, m_TextureManager }
     , m_Enemy{ m_TextureManager }
     , m_Door{ 900, 600, 100, 200 }
@@ -23,6 +24,8 @@ GameManager::GameManager()
     m_CameraView.setCenter(m_Player.GetCenter());
     //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
     m_Window.setView(m_CameraView);
+
+    m_LevelManager.LoadLevel(0);
 }
 
 void GameManager::Update(float deltaTime)
@@ -76,6 +79,8 @@ void GameManager::Render(sf::RenderTarget& target)
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_Player);
     target.draw(m_Enemy);
+
+    target.draw(m_LevelManager);
     
     // TODO : Clean that
     target.draw(m_Door);

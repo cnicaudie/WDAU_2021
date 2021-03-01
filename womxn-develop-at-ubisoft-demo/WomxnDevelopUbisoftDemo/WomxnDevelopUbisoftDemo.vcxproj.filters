@@ -65,6 +65,9 @@
     <ClCompile Include="Game\TileMap.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Game\LevelManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -123,6 +126,9 @@
       <Filter>Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="Game\TileMap.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\LevelManager.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
