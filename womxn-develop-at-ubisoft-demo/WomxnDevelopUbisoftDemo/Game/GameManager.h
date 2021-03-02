@@ -11,13 +11,20 @@
 class GameManager : public Game
 {
 public:
-    GameManager();
+    static GameManager* GetInstance();
+    GameManager(const GameManager& gameManager) = delete;
+    void operator=(const GameManager& gameManager) = delete;
 
     void Update(float deltaTime) override;
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
 private:
+    GameManager();
+    ~GameManager();
+
+    static GameManager* m_GameManager; // Singleton instance
+
     std::shared_ptr<TextureManager> m_TextureManager;
     UIManager m_UiManager;
     LevelManager m_LevelManager;

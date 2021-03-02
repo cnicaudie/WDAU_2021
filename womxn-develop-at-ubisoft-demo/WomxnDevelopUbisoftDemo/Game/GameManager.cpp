@@ -1,6 +1,18 @@
 #include <stdafx.h>
 #include "GameManager.h"
 
+GameManager* GameManager::m_GameManager = nullptr;
+
+GameManager* GameManager::GetInstance() 
+{
+    if (m_GameManager == nullptr) 
+    {
+        m_GameManager = new GameManager();
+    }
+
+    return m_GameManager;
+}
+
 GameManager::GameManager()
     : Game{ "Game Demo" }
     , m_TextureManager{ std::make_shared<TextureManager>() }
@@ -26,6 +38,11 @@ GameManager::GameManager()
     m_Window.setView(m_CameraView);
 
     m_LevelManager.LoadLevel(0);
+}
+
+GameManager::~GameManager()
+{
+    delete m_GameManager;
 }
 
 void GameManager::Update(float deltaTime)

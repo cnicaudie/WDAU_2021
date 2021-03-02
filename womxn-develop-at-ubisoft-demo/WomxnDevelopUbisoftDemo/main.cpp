@@ -4,8 +4,8 @@
 
 int main()
 {
-    GameManager game{};
-    game.RunGameLoop();
+    GameManager* game = GameManager::GetInstance();
+    game->RunGameLoop();
 
     return EXIT_SUCCESS;
 }
