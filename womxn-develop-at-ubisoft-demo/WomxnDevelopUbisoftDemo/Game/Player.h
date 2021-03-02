@@ -29,9 +29,6 @@ private:
 	void ComputeVelocity();
 	void Move(float deltaTime);
 
-	void MoveX(float deltaTime);
-	void MoveY(float deltaTime);
-
 	//====================//
 
 	std::shared_ptr<InputManager> m_InputManager;
