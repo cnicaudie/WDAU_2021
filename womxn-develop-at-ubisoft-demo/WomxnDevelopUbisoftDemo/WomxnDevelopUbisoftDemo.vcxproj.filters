@@ -26,9 +26,6 @@
     <ClCompile Include="Engine\Game.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Collision.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Wall.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -62,11 +59,20 @@
     <ClCompile Include="Engine\Input\KeyboardBinding.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Game\TileMap.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\LevelManager.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Map\Tile.cpp">
+      <Filter>Game\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Map\TileMap.cpp">
+      <Filter>Game\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collision\CollisionManager.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collision\Collision.cpp">
+      <Filter>Engine\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,9 +90,6 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Game.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Collision.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Game\Wall.h">
@@ -125,11 +128,23 @@
     <ClInclude Include="Engine\Input\KeyboardBinding.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Game\TileMap.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\LevelManager.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\Tile.h">
+      <Filter>Game\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\TileMap.h">
+      <Filter>Game\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\TileType.h">
+      <Filter>Game\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\CollisionManager.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\Collision.h">
+      <Filter>Engine\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +165,12 @@
     </Filter>
     <Filter Include="Engine\Input">
       <UniqueIdentifier>{995b79ec-7317-49f4-a3e0-da13d7395213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Map">
+      <UniqueIdentifier>{88809e3a-a87f-437b-b1de-c12a55739385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Collision">
+      <UniqueIdentifier>{203e2ef4-857b-4a15-854d-f73848e1fa16}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

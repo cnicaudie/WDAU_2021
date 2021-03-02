@@ -21,18 +21,12 @@ GameManager::GameManager()
     , m_Player{ m_InputManager, m_TextureManager }
     , m_Enemy{ m_TextureManager }
     , m_Door{ 900, 600, 100, 200 }
-    , m_Ground{ 400, 700, 500, 25 }
-    , m_Wall{ 200, 500, 25, 200 }
-    , m_Platform{ 400, 500, 100, 25 }
     , m_CameraView{}
     , m_IsGameOver{ false }
 {
-    std::vector<Wall> walls{ m_Wall, m_Ground, m_Platform };
-    m_Player.InitColliders(walls);
-
     sf::Vector2f viewSize{ 1024, 768 };
     m_CameraView.setSize(viewSize);
-    m_CameraView.zoom(1.5f);
+    //m_CameraView.zoom(1.5f);
     m_CameraView.setCenter(m_Player.GetCenter());
     //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
     m_Window.setView(m_CameraView);
@@ -52,6 +46,7 @@ void GameManager::Update(float deltaTime)
     if (!m_IsGameOver)
     {
         m_Player.Update(deltaTime);
+
         m_Enemy.Update(deltaTime);
     
         // Move the camera view according to the player's position
@@ -60,10 +55,7 @@ void GameManager::Update(float deltaTime)
     
         // TODO : Clean that
         m_Door.Update(deltaTime);
-        m_Ground.Update(deltaTime);
-        m_Wall.Update(deltaTime);
-        m_Platform.Update(deltaTime);
-
+        
         //if (m_Door.Contains(m_Player))
         if (m_Door.Contains(m_Player.GetCenter()))
         {
@@ -94,16 +86,11 @@ void GameManager::Update(float deltaTime)
 void GameManager::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
+    target.draw(m_LevelManager);
     target.draw(m_Player);
     target.draw(m_Enemy);
 
-    target.draw(m_LevelManager);
-    
-    // TODO : Clean that
     target.draw(m_Door);
-    target.draw(m_Wall);
-    target.draw(m_Ground);
-    target.draw(m_Platform);
 
     target.draw(m_UiManager);
 }

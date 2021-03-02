@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include "LevelManager.h"
 #include <UI/UIManager.h>
+#include <Engine/Collision/CollisionManager.h>
 
 class GameManager : public Game
 {
@@ -19,6 +20,11 @@ public:
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
+    bool CheckPlayerMovement(const sf::Vector2f& nextPosition) 
+    {
+        return m_CollisionManager.CheckCollision(m_Player, nextPosition, m_LevelManager.GetMap());
+    }
+
 private:
     GameManager();
     ~GameManager();
@@ -29,15 +35,12 @@ private:
     UIManager m_UiManager;
     LevelManager m_LevelManager;
     
+    CollisionManager m_CollisionManager;
     Player m_Player;
     Enemy m_Enemy;
 
     Door m_Door;
-    // For test purposes
-    Wall m_Ground;
-    Wall m_Wall;
-    Wall m_Platform;
-
+    
     sf::View m_CameraView;
     
     bool m_IsGameOver;

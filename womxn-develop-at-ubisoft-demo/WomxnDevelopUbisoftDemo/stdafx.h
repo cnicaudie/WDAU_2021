@@ -8,7 +8,7 @@
 #include "imgui-SFML.h"
 
 #include <Engine/Game.h>
-#include <Engine/Collision.h>
+#include <Engine/Collision/Collision.h>
 #include <Engine/TextureManager.h>
 #include <Engine/Input/InputManager.h>
 

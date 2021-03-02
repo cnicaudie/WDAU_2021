@@ -23,7 +23,7 @@ void LevelManager::LoadLevel(const int levelNumber = 0)
 }
 
 
-const std::vector<int> LevelManager::GetLevel(const int levelNumber) 
+const std::vector<int> LevelManager::GetLevel(const int levelNumber)
 {
 	std::ifstream levelFile(".\\Assets\\level" + std::to_string(levelNumber) + ".txt");
 	std::string line;

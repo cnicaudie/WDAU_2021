@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "Player.h"
 #include <cmath>
+#include <Game/GameManager.h>
 
 // Joystick helpers
 namespace
@@ -40,7 +41,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_IsUsingJoystick(false)
     , m_JoystickIndex(0)
     , m_WasButtonPressed(false)
-    , m_Position(250.0f, 250.0f)
+    , m_Position(0.f, 0.f)
     , m_IsGrounded(false)
     , m_CanShoot(true)
     , m_ShootCooldown(5.f)
@@ -52,7 +53,6 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     m_Sprite.setTexture(textureManager->GetTextureFromName("PLAYER"));
     m_Sprite.setOrigin(textureSize * 0.5f);
     m_Sprite.setPosition(m_Position);
-
     SetBoundingBox(m_Position, textureSize);
 
     m_IsUsingJoystick = GetFirstJoystickIndex(m_JoystickIndex);
@@ -171,7 +171,7 @@ void Player::Move(float deltaTime)
 
     // Try to move on the X axis
     sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
-    if (!CheckCollision(tempVelocity * deltaTime)) 
+    if (!GameManager::GetInstance()->CheckPlayerMovement(tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
     }
@@ -179,7 +179,7 @@ void Player::Move(float deltaTime)
     // Try to move on the Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_Velocity.y;
-    if (!CheckCollision(tempVelocity * deltaTime)) 
+    if (!GameManager::GetInstance()->CheckPlayerMovement(tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
         // Uncomment next line to avoid 1 jump when falling
@@ -189,59 +189,3 @@ void Player::Move(float deltaTime)
     SetCenter(m_Position);
     m_Sprite.setPosition(m_Position);
 }
-
-bool Player::CheckCollision(const sf::Vector2f& nextPosition) {
-    bool isColliding = false;
-
-    sf::FloatRect otherCollider;
-
-    // Set up the player's future bounding box
-    sf::FloatRect playerCollider = m_BoundingBox;
-    playerCollider.left += nextPosition.x;
-    playerCollider.top += nextPosition.y;
-
-    // Search for a collision
-    for (Wall w : m_Walls) 
-    {
-        otherCollider = w.GetBoundingBox();
-
-        if (playerCollider.intersects(otherCollider))
-        {
-            isColliding = true;
-
-            // Check the direction of the collision 
-
-            // Bottom collision
-            if (playerCollider.top < otherCollider.top && playerCollider.top + playerCollider.height < otherCollider.top +  otherCollider.height)
-            {
-                m_IsGrounded = true;
-                m_Velocity.y = 0.f;
-                m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-            }
-
-            // Top collision
-            else if (playerCollider.top > otherCollider.top && playerCollider.top + playerCollider.height > otherCollider.top + otherCollider.height)
-            {
-                m_Velocity.y = 0.f;
-                m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2) + 0.5f;
-            }
-
-            // Right collision
-            else if (playerCollider.left < otherCollider.left && playerCollider.left + playerCollider.width < otherCollider.left + otherCollider.width) 
-            {
-                m_Velocity.x = 0.f;
-                m_Position.x = otherCollider.left - (m_BoundingBox.width / 2) - 0.5f;
-            }
-            
-            // Left collision
-            else if (playerCollider.left > otherCollider.left && playerCollider.left + playerCollider.width > otherCollider.left + otherCollider.width) 
-            {
-                m_Velocity.x = 0.f;
-                m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2) + 0.5f;
-            }
-        }
-    }
-    
-    return isColliding;
-}
-

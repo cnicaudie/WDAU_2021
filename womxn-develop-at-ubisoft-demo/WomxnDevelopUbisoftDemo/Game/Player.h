@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Wall.h"
 #include "Bullet.h"
 #include <memory>
 
@@ -12,8 +11,15 @@ public:
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	
-	void InitColliders(const std::vector<Wall>& walls) { m_Walls = walls; };
 	std::vector<Bullet>& GetBullets() { return m_Bullets; };
+
+	inline void SetGroundLevel(bool isGrounded) { m_IsGrounded = isGrounded; };
+
+	inline void SetPositionX(float x) { m_Position.x = x; }
+	inline void SetPositionY(float y) { m_Position.y = y; }
+
+	inline void ResetVelocityX() { m_Velocity.x = 0.f; };
+	inline void ResetVelocityY() { m_Velocity.y = 0.f; };
 
 private:
 	void UpdateShootingCooldown(float deltaTime);
@@ -21,10 +27,13 @@ private:
 	void Shoot();
 	
 	void ComputeVelocity();
-	bool CheckCollision(const sf::Vector2f& nextPosition);
 	void Move(float deltaTime);
 
+	void MoveX(float deltaTime);
+	void MoveY(float deltaTime);
+
 	//====================//
+
 	std::shared_ptr<InputManager> m_InputManager;
 	std::shared_ptr<TextureManager> m_TextureManager;
 	sf::Sprite m_Sprite;
@@ -43,7 +52,5 @@ private:
 	float m_ShootCooldown;
 	int m_AmmunitionsNumber;
 
-	// TODO : Use a better way to access collideable objects on the map
-	std::vector<Wall> m_Walls; 
 	std::vector<Bullet> m_Bullets;
 };

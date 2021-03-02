@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TileMap.h"
+#include <Game/Map/TileMap.h>
 
 class LevelManager : public sf::Drawable
 {
@@ -9,6 +9,8 @@ public:
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void LoadLevel(const int levelNumber);
+
+	const TileMap& GetMap() const { return m_Map; };
 
 private:
 	const std::vector<int> GetLevel(const int levelNumber);
