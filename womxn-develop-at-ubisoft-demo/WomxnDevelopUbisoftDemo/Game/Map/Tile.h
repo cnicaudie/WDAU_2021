@@ -2,12 +2,12 @@
 
 #include "TileType.h"
 
-class Tile : public BoxCollideable
+class Tile
 {
 public:
-	Tile(float xCenterPos, float yCenterPos, TileType tileType, float width, float height);
+	Tile(TileType tileType);
 
-	const TileType GetType() const { return m_TileType; }
+	virtual const TileType GetType() const { return m_TileType; }
 
 private:
 	TileType m_TileType;

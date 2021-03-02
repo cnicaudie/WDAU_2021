@@ -74,6 +74,9 @@
     <ClCompile Include="Engine\Collision\Collision.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Map\CollideableTile.cpp">
+      <Filter>Game\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Collision\Collision.h">
       <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\CollideableTile.h">
+      <Filter>Game\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
