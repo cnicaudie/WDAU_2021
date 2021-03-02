@@ -45,6 +45,10 @@ bool TileMap::Load(const sf::Texture& tileset, const std::vector<int>& tiles, co
             quad[2].position = sf::Vector2f(static_cast<float>((i + 1) * TILE_SIZE.x), static_cast<float>((j + 1) * TILE_SIZE.y));
             quad[3].position = sf::Vector2f(static_cast<float>(i * TILE_SIZE.x), static_cast<float>((j + 1) * TILE_SIZE.y));
 
+            float xCenter = (TILE_SIZE.x / 2) + i * TILE_SIZE.x;
+            float yCenter = (TILE_SIZE.y / 2) + j * TILE_SIZE.y;
+            m_TileMap.emplace_back(xCenter, yCenter, static_cast<TileType>(tileNumber), TILE_SIZE.x, TILE_SIZE.y);
+
             // Define its 4 texture coordinates
             quad[0].texCoords = sf::Vector2f(static_cast<float>(tu * TILE_SIZE.x), static_cast<float>(tv * TILE_SIZE.y));
             quad[1].texCoords = sf::Vector2f(static_cast<float>((tu + 1) * TILE_SIZE.x), static_cast<float>(tv * TILE_SIZE.y));
