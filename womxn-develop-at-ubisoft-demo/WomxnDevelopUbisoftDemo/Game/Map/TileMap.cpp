@@ -55,15 +55,15 @@ bool TileMap::Load(const sf::Texture& tileset, const std::vector<int>& tiles, co
             quad[3].texCoords = sf::Vector2f(static_cast<float>(tu * TILE_SIZE.x), static_cast<float>((tv + 1) * TILE_SIZE.y));
 
             // Add the new tile to the tilemap vector
-            float xCenter = (TILE_SIZE.x / 2) + i * TILE_SIZE.x;
-            float yCenter = (TILE_SIZE.y / 2) + j * TILE_SIZE.y;
+            unsigned int xCenter = (TILE_SIZE.x / 2) + i * TILE_SIZE.x;
+            unsigned int yCenter = (TILE_SIZE.y / 2) + j * TILE_SIZE.y;
 
             switch (tileNumber)
             {
                 // TODO : Add other cases or remove TileType
                 case 3:
                 {
-                    m_TileMap.emplace_back(std::make_shared<CollideableTile>(TileType::CONCRETE, xCenter, yCenter, TILE_SIZE.x, TILE_SIZE.y));
+                    m_TileMap.emplace_back(std::make_shared<CollideableTile>(TileType::CONCRETE, static_cast<float>(xCenter), static_cast<float>(yCenter), TILE_SIZE.x, TILE_SIZE.y));
                     break;
                 }
                 

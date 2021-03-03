@@ -38,7 +38,6 @@ namespace
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : m_InputManager{ inputManager }
     , m_TextureManager{ textureManager }
-    , m_IsUsingJoystick(false)
     , m_JoystickIndex(0)
     , m_WasButtonPressed(false)
     , m_Position(0.f, 0.f)
@@ -53,15 +52,14 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     m_Sprite.setTexture(textureManager->GetTextureFromName("PLAYER"));
     m_Sprite.setOrigin(textureSize * 0.5f);
     m_Sprite.setPosition(m_Position);
-    SetBoundingBox(m_Position, textureSize);
+    m_Sprite.setScale(0.5f, 0.5f);
 
-    m_IsUsingJoystick = GetFirstJoystickIndex(m_JoystickIndex);
+    SetBoundingBox(m_Position, textureSize * 0.5f);
 }
 
 void Player::Update(float deltaTime)
 {
     ComputeVelocity();
-
     Move(deltaTime);
 
     UpdateShootingCooldown(deltaTime);
@@ -74,11 +72,12 @@ void Player::Update(float deltaTime)
     
     if (m_InputManager->HasAction(Action::SQUEEZE))
     {
-        m_Sprite.setScale(0.8f, 0.8f);
+        m_Sprite.setScale(0.25f, 0.25f);
+        // TODO : Adapt the bounding box
     }
     else
     {
-        m_Sprite.setScale(1.0f, 1.0f);
+        m_Sprite.setScale(0.5f, 0.5f);
     }
 }
 
@@ -136,7 +135,7 @@ void Player::ComputeVelocity()
     
     // Compute the velocity based on the user input
     // TODO : Make some test to find a generic solution for joystick/keyboard movement
-    if (m_IsUsingJoystick)
+    if (m_InputManager->IsUsingJoystick())
     {
         m_Velocity.x = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
         m_Velocity.y = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::Y, DEAD_ZONE, SPEED_MAX);

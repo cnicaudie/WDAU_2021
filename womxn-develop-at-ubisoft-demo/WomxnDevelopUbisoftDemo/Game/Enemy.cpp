@@ -3,7 +3,7 @@
 
 Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
 	: m_HealthPoints(100)
-	, m_Position(500.0f, 655.5f)
+	, m_Position(300.0f, 80.0f)  // TODO : Add a parameter in constructor
 	, m_WasDamaged(false)
 	, m_DamageCooldown(2.f)
 	, m_IsDead(false)
@@ -49,6 +49,7 @@ void Enemy::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Enemy::Damage() 
 {
+	std::cout << "Damaged enemy !" << std::endl;
 	m_Sprite.setColor(sf::Color::Red);
 	m_DamageCooldown = 0.f;
 	m_WasDamaged = true;

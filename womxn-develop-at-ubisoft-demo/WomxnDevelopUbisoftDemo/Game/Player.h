@@ -35,7 +35,6 @@ private:
 	sf::Sprite m_Sprite;
 
 	// TODO : Manage input in an Input manager
-	bool m_IsUsingJoystick;
 	unsigned int m_JoystickIndex;
 	bool m_WasButtonPressed;
 

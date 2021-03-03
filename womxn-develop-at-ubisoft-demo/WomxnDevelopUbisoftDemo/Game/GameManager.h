@@ -19,14 +19,14 @@ public:
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
-    bool CheckPlayerMovementX(const sf::Vector2f& nextPosition) 
+    inline bool CheckPlayerMovementX(const sf::Vector2f& nextPosition) 
     {
-        return m_CollisionManager.CheckCollisionX(m_Player, nextPosition, m_LevelManager.GetMap());
+        return m_CollisionManager.CheckPlayerCollisionX(m_Player, nextPosition, m_LevelManager.GetMap());
     }
 
-    bool CheckPlayerMovementY(const sf::Vector2f& nextPosition)
+    inline bool CheckPlayerMovementY(const sf::Vector2f& nextPosition)
     {
-        return m_CollisionManager.CheckCollisionY(m_Player, nextPosition, m_LevelManager.GetMap());
+        return m_CollisionManager.CheckPlayerCollisionY(m_Player, nextPosition, m_LevelManager.GetMap());
     }
 
 private:

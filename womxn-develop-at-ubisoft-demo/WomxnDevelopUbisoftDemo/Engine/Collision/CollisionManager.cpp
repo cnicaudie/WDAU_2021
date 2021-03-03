@@ -4,7 +4,7 @@
 
 CollisionManager::CollisionManager() {}
 
-const bool CollisionManager::CheckCollisionX(Player& player, const sf::Vector2f& nextPosition, const TileMap& map) const
+const bool CollisionManager::CheckPlayerCollisionX(Player& player, const sf::Vector2f& nextPosition, const TileMap& map) const
 {
     bool isColliding = false;
 
@@ -31,19 +31,16 @@ const bool CollisionManager::CheckCollisionX(Player& player, const sf::Vector2f&
                     && playerCollider.left < otherCollider.left)
                 {
                     player.ResetVelocityX();
-                    //player.SetPositionX(otherCollider.left + otherCollider.width + (playerCollider.width / 2));
-                    std::cout << "Left Collision" << std::endl;
+                    player.SetPositionX(otherCollider.left - (playerCollider.width / 2));
                 }
+                
                 // Right collision
                 else if (playerCollider.left < otherCollider.left + otherCollider.width
                     && playerCollider.left + playerCollider.width > otherCollider.left + otherCollider.width)
                 {
                     player.ResetVelocityX();
-                    //player.SetPositionX(otherCollider.left - (playerCollider.width / 2));
-                    std::cout << "Right Collision" << std::endl;
+                    player.SetPositionX(otherCollider.left + otherCollider.width + (playerCollider.width / 2));
                 }
-
-
             }
         }
     }
@@ -51,7 +48,7 @@ const bool CollisionManager::CheckCollisionX(Player& player, const sf::Vector2f&
     return isColliding;
 }
 
-const bool CollisionManager::CheckCollisionY(Player& player, const sf::Vector2f& nextPosition, const TileMap& map) const
+const bool CollisionManager::CheckPlayerCollisionY(Player& player, const sf::Vector2f& nextPosition, const TileMap& map) const
 {
     bool isColliding = false;
     
@@ -88,10 +85,14 @@ const bool CollisionManager::CheckCollisionY(Player& player, const sf::Vector2f&
                 {
                     player.ResetVelocityY();
                     player.SetPositionY(otherCollider.top + otherCollider.height + (playerCollider.height / 2));
-                    std::cout << "Top Collision" << std::endl;
                 }
 
             }
+        }
+    }
+
+    return isColliding;
+}
         }
     }
 
