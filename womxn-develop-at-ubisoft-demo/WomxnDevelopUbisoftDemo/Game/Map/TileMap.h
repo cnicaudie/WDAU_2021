@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tile.h"
+#include <Game/Objects/SoulChunk.h>
 
 class TileMap : public sf::Drawable, public sf::Transformable
 {
@@ -18,4 +19,7 @@ private:
     sf::Texture m_Tileset;
 
     std::vector<std::shared_ptr<Tile>> m_TileMap;
+
+    // TODO : is it the right position ?
+    SoulChunk m_soulChunk;
 };

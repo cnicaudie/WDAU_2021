@@ -20,17 +20,8 @@
     <ClCompile Include="..\external\imgui-master\imgui_tables.cpp">
       <Filter>Engine\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Door.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Game.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Wall.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Bullet.cpp">
-      <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\Enemy.cpp">
       <Filter>Game</Filter>
@@ -77,6 +68,15 @@
     <ClCompile Include="Game\Map\CollideableTile.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Objects\Bullet.cpp">
+      <Filter>Game\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\Door.cpp">
+      <Filter>Game\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\SoulChunk.cpp">
+      <Filter>Game\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -89,17 +89,8 @@
     <ClInclude Include="..\external\imgui-sfml-master\imgui-SFML.h">
       <Filter>Engine\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Door.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Game.h">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Wall.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Bullet.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\Enemy.h">
       <Filter>Game</Filter>
@@ -152,6 +143,15 @@
     <ClInclude Include="Game\Map\CollideableTile.h">
       <Filter>Game\Map</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Objects\Bullet.h">
+      <Filter>Game\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Door.h">
+      <Filter>Game\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\SoulChunk.h">
+      <Filter>Game\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -177,6 +177,9 @@
     </Filter>
     <Filter Include="Engine\Collision">
       <UniqueIdentifier>{203e2ef4-857b-4a15-854d-f73848e1fa16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Objects">
+      <UniqueIdentifier>{5105a13c-1ee1-4f7d-8f6f-4ad7d87b8496}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

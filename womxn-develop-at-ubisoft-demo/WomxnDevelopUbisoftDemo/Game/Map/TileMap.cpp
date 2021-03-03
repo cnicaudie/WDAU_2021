@@ -4,7 +4,7 @@
 
 static const sf::Vector2u TILE_SIZE{ 32, 32 };
 
-TileMap::TileMap() {}
+TileMap::TileMap() : m_soulChunk(m_Tileset, sf::Vector2f(336.f, 208.f)) {}
 
 void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
@@ -16,6 +16,8 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     // Draw the vertex array
     target.draw(m_Vertices, states);
+
+    target.draw(m_soulChunk);
 }
 
 bool TileMap::Load(const sf::Texture& tileset, const std::vector<int>& tiles, const sf::Vector2u& levelSize)

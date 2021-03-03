@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Bullet.h"
-#include "Door.h"
+#include <Game/Objects/Bullet.h>
+#include <Game/Objects/Door.h>
 #include "Player.h"
-#include "Wall.h"
 #include "Enemy.h"
 #include "LevelManager.h"
 #include <UI/UIManager.h>

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Bullet.h"
-#include <memory>
+#include <Game/Objects/Bullet.h>
 
 class Player : public sf::Drawable, public BoxCollideable
 {
