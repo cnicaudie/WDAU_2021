@@ -106,6 +106,17 @@ void Player::UpdateBullets(float deltaTime)
     for (Bullet& b : m_Bullets) {
         b.Update(deltaTime);
     }
+
+    // Check for impact
+    int bulletIndex = 0;
+    for (Bullet& b : m_Bullets) 
+    {
+        bool bulletHadImpact = GameManager::GetInstance()->CheckBulletImpact(b);
+        if (b.GetDistance() > 400.f || bulletHadImpact) {
+            m_Bullets.erase(m_Bullets.begin() + bulletIndex);
+        }
+        bulletIndex++;
+    }
 }
 
 void Player::Shoot()

@@ -1,6 +1,11 @@
 #include <stdafx.h>
+
 #include "CollisionManager.h"
+
 #include <Game/Map/CollideableTile.h>
+
+
+#include <utility>
 
 CollisionManager::CollisionManager() {}
 
@@ -93,8 +98,34 @@ const bool CollisionManager::CheckPlayerCollisionY(Player& player, const sf::Vec
 
     return isColliding;
 }
+
+const bool CollisionManager::CheckBulletCollisionWithEnemies(const Bullet& bullet, std::vector<Enemy>& enemies) const
+{
+    bool isColliding = false;
+    for (Enemy& enemy : enemies) 
+    {
+        if (bullet.IsColliding(enemy)) 
+        {
+            enemy.Damage(); // TODO : use events ?
+            isColliding = true;
         }
     }
 
     return isColliding;
+}
+
+const bool CollisionManager::CheckBulletCollisionWithMap(const Bullet& bullet, const TileMap& map) const
+{
+    for (auto& tile : map.GetTileMap())
+    {
+        if (std::shared_ptr<CollideableTile> t = std::dynamic_pointer_cast<CollideableTile>(tile))
+        {
+            if (t->Contains(bullet.GetCenter()))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }

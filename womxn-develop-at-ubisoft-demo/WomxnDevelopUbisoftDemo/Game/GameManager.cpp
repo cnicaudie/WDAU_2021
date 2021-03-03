@@ -19,11 +19,11 @@ GameManager::GameManager()
     , m_UiManager{}
     , m_LevelManager { m_TextureManager }
     , m_Player{ m_InputManager, m_TextureManager }
-    , m_Enemy{ m_TextureManager }
     , m_Door{ 900, 600, 100, 200 }
     , m_CameraView{}
     , m_IsGameOver{ false }
 {
+    // Camera setup
     sf::Vector2f viewSize{ 1024, 768 };
     m_CameraView.setSize(viewSize);
     //m_CameraView.zoom(1.5f);
@@ -32,6 +32,7 @@ GameManager::GameManager()
     m_Window.setView(m_CameraView);
 
     m_LevelManager.LoadLevel(0);
+    m_Enemies.emplace_back(m_TextureManager);
 }
 
 GameManager::~GameManager()
@@ -46,8 +47,19 @@ void GameManager::Update(float deltaTime)
     if (!m_IsGameOver)
     {
         m_Player.Update(deltaTime);
+        /*std::pair<bool, sf::Vector2f> triggerPair = m_CollisionManager.CheckPlayerTriggeredSoul(m_Player, m_LevelManager.GetMap());
+        if (triggerPair.first)
+        {
+            std::cout << "Want to set tile" << std::endl;
+            m_LevelManager.SetTileAt(triggerPair.second);
+            std::cout << "Succeeded!" << std::endl;
+        }*/
 
-        m_Enemy.Update(deltaTime);
+        
+        for (Enemy& enemy : m_Enemies)
+        {
+            enemy.Update(deltaTime);
+        }
     
         // Move the camera view according to the player's position
         m_CameraView.setCenter(m_Player.GetCenter());
@@ -63,23 +75,6 @@ void GameManager::Update(float deltaTime)
             m_Door.StartEndGame();
             m_IsGameOver = true;
         }
-
-        // TODO : Clean that
-        int bulletNumber = 0;
-        auto& bullets = m_Player.GetBullets();
-        for (Bullet& b : bullets) {
-            bool bulletHadCollision = b.IsColliding(m_Enemy);
-            if (b.GetDistance() > 400.f || bulletHadCollision) {
-                bullets.erase(bullets.begin() + bulletNumber);
-            }
-
-            if (bulletHadCollision) {
-                std::cout << "Touched enemy" << std::endl;
-                m_Enemy.Damage();
-            }
-
-            bulletNumber++;
-        }
     }
 }
 
@@ -88,7 +83,11 @@ void GameManager::Render(sf::RenderTarget& target)
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_LevelManager);
     target.draw(m_Player);
-    target.draw(m_Enemy);
+
+    for (const Enemy& enemy : m_Enemies)
+    {
+        target.draw(enemy);
+    }
 
     target.draw(m_Door);
 

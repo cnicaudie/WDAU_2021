@@ -29,6 +29,12 @@ public:
         return m_CollisionManager.CheckPlayerCollisionY(m_Player, nextPosition, m_LevelManager.GetMap());
     }
 
+    inline bool CheckBulletImpact(const Bullet& bullet) 
+    {
+        return m_CollisionManager.CheckBulletCollisionWithEnemies(bullet, m_Enemies) 
+            || m_CollisionManager.CheckBulletCollisionWithMap(bullet, m_LevelManager.GetMap());
+    }
+
 private:
     GameManager();
     ~GameManager();
@@ -41,7 +47,7 @@ private:
     
     CollisionManager m_CollisionManager;
     Player m_Player;
-    Enemy m_Enemy;
+    std::vector<Enemy> m_Enemies;
 
     Door m_Door;
     
