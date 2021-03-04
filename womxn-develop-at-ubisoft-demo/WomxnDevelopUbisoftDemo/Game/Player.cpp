@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include "Player.h"
 #include <cmath>
-#include <Game/GameManager.h>
 
 // Joystick helpers
 namespace
@@ -111,8 +110,7 @@ void Player::UpdateBullets(float deltaTime)
     int bulletIndex = 0;
     for (Bullet& b : m_Bullets) 
     {
-        bool bulletHadImpact = GameManager::GetInstance()->CheckBulletImpact(b);
-        if (b.GetDistance() > 400.f || bulletHadImpact) {
+        if (b.GetDistance() > 400.f || b.HadImpact()) {
             m_Bullets.erase(m_Bullets.begin() + bulletIndex);
         }
         bulletIndex++;

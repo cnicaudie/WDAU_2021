@@ -3,7 +3,7 @@
 #include <cmath>
 
 Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos)
-	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f)
+	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f), m_HadImpact(false)
 {
 	sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("BULLET");
 	
@@ -22,6 +22,8 @@ Bullet::~Bullet() {
 
 void Bullet::Update(float deltaTime) 
 {
+	m_HadImpact = GameManager::GetInstance()->CheckBulletImpact(*this);
+
 	float oldPosX = GetCenter().x;
 	sf::Vector2f newPos(m_Direction * m_Speed * deltaTime);
 	m_Sprite.move(newPos);
