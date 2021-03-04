@@ -35,6 +35,11 @@ public:
             || m_CollisionManager.CheckBulletCollisionWithMap(bullet, m_LevelManager.GetMap());
     }
 
+    inline bool CheckPlayerCollectedSoulChunk(const SoulChunk& soulChunk)
+    {
+        return m_CollisionManager.CheckPlayerTriggerWithSoulChunk(m_Player, soulChunk);
+    }
+
 private:
     GameManager();
     ~GameManager();

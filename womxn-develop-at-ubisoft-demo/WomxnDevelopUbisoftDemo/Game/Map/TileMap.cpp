@@ -4,7 +4,10 @@
 
 static const sf::Vector2u TILE_SIZE{ 32, 32 };
 
-TileMap::TileMap() : m_soulChunk(m_Tileset, sf::Vector2f(336.f, 208.f)) {}
+TileMap::TileMap() 
+{
+    m_SoulChunks.emplace_back(m_Tileset, sf::Vector2f(336.f, 208.f));
+}
 
 void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
@@ -17,7 +20,28 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
     // Draw the vertex array
     target.draw(m_Vertices, states);
 
-    target.draw(m_soulChunk);
+    for (const SoulChunk& s : m_SoulChunks)
+    {
+        if (!s.WasCollected()) 
+        {
+            target.draw(s);
+        }
+    }
+}
+
+void TileMap::Update(float deltaTime) 
+{
+    // Update Soul Chunks
+    int soulIndex = 0;
+    for (SoulChunk& s : m_SoulChunks)
+    {
+        s.Update(deltaTime);
+        if (s.WasCollected())
+        {
+            m_SoulChunks.erase(m_SoulChunks.begin() + soulIndex);
+        }
+        soulIndex++;
+    }
 }
 
 bool TileMap::Load(const sf::Texture& tileset, const std::vector<int>& tiles, const sf::Vector2u& levelSize)
@@ -63,7 +87,9 @@ bool TileMap::Load(const sf::Texture& tileset, const std::vector<int>& tiles, co
                 // TODO : Add other cases or remove TileType
                 case 3:
                 {
-                    m_TileMap.emplace_back(std::make_shared<CollideableTile>(TileType::CONCRETE, static_cast<float>(xCenter), static_cast<float>(yCenter), TILE_SIZE.x, TILE_SIZE.y));
+                    m_TileMap.emplace_back(std::make_shared<CollideableTile>(TileType::CONCRETE, 
+                        static_cast<float>(xCenter), static_cast<float>(yCenter), 
+                        static_cast<float>(TILE_SIZE.x), static_cast<float>(TILE_SIZE.y)));
                     break;
                 }
                 

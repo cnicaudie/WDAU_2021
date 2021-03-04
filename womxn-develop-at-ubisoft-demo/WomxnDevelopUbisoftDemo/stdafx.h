@@ -12,6 +12,7 @@
 #include <Engine/TextureManager.h>
 #include <Engine/Input/InputManager.h>
 
+#include <Game/GameManager.h>
 #include <Game/Action.h>
 
 #include <iostream>

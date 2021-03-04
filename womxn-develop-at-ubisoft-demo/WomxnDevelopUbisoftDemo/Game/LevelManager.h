@@ -8,6 +8,7 @@ public:
 	LevelManager(const std::shared_ptr<TextureManager>& textureManager);
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void Update(float deltaTime);
 	void LoadLevel(const int levelNumber);
 
 	const TileMap& GetMap() const { return m_Map; };

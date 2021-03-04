@@ -47,15 +47,8 @@ void GameManager::Update(float deltaTime)
     if (!m_IsGameOver)
     {
         m_Player.Update(deltaTime);
-        /*std::pair<bool, sf::Vector2f> triggerPair = m_CollisionManager.CheckPlayerTriggeredSoul(m_Player, m_LevelManager.GetMap());
-        if (triggerPair.first)
-        {
-            std::cout << "Want to set tile" << std::endl;
-            m_LevelManager.SetTileAt(triggerPair.second);
-            std::cout << "Succeeded!" << std::endl;
-        }*/
+        m_LevelManager.Update(deltaTime);
 
-        
         for (Enemy& enemy : m_Enemies)
         {
             enemy.Update(deltaTime);

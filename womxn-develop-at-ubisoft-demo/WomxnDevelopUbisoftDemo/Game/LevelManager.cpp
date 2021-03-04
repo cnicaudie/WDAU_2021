@@ -15,6 +15,10 @@ void LevelManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_Map);
 }
 
+void LevelManager::Update(float deltaTime) 
+{
+	m_Map.Update(deltaTime);
+}
 
 void LevelManager::LoadLevel(const int levelNumber = 0)
 {
