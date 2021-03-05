@@ -23,13 +23,7 @@
     <ClCompile Include="Engine\Game.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Enemy.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\GameManager.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Player.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="UI\UIManager.cpp">
@@ -56,9 +50,6 @@
     <ClCompile Include="Game\Map\Tile.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Map\TileMap.cpp">
-      <Filter>Game\Map</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Collision\CollisionManager.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
@@ -80,6 +71,15 @@
     <ClCompile Include="Game\Map\MapGrid.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Map\Map.cpp">
+      <Filter>Game\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Entities\Enemy.cpp">
+      <Filter>Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Entities\Player.cpp">
+      <Filter>Game\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -95,13 +95,7 @@
     <ClInclude Include="Engine\Game.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Enemy.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\GameManager.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Player.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="UI\UIManager.h">
@@ -131,9 +125,6 @@
     <ClInclude Include="Game\Map\Tile.h">
       <Filter>Game\Map</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Map\TileMap.h">
-      <Filter>Game\Map</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Map\TileType.h">
       <Filter>Game\Map</Filter>
     </ClInclude>
@@ -157,6 +148,15 @@
     </ClInclude>
     <ClInclude Include="Game\Map\MapGrid.h">
       <Filter>Game\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\Map.h">
+      <Filter>Game\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Entities\Enemy.h">
+      <Filter>Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Entities\Player.h">
+      <Filter>Game\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +186,9 @@
     </Filter>
     <Filter Include="Game\Objects">
       <UniqueIdentifier>{5105a13c-1ee1-4f7d-8f6f-4ad7d87b8496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Entities">
+      <UniqueIdentifier>{02c5a448-829b-4326-a01d-014738821314}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

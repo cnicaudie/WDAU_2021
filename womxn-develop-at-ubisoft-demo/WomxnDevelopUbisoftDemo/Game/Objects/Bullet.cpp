@@ -20,7 +20,7 @@ Bullet::~Bullet() {
 
 void Bullet::Update(float deltaTime) 
 {
-	m_HadImpact = GameManager::GetInstance()->CheckBulletImpact(*this);
+	//m_HadImpact = GameManager::GetInstance()->CheckBulletImpact(*this);
 
 	float oldPosX = GetCenter().x;
 	sf::Vector2f newPos(m_Direction * m_Speed * deltaTime);

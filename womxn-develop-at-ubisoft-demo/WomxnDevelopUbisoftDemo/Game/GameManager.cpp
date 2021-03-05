@@ -31,7 +31,7 @@ GameManager::GameManager()
     //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
     m_Window.setView(m_CameraView);
 
-    m_LevelManager.LoadLevel(0);
+    //m_LevelManager.LoadLevel(0);
     m_Enemies.emplace_back(m_TextureManager);
 }
 
@@ -93,12 +93,18 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
     ImGui::Text("Press F1 to close this debug menu");
     ImGui::NewLine();
 
-    if (ImGui::CollapsingHeader("Main character position"))
+    if (ImGui::CollapsingHeader("Main character infos"))
     {
         const auto& mainCharCenterPos = m_Player.GetCenter();
+        const auto& mainCharVelocity = m_Player.GetVelocity();
 
+        ImGui::Text("Position infos :");
         ImGui::Text("X: %f", mainCharCenterPos.x);
         ImGui::Text("Y: %f", mainCharCenterPos.y);
+
+        ImGui::Text("Velocity infos :");
+        ImGui::Text("X: %f", mainCharVelocity.x);
+        ImGui::Text("Y: %f", mainCharVelocity.y);
     }
 
     if (ImGui::CollapsingHeader("Mouse position"))

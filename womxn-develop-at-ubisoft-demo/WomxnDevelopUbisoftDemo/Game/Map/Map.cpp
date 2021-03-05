@@ -2,7 +2,7 @@
 #include "Map.h"
 #include "CollideableTile.h"
 
-static const sf::Vector2u TILE_SIZE{ 32, 32 };
+const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 
 Map::Map(const sf::Texture& tileSet)
     : m_TileSet(tileSet), m_MapGrid(TILE_SIZE)
@@ -51,8 +51,16 @@ bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
     m_BackgroundTileMap.setPrimitiveType(sf::Quads);
     m_BackgroundTileMap.resize(static_cast<size_t>(levelSize.x) * static_cast<size_t>(levelSize.y) * 4);
     
+    // Clear the map grid if necessary
+    if (!m_MapGrid.m_TileGrid.empty())
+    {
+        m_MapGrid.m_TileGrid.clear();
+    }
+
     // Populate the vertex array, with one quad per tile
-    for (unsigned int i = 0; i < levelSize.x; ++i)
+    for (unsigned int i = 0; i < levelSize.x; ++i) 
+    {
+        std::vector<std::shared_ptr<Tile>> tileLine;
         for (unsigned int j = 0; j < levelSize.y; ++j)
         {
             // Get the current tile number
@@ -62,16 +70,18 @@ bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
             int tu = tileNumber % (m_TileSet.getSize().x / TILE_SIZE.x);
             int tv = tileNumber / (m_TileSet.getSize().x / TILE_SIZE.x);
 
-            DefineTileMapVertice(i, j, levelSize, tu, tv);
-            DefineMapGrid(tileNumber, i, j, levelSize);
+            CreateVertexQuad(i, j, levelSize, tu, tv);
+            CreateTile(tileNumber, tileLine, i, j, levelSize);
         }
+        m_MapGrid.m_TileGrid.push_back(tileLine);
+    }
 
     return true;
 }
 
-void Map::DefineTileMapVertice(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)
+void Map::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)
 {
-    // Get a pointer to the current tile's quad
+    // Get a pointer to the current tile's quad (of the vertex array)
     sf::Vertex* quad = &m_BackgroundTileMap[(static_cast<size_t>(i) + static_cast<size_t>(j) * static_cast<size_t>(levelSize.x)) * 4];
 
     // Define its 4 corners
@@ -87,17 +97,8 @@ void Map::DefineTileMapVertice(unsigned int i, unsigned int j, const sf::Vector2
     quad[3].texCoords = sf::Vector2f(static_cast<float>(tu * TILE_SIZE.x), static_cast<float>((tv + 1) * TILE_SIZE.y));
 }
 
-void Map::DefineMapGrid(int tileNumber, unsigned int i, unsigned int j, const sf::Vector2u& levelSize)
+void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize)
 {
-    //m_MapGrid.m_TileSize = TILE_SIZE;
-
-    if (!m_MapGrid.m_TileGrid.empty())
-    {
-        m_MapGrid.m_TileGrid.clear();
-    }
-
-    m_MapGrid.m_TileGrid.resize(levelSize.x);
-
     TileType tileType = static_cast<TileType>(tileNumber);
     unsigned int xCenter = (TILE_SIZE.x / 2) + i * TILE_SIZE.x;
     unsigned int yCenter = (TILE_SIZE.y / 2) + j * TILE_SIZE.y;
@@ -106,7 +107,7 @@ void Map::DefineMapGrid(int tileNumber, unsigned int i, unsigned int j, const sf
     {
     case TileType::CONCRETE:
     {
-        m_MapGrid.m_TileGrid.emplace_back(std::make_shared<CollideableTile>
+        tileLine.push_back(std::make_shared<CollideableTile>
             (static_cast<float>(xCenter)
                 , static_cast<float>(yCenter)
                 , static_cast<float>(TILE_SIZE.x)
@@ -117,7 +118,7 @@ void Map::DefineMapGrid(int tileNumber, unsigned int i, unsigned int j, const sf
 
     default:
     {
-        m_MapGrid.m_TileGrid.emplace_back(std::make_shared<Tile>
+        tileLine.push_back(std::make_shared<Tile>
             (static_cast<float>(xCenter)
                 , static_cast<float>(yCenter)
                 , static_cast<float>(TILE_SIZE.x)

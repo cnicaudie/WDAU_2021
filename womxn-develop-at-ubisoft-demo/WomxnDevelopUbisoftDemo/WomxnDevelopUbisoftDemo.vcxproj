@@ -218,14 +218,14 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Game\Map\MapGrid.cpp" />
     <ClCompile Include="Game\Objects\Bullet.cpp" />
     <ClCompile Include="Game\Objects\Door.cpp" />
-    <ClCompile Include="Game\Enemy.cpp" />
+    <ClCompile Include="Game\Entities\Enemy.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
     <ClCompile Include="Game\LevelManager.cpp" />
     <ClCompile Include="Game\Map\CollideableTile.cpp" />
     <ClCompile Include="Game\Map\Tile.cpp" />
     <ClCompile Include="Game\Objects\SoulChunk.cpp" />
-    <ClCompile Include="Game\Player.cpp" />
-    <ClCompile Include="Game\Map\TileMap.cpp" />
+    <ClCompile Include="Game\Entities\Player.cpp" />
+    <ClCompile Include="Game\Map\Map.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UI\UIManager.cpp" />
   </ItemGroup>
@@ -245,15 +245,15 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Map\MapGrid.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
     <ClInclude Include="Game\Objects\Door.h" />
-    <ClInclude Include="Game\Enemy.h" />
+    <ClInclude Include="Game\Entities\Enemy.h" />
     <ClInclude Include="Game\GameManager.h" />
     <ClInclude Include="Game\LevelManager.h" />
     <ClInclude Include="Game\Map\CollideableTile.h" />
     <ClInclude Include="Game\Map\Tile.h" />
     <ClInclude Include="Game\Map\TileType.h" />
     <ClInclude Include="Game\Objects\SoulChunk.h" />
-    <ClInclude Include="Game\Player.h" />
-    <ClInclude Include="Game\Map\TileMap.h" />
+    <ClInclude Include="Game\Entities\Player.h" />
+    <ClInclude Include="Game\Map\Map.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UI\UIManager.h" />
   </ItemGroup>

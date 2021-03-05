@@ -9,16 +9,11 @@ public:
 	
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	
+	void OnCollision(const std::shared_ptr<BoxCollideable>& other) override;
+
 	std::vector<Bullet>& GetBullets() { return m_Bullets; };
 
-	inline void SetGroundLevel(bool isGrounded) { m_IsGrounded = isGrounded; };
-
-	inline void SetPositionX(float x) { m_Position.x = x; }
-	inline void SetPositionY(float y) { m_Position.y = y; }
-
-	inline void ResetVelocityX() { m_Velocity.x = 0.f; };
-	inline void ResetVelocityY() { m_Velocity.y = 0.f; };
+	inline const sf::Vector2f GetVelocity() { return m_Velocity; };
 
 private:
 	void UpdateShootingCooldown(float deltaTime);

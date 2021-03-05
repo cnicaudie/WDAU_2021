@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "Player.h"
+#include <Game/Map/CollideableTile.h>
 
 // Joystick helpers
 namespace
@@ -38,7 +39,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_TextureManager{ textureManager }
     , m_JoystickIndex(0)
     , m_WasButtonPressed(false)
-    , m_Position(0.f, 0.f)
+    , m_Position(50.f, 50.f)
     , m_IsGrounded(false)
     , m_CanShoot(true)
     , m_ShootCooldown(5.f)
@@ -85,6 +86,55 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     for (const Bullet& b : m_Bullets) {
         target.draw(b);
+    }
+}
+
+void Player::OnCollision(const std::shared_ptr<BoxCollideable>& other)
+{
+    //std::cout << "Player had collision..." << std::endl;
+
+    sf::FloatRect otherCollider = other->GetBoundingBox();
+
+    if (std::dynamic_pointer_cast<CollideableTile>(other))
+    {
+        //std::cout << "...with CollideableTile" << std::endl;
+        
+        // Bottom collision
+        if (m_BoundingBox.top + m_BoundingBox.height <= otherCollider.top
+            && m_BoundingBox.top < otherCollider.top)
+        {
+            m_Velocity.y = 0.f;
+            m_IsGrounded = true;
+            m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
+            //std::cout << "Bottom collision" << std::endl;
+        }
+
+        // Top collision
+        else if (m_BoundingBox.top >= otherCollider.top + otherCollider.height
+            && m_BoundingBox.top + m_BoundingBox.height > otherCollider.top + otherCollider.height)
+        {
+            m_Velocity.y = 0.f;
+            m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
+            //std::cout << "Top collision" << std::endl;
+        }
+
+        // Left collision
+        if (m_BoundingBox.left >= otherCollider.left + otherCollider.width
+            && m_BoundingBox.left + m_BoundingBox.width > otherCollider.left + otherCollider.width)
+        {
+            m_Velocity.x = 0.f;
+            m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
+            //std::cout << "Left collision" << std::endl;
+        }
+
+        // Right collision
+        else if (m_BoundingBox.left + m_BoundingBox.width <= otherCollider.left
+            && m_BoundingBox.left < otherCollider.left)
+        {
+            m_Velocity.x = 0.f;
+            m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
+            //std::cout << "Right collision" << std::endl;
+        }
     }
 }
 
@@ -166,8 +216,8 @@ void Player::ComputeVelocity()
     
     if (m_InputManager->HasAction(Action::JUMP) && m_IsGrounded)
     {
+        m_IsGrounded = false; 
         m_Velocity.y = -JUMP_FORCE;
-        m_IsGrounded = false;
     }
 }
 
@@ -175,10 +225,10 @@ void Player::Move(float deltaTime)
 {
     const float GRAVITY = 9.8f;
     m_Velocity.y += GRAVITY;
-
+  
     // Try to move on the X axis
     sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
-    if (!GameManager::GetInstance()->CheckPlayerMovementX(tempVelocity * deltaTime)) 
+    if (!GameManager::GetInstance()->CheckPlayerMovement(tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
     }
@@ -186,12 +236,18 @@ void Player::Move(float deltaTime)
     // Try to move on the Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_Velocity.y;
-    if (!GameManager::GetInstance()->CheckPlayerMovementY(tempVelocity * deltaTime))
+    if (!GameManager::GetInstance()->CheckPlayerMovement(tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
         // Uncomment next line to avoid 1 jump when falling
         //m_IsGrounded = false;
     }
+
+    // Clamp the player position between the bounds of the level
+    // TODO : Either make a huge level or manage the sticking effect when trying to go out of the level
+    sf::Vector2u levelBounds = GameManager::GetInstance()->GetLevelBounds();
+    m_Position.x = std::clamp(m_Position.x, 0.f, static_cast<float>(levelBounds.x));
+    m_Position.y = std::clamp(m_Position.y, 0.f, static_cast<float>(levelBounds.y));
 
     SetCenter(m_Position);
     m_Sprite.setPosition(m_Position);

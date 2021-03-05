@@ -24,11 +24,11 @@ SoulChunk::~SoulChunk()
 
 void SoulChunk::Update(float deltaTime) 
 {
-	if (GameManager::GetInstance()->CheckPlayerCollectedSoulChunk(*this))
+	/*if (GameManager::GetInstance()->CheckPlayerCollectedSoulChunk(*this))
 	{
 		std::cout << "Collected soul chunk !" << std::endl;
 		m_WasCollected = true;
-	}
+	}*/
 }
 
 void SoulChunk::draw(sf::RenderTarget& target, sf::RenderStates states) const 

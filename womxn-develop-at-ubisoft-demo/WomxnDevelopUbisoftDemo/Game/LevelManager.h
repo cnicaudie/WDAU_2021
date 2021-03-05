@@ -12,6 +12,7 @@ public:
 	void LoadLevel(const int levelNumber);
 
 	const Map& GetMap() const { return m_Map; };
+	const sf::Vector2u GetLevelBounds() { return { m_LevelWidth * Map::TILE_SIZE.x, m_LevelHeight * Map::TILE_SIZE.y }; };
 
 private:
 	const std::vector<int> GetLevel(const int levelNumber);

@@ -1,20 +1,16 @@
 #include <stdafx.h>
-
 #include "CollisionManager.h"
 
 #include <Game/Map/CollideableTile.h>
 
-
-#include <utility>
-
 CollisionManager::CollisionManager() {}
 
-const bool CollisionManager::CheckCollision(const BoxCollideable& first, const sf::Vector2f& nextPosition, const std::vector<BoxCollideable>& others) const
+const bool CollisionManager::CheckCollision(BoxCollideable* first, const sf::Vector2f& nextPosition, const MapGrid& mapGrid) const
 {
     bool hasCollided = false;
     
     // Get the bounding boxes for the previous and the next position
-    sf::FloatRect startCollider = first.GetBoundingBox();
+    sf::FloatRect startCollider = first->GetBoundingBox();
     sf::FloatRect endCollider = startCollider;
     endCollider.left += nextPosition.x;
     endCollider.top += nextPosition.y;
@@ -24,36 +20,51 @@ const bool CollisionManager::CheckCollision(const BoxCollideable& first, const s
     sf::Vector2f startPointBottom(startCollider.left + startCollider.width, startCollider.top + startCollider.height);
     sf::Vector2f endPointTop(endCollider.left, endCollider.top);
     sf::Vector2f endPointBottom(endCollider.left + endCollider.width, endCollider.top + endCollider.height);
-
+    
     // Draw a quad between the previous and next positions
     sf::ConvexShape quad(4);
     quad.setPoint(0, startPointTop);
     quad.setPoint(1, endPointTop);
     quad.setPoint(2, endPointBottom);
     quad.setPoint(3, startPointBottom);
-
+    
     // Get its bounding box
     sf::FloatRect quadBoundingBox = quad.getGlobalBounds();
 
-    // MapGrid::GetTilesAround(quadBoundingBox)
-    // for tile in res
-    // if (isTrigger)
-    // tile.GetCollideablesOnTile
-    // else check collision with tile itself
+    std::vector<std::shared_ptr<Tile>> tiles = mapGrid.GetBoundingTiles(quadBoundingBox);
+    //std::cout << "Number of tiles to check : " << tiles.size() << std::endl;
 
-    // Search for a collision between the quad and other colliders 
-    for (const BoxCollideable& other : others) 
+    for (std::shared_ptr<Tile>& t : tiles)
     {
-        if (quadBoundingBox.intersects(other.GetBoundingBox()))
+        if (t->IsTrigger()) 
+        {
+            for (const std::shared_ptr<BoxCollideable>& b : t->GetCollideablesOnTile()) 
+            {
+                // Check collision with collideables in tile
+                if (quadBoundingBox.intersects(b->GetBoundingBox())) 
+                {
+                    hasCollided = true;
+
+                    // If collision detected, call "OnCollision"
+                    first->OnCollision(b);
+                    //b->OnCollision(first);
+                }
+            }
+        }
+        // Check collision with tile itself (if collideable)
+        else if (quadBoundingBox.intersects(t->GetBoundingBox())) 
         {
             hasCollided = true;
-            
+
             // If collision detected, call "OnCollision"
-            first.OnCollision(other);
-            other.OnCollision(first);
+            //std::cout << "Collided with tile" << std::endl;
+            first->OnCollision(t);
+            //t.OnCollision(*first);
+            
         }
     }
 
+    //std::cout << "Ended collision check" << std::endl;
     return hasCollided;
 }
 

@@ -1,12 +1,12 @@
 #pragma once
 
+#include <Engine/Collision/CollisionManager.h>
+#include <UI/UIManager.h>
 #include <Game/Objects/Bullet.h>
 #include <Game/Objects/Door.h>
-#include "Player.h"
-#include "Enemy.h"
+#include <Game/Entities/Player.h>
+#include <Game/Entities/Enemy.h>
 #include "LevelManager.h"
-#include <UI/UIManager.h>
-#include <Engine/Collision/CollisionManager.h>
 
 class GameManager : public Game
 {
@@ -19,16 +19,14 @@ public:
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
-    inline bool CheckPlayerMovementX(const sf::Vector2f& nextPosition) 
+    inline bool CheckPlayerMovement(const sf::Vector2f& nextPosition) 
     {
-        return m_CollisionManager.CheckPlayerCollisionX(m_Player, nextPosition, m_LevelManager.GetMap());
+        return m_CollisionManager.CheckCollision(&m_Player, nextPosition, m_LevelManager.GetMap().GetMapGrid());
     }
 
-    inline bool CheckPlayerMovementY(const sf::Vector2f& nextPosition)
-    {
-        return m_CollisionManager.CheckPlayerCollisionY(m_Player, nextPosition, m_LevelManager.GetMap());
-    }
+    inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
 
+    /*
     inline bool CheckBulletImpact(const Bullet& bullet) 
     {
         return m_CollisionManager.CheckBulletCollisionWithEnemies(bullet, m_Enemies) 
@@ -39,6 +37,7 @@ public:
     {
         return m_CollisionManager.CheckPlayerTriggerWithSoulChunk(m_Player, soulChunk);
     }
+    */
 
 private:
     GameManager();

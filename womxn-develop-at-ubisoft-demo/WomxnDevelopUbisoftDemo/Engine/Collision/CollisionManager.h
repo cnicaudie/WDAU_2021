@@ -1,17 +1,13 @@
 #pragma once
 
-#include <Game/Enemy.h>
-#include <Game/Player.h>
-#include <Game/Objects/Bullet.h>
-#include <Game/Objects/SoulChunk.h>
-#include <Game/Map/Map.h>
+#include <Game/Map/MapGrid.h>
 
 class CollisionManager 
 {
 public:
 	CollisionManager();
 
-	const bool CheckCollision(const BoxCollideable& first, const sf::Vector2f& nextPosition, const std::vector<BoxCollideable>& others) const;
+	const bool CheckCollision(BoxCollideable* first, const sf::Vector2f& nextPosition, const MapGrid& mapGrid) const;
 
 	/*const bool CheckPlayerCollisionX(Player& player, const sf::Vector2f& nextPosition, const Map& map) const;
 	const bool CheckPlayerCollisionY(Player& player, const sf::Vector2f& nextPosition, const Map& map) const;

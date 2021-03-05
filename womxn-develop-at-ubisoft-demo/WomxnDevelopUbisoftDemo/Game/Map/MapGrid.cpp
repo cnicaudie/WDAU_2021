@@ -7,16 +7,16 @@ MapGrid::MapGrid(const sf::Vector2u& tileSize)
 	//m_TileGrid.resize(levelSize.x, std::vector<std::shared_ptr<Tile>>(levelSize.y));
 }
 
-const std::vector<Tile> MapGrid::GetBoundingTiles(const sf::FloatRect& boundingBox) const
+const std::vector<std::shared_ptr<Tile>> MapGrid::GetBoundingTiles(const sf::FloatRect& boundingBox) const
 {
-	std::vector<Tile> result;
+	std::vector<std::shared_ptr<Tile>> result;
 
 	sf::Vector2i startPoint = GetTileCoordinates({ boundingBox.left, boundingBox.top });
 	sf::Vector2i endPoint = GetTileCoordinates({ boundingBox.left + boundingBox.width, boundingBox.top + boundingBox.height });
-
-	for (int i = startPoint.x; i < endPoint.x; i++)
+	
+	for (int i = startPoint.x; i <= endPoint.x; i++)
 	{
-		for (int j = startPoint.y; i < endPoint.y; j++)
+		for (int j = startPoint.y; j <= endPoint.y; j++)
 		{
 			result.push_back(GetTileAt(i, j));
 		}
