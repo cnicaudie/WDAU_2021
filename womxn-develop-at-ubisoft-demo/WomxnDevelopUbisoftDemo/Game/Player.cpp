@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include "Player.h"
-#include <cmath>
 
 // Joystick helpers
 namespace

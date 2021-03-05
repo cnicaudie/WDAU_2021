@@ -9,7 +9,56 @@
 
 CollisionManager::CollisionManager() {}
 
-const bool CollisionManager::CheckPlayerCollisionX(Player& player, const sf::Vector2f& nextPosition, const TileMap& map) const
+const bool CollisionManager::CheckCollision(const BoxCollideable& first, const sf::Vector2f& nextPosition, const std::vector<BoxCollideable>& others) const
+{
+    bool hasCollided = false;
+    
+    // Get the bounding boxes for the previous and the next position
+    sf::FloatRect startCollider = first.GetBoundingBox();
+    sf::FloatRect endCollider = startCollider;
+    endCollider.left += nextPosition.x;
+    endCollider.top += nextPosition.y;
+    
+    // Define the starting and end points of the first collider bounding box 
+    sf::Vector2f startPointTop(startCollider.left, startCollider.top);
+    sf::Vector2f startPointBottom(startCollider.left + startCollider.width, startCollider.top + startCollider.height);
+    sf::Vector2f endPointTop(endCollider.left, endCollider.top);
+    sf::Vector2f endPointBottom(endCollider.left + endCollider.width, endCollider.top + endCollider.height);
+
+    // Draw a quad between the previous and next positions
+    sf::ConvexShape quad(4);
+    quad.setPoint(0, startPointTop);
+    quad.setPoint(1, endPointTop);
+    quad.setPoint(2, endPointBottom);
+    quad.setPoint(3, startPointBottom);
+
+    // Get its bounding box
+    sf::FloatRect quadBoundingBox = quad.getGlobalBounds();
+
+    // MapGrid::GetTilesAround(quadBoundingBox)
+    // for tile in res
+    // if (isTrigger)
+    // tile.GetCollideablesOnTile
+    // else check collision with tile itself
+
+    // Search for a collision between the quad and other colliders 
+    for (const BoxCollideable& other : others) 
+    {
+        if (quadBoundingBox.intersects(other.GetBoundingBox()))
+        {
+            hasCollided = true;
+            
+            // If collision detected, call "OnCollision"
+            first.OnCollision(other);
+            other.OnCollision(first);
+        }
+    }
+
+    return hasCollided;
+}
+
+/*
+const bool CollisionManager::CheckPlayerCollisionX(Player& player, const sf::Vector2f& nextPosition, const Map& map) const
 {
     bool isColliding = false;
 
@@ -53,7 +102,7 @@ const bool CollisionManager::CheckPlayerCollisionX(Player& player, const sf::Vec
     return isColliding;
 }
 
-const bool CollisionManager::CheckPlayerCollisionY(Player& player, const sf::Vector2f& nextPosition, const TileMap& map) const
+const bool CollisionManager::CheckPlayerCollisionY(Player& player, const sf::Vector2f& nextPosition, const Map& map) const
 {
     bool isColliding = false;
     
@@ -114,7 +163,7 @@ const bool CollisionManager::CheckBulletCollisionWithEnemies(const Bullet& bulle
     return isColliding;
 }
 
-const bool CollisionManager::CheckBulletCollisionWithMap(const Bullet& bullet, const TileMap& map) const
+const bool CollisionManager::CheckBulletCollisionWithMap(const Bullet& bullet, const Map& map) const
 {
     for (auto& tile : map.GetTileMap())
     {
@@ -129,3 +178,4 @@ const bool CollisionManager::CheckBulletCollisionWithMap(const Bullet& bullet, c
 
     return false;
 }
+*/

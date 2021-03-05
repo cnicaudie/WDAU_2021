@@ -77,6 +77,9 @@
     <ClCompile Include="Game\Objects\SoulChunk.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Map\MapGrid.cpp">
+      <Filter>Game\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -151,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="Game\Objects\SoulChunk.h">
       <Filter>Game\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\MapGrid.h">
+      <Filter>Game\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

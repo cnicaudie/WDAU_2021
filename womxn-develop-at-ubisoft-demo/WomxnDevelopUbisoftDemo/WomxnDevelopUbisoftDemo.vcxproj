@@ -215,6 +215,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Input\KeyboardBinding.cpp" />
     <ClCompile Include="Engine\Input\MouseBinding.cpp" />
     <ClCompile Include="Engine\TextureManager.cpp" />
+    <ClCompile Include="Game\Map\MapGrid.cpp" />
     <ClCompile Include="Game\Objects\Bullet.cpp" />
     <ClCompile Include="Game\Objects\Door.cpp" />
     <ClCompile Include="Game\Enemy.cpp" />
@@ -241,6 +242,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Input\MouseBinding.h" />
     <ClInclude Include="Engine\TextureManager.h" />
     <ClInclude Include="Game\Action.h" />
+    <ClInclude Include="Game\Map\MapGrid.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
     <ClInclude Include="Game\Objects\Door.h" />
     <ClInclude Include="Game\Enemy.h" />
