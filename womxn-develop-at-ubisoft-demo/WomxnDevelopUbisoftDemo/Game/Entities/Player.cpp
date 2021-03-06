@@ -227,7 +227,7 @@ void Player::Move(float deltaTime)
   
     // Try to move on the X axis
     sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
-    if (!GameManager::GetInstance()->CheckPlayerMovement(tempVelocity * deltaTime)) 
+    if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
     }
@@ -235,7 +235,7 @@ void Player::Move(float deltaTime)
     // Try to move on the Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_Velocity.y;
-    if (!GameManager::GetInstance()->CheckPlayerMovement(tempVelocity * deltaTime))
+    if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
         // Uncomment next line to avoid 1 jump when falling

@@ -5,12 +5,12 @@
 
 CollisionManager::CollisionManager() {}
 
-const bool CollisionManager::CheckCollision(BoxCollideable* first, const sf::Vector2f& positionOffset, const MapGrid& mapGrid) const
+const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const MapGrid& mapGrid) const
 {
     bool hasCollided = false;
     
     // Get the bounding boxes for the previous and the next position
-    sf::FloatRect startCollider = first->GetBoundingBox();
+    sf::FloatRect startCollider = collideable->GetBoundingBox();
     sf::FloatRect endCollider = startCollider;
     endCollider.left += positionOffset.x;
     endCollider.top += positionOffset.y;
@@ -33,18 +33,18 @@ const bool CollisionManager::CheckCollision(BoxCollideable* first, const sf::Vec
     
     std::vector<std::shared_ptr<Tile>> tiles = mapGrid.GetBoundingTiles(quadBoundingBox);
     
-    for (std::shared_ptr<Tile>& t : tiles)
+    for (std::shared_ptr<Tile>& tile : tiles)
     {
-        if (t->IsTrigger()) 
+        if (tile->IsTrigger()) 
         {
-            for (BoxCollideable* b : t->GetCollideablesOnTile()) 
+            for (BoxCollideable* otherCollideable : tile->GetCollideablesOnTile()) 
             {
                 // Check collision with collideables in tile
-                if (b->Contains(first->GetCenter())) 
+                if (otherCollideable->Contains(collideable->GetCenter()))
                 {
-                    if (b->IsTrigger()) 
+                    if (otherCollideable->IsTrigger()) 
                     {
-                        b->OnTrigger(first);
+                        otherCollideable->OnTrigger(collideable);
                     } 
                     else 
                     {
@@ -56,12 +56,12 @@ const bool CollisionManager::CheckCollision(BoxCollideable* first, const sf::Vec
                 }
             }
         }
-        // Check collision with tile itself (if collideable)
-        else if (quadBoundingBox.intersects(t->GetBoundingBox())) 
+        // Check collision with tile itself
+        else if (quadBoundingBox.intersects(tile->GetBoundingBox())) 
         {
             hasCollided = true;
 
-            first->OnCollision(static_cast<const BoxCollideable*>(t.get()));
+            collideable->OnCollision(static_cast<const BoxCollideable*>(tile.get()));
             //t.OnCollision(*first);    
         }
     }

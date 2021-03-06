@@ -21,15 +21,9 @@ public:
 
     inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
 
-    inline bool CheckPlayerMovement(const sf::Vector2f& positionOffset)
+    inline bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset)
     {
-        return m_CollisionManager.CheckCollision(&m_Player, positionOffset, m_LevelManager.GetMap().GetMapGrid());
-    }
-
-    // TODO : Do one function for both
-    inline bool CheckBulletImpact(Bullet* bullet, const sf::Vector2f& positionOffset)
-    {
-        return m_CollisionManager.CheckCollision(bullet, positionOffset, m_LevelManager.GetMap().GetMapGrid());
+        return m_CollisionManager.CheckCollision(collideable, positionOffset, m_LevelManager.GetMap().GetMapGrid());
     }
 
     inline void StartEndGame()

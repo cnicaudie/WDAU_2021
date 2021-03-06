@@ -23,7 +23,7 @@ void Bullet::Update(float deltaTime)
 {
 	sf::Vector2f positionOffset(m_Direction * m_Speed * deltaTime);
 
-	m_HadImpact = GameManager::GetInstance()->CheckBulletImpact(this, positionOffset);
+	m_HadImpact = GameManager::GetInstance()->CheckCollision(this, positionOffset);
 	
 	m_Sprite.move(positionOffset);
 
