@@ -13,7 +13,7 @@ public:
 
 	std::vector<Bullet>& GetBullets() { return m_Bullets; };
 
-	inline const sf::Vector2f GetVelocity() { return m_Velocity; };
+	inline const sf::Vector2f GetVelocity() { return m_Velocity; }; // For debug in GameManager
 
 private:
 	void UpdateShootingCooldown(float deltaTime);
@@ -31,8 +31,7 @@ private:
 
 	// TODO : Manage input in an Input manager
 	unsigned int m_JoystickIndex;
-	bool m_WasButtonPressed;
-
+	
 	sf::Vector2f m_Position; 
 	sf::Vector2f m_Velocity;
 	

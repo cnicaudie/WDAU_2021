@@ -19,20 +19,19 @@ public:
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
-    inline bool CheckPlayerMovement(const sf::Vector2f& nextPosition) 
+    inline bool CheckPlayerMovement(const sf::Vector2f& positionOffset)
     {
-        return m_CollisionManager.CheckCollision(&m_Player, nextPosition, m_LevelManager.GetMap().GetMapGrid());
+        return m_CollisionManager.CheckCollision(&m_Player, positionOffset, m_LevelManager.GetMap().GetMapGrid());
     }
 
     inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
 
-    /*
-    inline bool CheckBulletImpact(const Bullet& bullet) 
+    inline bool CheckBulletImpact(Bullet* bullet, const sf::Vector2f& positionOffset)
     {
-        return m_CollisionManager.CheckBulletCollisionWithEnemies(bullet, m_Enemies) 
-            || m_CollisionManager.CheckBulletCollisionWithMap(bullet, m_LevelManager.GetMap());
+        return m_CollisionManager.CheckCollision(bullet, positionOffset, m_LevelManager.GetMap().GetMapGrid());
     }
 
+    /*
     inline bool CheckPlayerCollectedSoulChunk(const SoulChunk& soulChunk)
     {
         return m_CollisionManager.CheckPlayerTriggerWithSoulChunk(m_Player, soulChunk);

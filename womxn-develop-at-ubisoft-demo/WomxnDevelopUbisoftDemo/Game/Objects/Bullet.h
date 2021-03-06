@@ -7,6 +7,7 @@ public:
 	
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void OnCollision(const std::shared_ptr<BoxCollideable>& other) override;
 
 	inline const float GetDistance() const { return m_Distance; };
 	inline const bool HadImpact() const { return m_HadImpact; };

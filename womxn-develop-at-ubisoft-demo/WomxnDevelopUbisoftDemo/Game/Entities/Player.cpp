@@ -38,7 +38,6 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     : m_InputManager{ inputManager }
     , m_TextureManager{ textureManager }
     , m_JoystickIndex(0)
-    , m_WasButtonPressed(false)
     , m_Position(50.f, 50.f)
     , m_IsGrounded(false)
     , m_CanShoot(true)
@@ -173,13 +172,13 @@ void Player::Shoot()
     
     // TODO : Make a normalize function in a MathUtils file
     float magnitude = std::sqrt(bulletDirection.x * bulletDirection.x + bulletDirection.y * bulletDirection.y);
-    sf::Vector2f normalizedMousePos = bulletDirection / magnitude;
+    sf::Vector2f normalizedBulletDirection = bulletDirection / magnitude;
     
     m_CanShoot = false;
     m_AmmunitionsNumber--;
     std::cout << "Ammunitions left : " << m_AmmunitionsNumber << std::endl;
     m_ShootCooldown = 0.f;
-    m_Bullets.emplace_back(m_TextureManager, normalizedMousePos, m_Position);
+    m_Bullets.emplace_back(m_TextureManager, normalizedBulletDirection, m_Position);
 }
 
 void Player::ComputeVelocity()
@@ -243,11 +242,11 @@ void Player::Move(float deltaTime)
         //m_IsGrounded = false;
     }
 
-    // Clamp the player position between the bounds of the level
     // TODO : Either make a huge level or manage the sticking effect when trying to go out of the level
-    sf::Vector2u levelBounds = GameManager::GetInstance()->GetLevelBounds();
-    m_Position.x = std::clamp(m_Position.x, 0.f, static_cast<float>(levelBounds.x));
-    m_Position.y = std::clamp(m_Position.y, 0.f, static_cast<float>(levelBounds.y));
+    // Uncomment next lines to clamp the player position between the bounds of the level
+    //sf::Vector2u levelBounds = GameManager::GetInstance()->GetLevelBounds();
+    //m_Position.x = std::clamp(m_Position.x, 0.f, static_cast<float>(levelBounds.x));
+    //m_Position.y = std::clamp(m_Position.y, 0.f, static_cast<float>(levelBounds.y));
 
     SetCenter(m_Position);
     m_Sprite.setPosition(m_Position);
