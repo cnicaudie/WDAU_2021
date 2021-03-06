@@ -4,13 +4,12 @@ class BoxCollideable
 {
 
 public:
-
-    virtual void OnCollision(const std::shared_ptr<BoxCollideable>& other)
+    virtual void OnCollision(const BoxCollideable* other)
     { 
         // TODO
     };
 
-    virtual void OnTrigger(const BoxCollideable& other)
+    virtual void OnTrigger(const BoxCollideable* other)
     {
         // TODO
     };
@@ -64,5 +63,4 @@ protected:
 
     sf::FloatRect m_BoundingBox;
     bool m_IsTrigger;
-    //std::vector<std::shared_ptr<Tile>> m_CurrentTile;
 };

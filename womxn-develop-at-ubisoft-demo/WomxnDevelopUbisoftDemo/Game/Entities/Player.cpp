@@ -88,13 +88,13 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 }
 
-void Player::OnCollision(const std::shared_ptr<BoxCollideable>& other)
+void Player::OnCollision(const BoxCollideable* other)
 {
     //std::cout << "Player had collision..." << std::endl;
 
     sf::FloatRect otherCollider = other->GetBoundingBox();
 
-    if (std::dynamic_pointer_cast<CollideableTile>(other))
+    if (typeid(*other) == typeid(class CollideableTile))
     {
         //std::cout << "...with CollideableTile" << std::endl;
         
@@ -118,7 +118,7 @@ void Player::OnCollision(const std::shared_ptr<BoxCollideable>& other)
         }
 
         // Left collision
-        if (m_BoundingBox.left >= otherCollider.left + otherCollider.width
+        else if (m_BoundingBox.left >= otherCollider.left + otherCollider.width
             && m_BoundingBox.left + m_BoundingBox.width > otherCollider.left + otherCollider.width)
         {
             m_Velocity.x = 0.f;

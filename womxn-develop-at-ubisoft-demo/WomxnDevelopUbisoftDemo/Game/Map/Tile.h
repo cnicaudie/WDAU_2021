@@ -8,15 +8,15 @@ class Tile : public BoxCollideable
 public:
 	Tile(float xCenterPos, float yCenterPos, float width, float height);
 
-	inline void AddCollideable(const BoxCollideable& collideable)
+	inline void AddCollideable(BoxCollideable& collideable)
 	{
-		m_CollideablesOnTile.push_back(std::make_shared<BoxCollideable>(collideable));
+		m_CollideablesOnTile.push_back(&collideable);
 	};
 
 	inline void RemoveCollideable(const BoxCollideable& collideable)
 	{
 		// TODO : See if there's a better way to compare 2 BoxCollideables
-		auto it = std::find_if(m_CollideablesOnTile.begin(), m_CollideablesOnTile.end(), [collideable](std::shared_ptr<BoxCollideable> ptr) {
+		auto it = std::find_if(m_CollideablesOnTile.begin(), m_CollideablesOnTile.end(), [collideable](BoxCollideable* ptr) {
 			return ptr->GetBoundingBox() == collideable.GetBoundingBox(); });
 
 		if (it != m_CollideablesOnTile.end()) 
@@ -25,9 +25,9 @@ public:
 		}
 	};
 
-	inline const std::vector<std::shared_ptr<BoxCollideable>>& GetCollideablesOnTile() const { return m_CollideablesOnTile; }
+	inline const std::vector<BoxCollideable*>& GetCollideablesOnTile() const { return m_CollideablesOnTile; }
 
 private:
 	// Contains all collideables that are on this Tile (entities, objects...)
-	std::vector<std::shared_ptr<BoxCollideable>> m_CollideablesOnTile;
+	std::vector<BoxCollideable*> m_CollideablesOnTile;
 };

@@ -1,5 +1,4 @@
 #include <stdafx.h>
-#include <typeinfo> 
 
 Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos)
 	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f), m_HadImpact(false)
@@ -12,6 +11,7 @@ Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::
 	m_Sprite.scale(sf::Vector2f(0.25f, 0.25f));
 	
 	SetBoundingBox(pos, textureSize * 0.25f);
+	SetTrigger(false);
 	std::cout << "Bullet created !" << std::endl;
 }
 
@@ -39,7 +39,7 @@ void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_Sprite);
 }
 
-void Bullet::OnCollision(const std::shared_ptr<BoxCollideable>& other)
+void Bullet::OnCollision(const BoxCollideable* other)
 {
 	std::cout << "Bullet collided with : " << typeid(*other).name() << std::endl;
 }

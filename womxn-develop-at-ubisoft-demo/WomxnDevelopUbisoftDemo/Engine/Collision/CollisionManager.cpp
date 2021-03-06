@@ -30,26 +30,29 @@ const bool CollisionManager::CheckCollision(BoxCollideable* first, const sf::Vec
     
     // Get its bounding box
     sf::FloatRect quadBoundingBox = quad.getGlobalBounds();
-    //std::cout << "Quad top left position : " << quadBoundingBox.left << " / " << quadBoundingBox.top << std::endl;
-    //std::cout << "Quad width height : " << quadBoundingBox.width << " / " << quadBoundingBox.height << std::endl;
-
+    
     std::vector<std::shared_ptr<Tile>> tiles = mapGrid.GetBoundingTiles(quadBoundingBox);
-    //std::cout << "Number of tiles to check : " << tiles.size() << std::endl;
-
+    
     for (std::shared_ptr<Tile>& t : tiles)
     {
         if (t->IsTrigger()) 
         {
-            for (const std::shared_ptr<BoxCollideable>& b : t->GetCollideablesOnTile()) 
+            for (BoxCollideable* b : t->GetCollideablesOnTile()) 
             {
                 // Check collision with collideables in tile
-                if (quadBoundingBox.intersects(b->GetBoundingBox())) 
+                if (b->Contains(first->GetCenter())) 
                 {
-                    hasCollided = true;
+                    if (b->IsTrigger()) 
+                    {
+                        b->OnTrigger(first);
+                    } 
+                    else 
+                    {
+                        hasCollided = true;
+                        //first->OnCollision(b);
+                        //b->OnCollision(first);
 
-                    // If collision detected, call "OnCollision"
-                    first->OnCollision(b);
-                    //b->OnCollision(first);
+                    }
                 }
             }
         }
@@ -58,15 +61,10 @@ const bool CollisionManager::CheckCollision(BoxCollideable* first, const sf::Vec
         {
             hasCollided = true;
 
-            // If collision detected, call "OnCollision"
-            //std::cout << "Collided with tile" << std::endl;
-            first->OnCollision(t);
-            //t.OnCollision(*first);
-            
+            first->OnCollision(static_cast<const BoxCollideable*>(t.get()));
+            //t.OnCollision(*first);    
         }
     }
-
-    //std::cout << "Ended collision check" << std::endl;
     return hasCollided;
 }
 
@@ -85,21 +83,5 @@ const bool CollisionManager::CheckBulletCollisionWithEnemies(const Bullet& bulle
     }
 
     return isColliding;
-}
-
-const bool CollisionManager::CheckBulletCollisionWithMap(const Bullet& bullet, const Map& map) const
-{
-    for (auto& tile : map.GetTileMap())
-    {
-        if (std::shared_ptr<CollideableTile> t = std::dynamic_pointer_cast<CollideableTile>(tile))
-        {
-            if (t->Contains(bullet.GetCenter()))
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 */

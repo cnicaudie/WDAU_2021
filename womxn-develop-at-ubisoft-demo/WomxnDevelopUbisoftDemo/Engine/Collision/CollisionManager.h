@@ -11,10 +11,5 @@ public:
 
 	/*
 	const bool CheckBulletCollisionWithEnemies(const Bullet& bullet, std::vector<Enemy>& enemies) const;
-	const bool CheckBulletCollisionWithMap(const Bullet& bullet, const Map& map) const;
-
-	inline const bool CheckPlayerTriggerWithSoulChunk(const Player& player, const SoulChunk& soulChunk) const 
-	{
-		return soulChunk.Contains(player.GetCenter());
-	}*/
+*/
 };

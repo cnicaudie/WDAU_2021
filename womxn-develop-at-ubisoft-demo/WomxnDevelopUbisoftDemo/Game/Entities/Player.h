@@ -9,7 +9,7 @@ public:
 	
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	void OnCollision(const std::shared_ptr<BoxCollideable>& other) override;
+	void OnCollision(const BoxCollideable* other) override;
 
 	std::vector<Bullet>& GetBullets() { return m_Bullets; };
 

@@ -19,10 +19,10 @@ GameManager::GameManager()
     , m_UiManager{}
     , m_LevelManager { m_TextureManager }
     , m_Player{ m_InputManager, m_TextureManager }
-    , m_Door{ 900, 600, 100, 200 }
     , m_CameraView{}
     , m_IsGameOver{ false }
 {
+    // TODO : Make a camera manager
     // Camera setup
     sf::Vector2f viewSize{ 1024, 768 };
     m_CameraView.setSize(viewSize);
@@ -31,7 +31,7 @@ GameManager::GameManager()
     //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
     m_Window.setView(m_CameraView);
 
-    //m_LevelManager.LoadLevel(0);
+    // TODO : Move enemies in Map class
     m_Enemies.emplace_back(m_TextureManager);
 }
 
@@ -57,17 +57,6 @@ void GameManager::Update(float deltaTime)
         // Move the camera view according to the player's position
         m_CameraView.setCenter(m_Player.GetCenter());
         m_Window.setView(m_CameraView);
-    
-        // TODO : Clean that
-        m_Door.Update(deltaTime);
-        
-        //if (m_Door.Contains(m_Player))
-        if (m_Door.Contains(m_Player.GetCenter()))
-        {
-            m_UiManager.StartEndGame();
-            m_Door.StartEndGame();
-            m_IsGameOver = true;
-        }
     }
 }
 
@@ -81,8 +70,6 @@ void GameManager::Render(sf::RenderTarget& target)
     {
         target.draw(enemy);
     }
-
-    target.draw(m_Door);
 
     target.draw(m_UiManager);
 }

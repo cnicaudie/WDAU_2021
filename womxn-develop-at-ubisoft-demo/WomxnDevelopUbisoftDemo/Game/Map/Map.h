@@ -19,6 +19,7 @@ public:
     inline const MapGrid& GetMapGrid() const { return m_MapGrid; };
 
 private:
+    void LoadObjects();
     void CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv);
     void CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize);
     
@@ -30,4 +31,5 @@ private:
     // ==== Other objects on the map
     
     std::vector<SoulChunk> m_SoulChunks;
+    Door m_Door;
 };

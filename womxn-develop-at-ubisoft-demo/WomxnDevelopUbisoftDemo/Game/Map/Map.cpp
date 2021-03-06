@@ -5,22 +5,22 @@
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 
 Map::Map(const sf::Texture& tileSet)
-    : m_TileSet(tileSet), m_MapGrid(TILE_SIZE)
+    : m_TileSet(tileSet)
+    , m_MapGrid(TILE_SIZE)
+    , m_Door{ 1200, 120, 50, 100 }
 {
     m_SoulChunks.emplace_back(m_TileSet, sf::Vector2f(336.f, 208.f));
+    std::cout << "Map created !" << std::endl;
 }
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    // Apply the transform
-    states.transform *= getTransform();
+    // Draw the background map
+    states.transform *= getTransform(); // Apply the transform
+    states.texture = &m_TileSet; // Apply the tileset texture
+    target.draw(m_BackgroundTileMap, states); // Draw the vertex array
 
-    // Apply the tileset texture
-    states.texture = &m_TileSet;
-
-    // Draw the vertex array
-    target.draw(m_BackgroundTileMap, states);
-
+    // Draw other objects
     for (const SoulChunk& s : m_SoulChunks)
     {
         if (!s.WasCollected()) 
@@ -28,6 +28,8 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
             target.draw(s);
         }
     }
+
+    target.draw(m_Door);
 }
 
 void Map::Update(float deltaTime) 
@@ -39,9 +41,19 @@ void Map::Update(float deltaTime)
         s.Update(deltaTime);
         if (s.WasCollected())
         {
+            m_MapGrid.RemoveCollideableOnTiles(s);
             m_SoulChunks.erase(m_SoulChunks.begin() + soulIndex);
         }
         soulIndex++;
+    }
+
+    if (!m_Door.IsPlayingEndGame()) 
+    {
+        m_Door.Update(deltaTime);
+    } 
+    else 
+    {
+        m_MapGrid.RemoveCollideableOnTiles(m_Door);
     }
 }
 
@@ -76,7 +88,19 @@ bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
         m_MapGrid.m_TileGrid.push_back(tileLine);
     }
 
+    LoadObjects();
+
     return true;
+}
+
+void Map::LoadObjects()
+{
+    for (SoulChunk& soulChunk : m_SoulChunks)
+    {
+        m_MapGrid.SetCollideableOnTiles(soulChunk);
+    }
+
+    m_MapGrid.SetCollideableOnTiles(m_Door);
 }
 
 void Map::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)

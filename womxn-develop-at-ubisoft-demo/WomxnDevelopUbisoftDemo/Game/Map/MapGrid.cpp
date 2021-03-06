@@ -8,14 +8,14 @@ MapGrid::MapGrid(const sf::Vector2u& tileSize)
 const sf::Vector2i MapGrid::GetTileCoordinates(const sf::Vector2f& position) const
 {
 	sf::Vector2i result{ static_cast<int>(position.x / m_TileSize.x), static_cast<int>(position.y / m_TileSize.y) };
-
+	
 	// Check if the position is at the intersection between two tiles on X
 	if (std::fmod(position.x, m_TileSize.x) == 0.)
 	{
 		result.x -= 1;
 	}
 
-	// Check if the position is at the intersection between two tiles on X
+	// Check if the position is at the intersection between two tiles on Y
 	if (std::fmod(position.y, m_TileSize.y) == 0.)
 	{
 		result.y -= 1;
@@ -43,4 +43,20 @@ const std::vector<std::shared_ptr<Tile>> MapGrid::GetBoundingTiles(const sf::Flo
 	}
 
 	return result;
+}
+
+void MapGrid::SetCollideableOnTiles(BoxCollideable& collider)
+{
+	for (std::shared_ptr<Tile> tile : GetBoundingTiles(collider.GetBoundingBox())) 
+	{
+		tile->AddCollideable(collider);
+	}
+}
+
+void MapGrid::RemoveCollideableOnTiles(BoxCollideable& collider)
+{
+	for (std::shared_ptr<Tile> tile : GetBoundingTiles(collider.GetBoundingBox()))
+	{
+		tile->RemoveCollideable(collider);
+	}
 }

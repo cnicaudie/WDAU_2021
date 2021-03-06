@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "SoulChunk.h"
+#include <Game/Entities/Player.h>
 
 SoulChunk::SoulChunk(const sf::Texture& texture, const sf::Vector2f pos)
 	: m_WasCollected(false)
@@ -14,6 +15,7 @@ SoulChunk::SoulChunk(const sf::Texture& texture, const sf::Vector2f pos)
 	m_Sprite.setPosition(pos);
 
 	SetBoundingBox(pos, textureSize);
+	SetTrigger(true);
 	std::cout << "SoulChunk created !" << std::endl;
 }
 
@@ -24,14 +26,20 @@ SoulChunk::~SoulChunk()
 
 void SoulChunk::Update(float deltaTime) 
 {
-	/*if (GameManager::GetInstance()->CheckPlayerCollectedSoulChunk(*this))
-	{
-		std::cout << "Collected soul chunk !" << std::endl;
-		m_WasCollected = true;
-	}*/
+	// Nothing here for now
+	return;
 }
 
 void SoulChunk::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 { 
 	target.draw(m_Sprite);
+}
+
+void SoulChunk::OnTrigger(const BoxCollideable* other)
+{
+	if (typeid(*other) == typeid(class Player) && !m_WasCollected)
+	{
+		std::cout << "Collected soul chunk !" << std::endl;
+		m_WasCollected = true;
+	}
 }

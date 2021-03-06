@@ -19,24 +19,24 @@ public:
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
+    inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
+
     inline bool CheckPlayerMovement(const sf::Vector2f& positionOffset)
     {
         return m_CollisionManager.CheckCollision(&m_Player, positionOffset, m_LevelManager.GetMap().GetMapGrid());
     }
 
-    inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
-
+    // TODO : Do one function for both
     inline bool CheckBulletImpact(Bullet* bullet, const sf::Vector2f& positionOffset)
     {
         return m_CollisionManager.CheckCollision(bullet, positionOffset, m_LevelManager.GetMap().GetMapGrid());
     }
 
-    /*
-    inline bool CheckPlayerCollectedSoulChunk(const SoulChunk& soulChunk)
+    inline void StartEndGame()
     {
-        return m_CollisionManager.CheckPlayerTriggerWithSoulChunk(m_Player, soulChunk);
+        m_UiManager.StartEndGame();
+        m_IsGameOver = true;
     }
-    */
 
 private:
     GameManager();
@@ -52,8 +52,6 @@ private:
     Player m_Player;
     std::vector<Enemy> m_Enemies;
 
-    Door m_Door;
-    
     sf::View m_CameraView;
     
     bool m_IsGameOver;
