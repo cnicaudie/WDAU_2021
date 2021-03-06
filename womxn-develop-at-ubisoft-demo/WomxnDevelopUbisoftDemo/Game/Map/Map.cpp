@@ -4,12 +4,13 @@
 
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 
-Map::Map(const sf::Texture& tileSet)
-    : m_TileSet(tileSet)
+Map::Map(const std::shared_ptr<TextureManager>& textureManager)
+    : m_TileSet(textureManager->GetTextureFromName("TILESET"))
     , m_MapGrid(TILE_SIZE)
     , m_Door{ 1200, 120, 50, 100 }
 {
     m_SoulChunks.emplace_back(m_TileSet, sf::Vector2f(336.f, 208.f));
+    m_Enemies.emplace_back(textureManager);
     std::cout << "Map created !" << std::endl;
 }
 
@@ -30,6 +31,12 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 
     target.draw(m_Door);
+
+    // Draw entities
+    for (const Enemy& enemy : m_Enemies)
+    {
+        target.draw(enemy);
+    }
 }
 
 void Map::Update(float deltaTime) 
@@ -47,6 +54,7 @@ void Map::Update(float deltaTime)
         soulIndex++;
     }
 
+    // Update Door
     if (!m_Door.IsPlayingEndGame()) 
     {
         m_Door.Update(deltaTime);
@@ -54,6 +62,19 @@ void Map::Update(float deltaTime)
     else 
     {
         m_MapGrid.RemoveCollideableOnTiles(m_Door);
+    }
+
+    // Update Enemies
+    for (Enemy& enemy : m_Enemies)
+    {
+        if (!enemy.IsDead()) 
+        {
+            enemy.Update(deltaTime);
+        } 
+        else 
+        {
+            m_MapGrid.RemoveCollideableOnTiles(enemy);
+        }
     }
 }
 
@@ -88,12 +109,12 @@ bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
         m_MapGrid.m_TileGrid.push_back(tileLine);
     }
 
-    LoadObjects();
+    LoadObjectsAndEntities();
 
     return true;
 }
 
-void Map::LoadObjects()
+void Map::LoadObjectsAndEntities()
 {
     for (SoulChunk& soulChunk : m_SoulChunks)
     {
@@ -101,6 +122,11 @@ void Map::LoadObjects()
     }
 
     m_MapGrid.SetCollideableOnTiles(m_Door);
+
+    for (Enemy& enemy : m_Enemies)
+    {
+        m_MapGrid.SetCollideableOnTiles(enemy);
+    }
 }
 
 void Map::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)

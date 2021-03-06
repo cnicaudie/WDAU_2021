@@ -6,7 +6,7 @@
 
 LevelManager::LevelManager(const std::shared_ptr<TextureManager>& textureManager) 
 	: m_TextureManager{ textureManager }
-	, m_Map { m_TextureManager->GetTextureFromName("TILESET") }
+	, m_Map { textureManager }
 {
 	LoadLevel(0);
 }

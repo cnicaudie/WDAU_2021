@@ -2,10 +2,7 @@
 
 #include <Engine/Collision/CollisionManager.h>
 #include <UI/UIManager.h>
-#include <Game/Objects/Bullet.h>
-#include <Game/Objects/Door.h>
 #include <Game/Entities/Player.h>
-#include <Game/Entities/Enemy.h>
 #include "LevelManager.h"
 
 class GameManager : public Game
@@ -44,8 +41,7 @@ private:
     
     CollisionManager m_CollisionManager;
     Player m_Player;
-    std::vector<Enemy> m_Enemies;
-
+    
     sf::View m_CameraView;
     
     bool m_IsGameOver;

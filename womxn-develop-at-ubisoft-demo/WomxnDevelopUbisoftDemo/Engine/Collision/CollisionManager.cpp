@@ -39,19 +39,19 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
         {
             for (BoxCollideable* otherCollideable : tile->GetCollideablesOnTile()) 
             {
-                // Check collision with collideables in tile
+                // Check collision with collideables on tile
                 if (otherCollideable->Contains(collideable->GetCenter()))
                 {
                     if (otherCollideable->IsTrigger()) 
                     {
                         otherCollideable->OnTrigger(collideable);
+                        collideable->OnTrigger(static_cast<const BoxCollideable*>(otherCollideable));
                     } 
                     else 
                     {
-                        hasCollided = true;
-                        //first->OnCollision(b);
-                        //b->OnCollision(first);
-
+                        //hasCollided = true;
+                        otherCollideable->OnCollision(collideable);
+                        collideable->OnCollision(static_cast<const BoxCollideable*>(otherCollideable));
                     }
                 }
             }
@@ -60,28 +60,9 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
         else if (quadBoundingBox.intersects(tile->GetBoundingBox())) 
         {
             hasCollided = true;
-
+            //tile->OnCollision(collideable);
             collideable->OnCollision(static_cast<const BoxCollideable*>(tile.get()));
-            //t.OnCollision(*first);    
         }
     }
     return hasCollided;
 }
-
-/*
-
-const bool CollisionManager::CheckBulletCollisionWithEnemies(const Bullet& bullet, std::vector<Enemy>& enemies) const
-{
-    bool isColliding = false;
-    for (Enemy& enemy : enemies) 
-    {
-        if (bullet.IsColliding(enemy)) 
-        {
-            enemy.Damage(); // TODO : use events ?
-            isColliding = true;
-        }
-    }
-
-    return isColliding;
-}
-*/

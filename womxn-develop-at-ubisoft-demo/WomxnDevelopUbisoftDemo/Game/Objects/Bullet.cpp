@@ -21,12 +21,13 @@ Bullet::~Bullet() {
 
 void Bullet::Update(float deltaTime) 
 {
+	// Compute offset to next position and check for any collision
 	sf::Vector2f positionOffset(m_Direction * m_Speed * deltaTime);
-
-	m_HadImpact = GameManager::GetInstance()->CheckCollision(this, positionOffset);
+	GameManager::GetInstance()->CheckCollision(this, positionOffset);
 	
 	m_Sprite.move(positionOffset);
 
+	// Compute traveled distance
 	float offsetX = std::abs(GetCenter().x - m_Sprite.getPosition().x);
 	float offsetY = std::abs(GetCenter().y - m_Sprite.getPosition().y);
 	m_Distance += std::sqrt(offsetX * offsetX + offsetY * offsetY);
@@ -41,5 +42,9 @@ void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Bullet::OnCollision(const BoxCollideable* other)
 {
-	std::cout << "Bullet collided with : " << typeid(*other).name() << std::endl;
+	if (!m_HadImpact) 
+	{
+		std::cout << "Bullet collided with : " << typeid(*other).name() << std::endl;
+		m_HadImpact = true;
+	}
 }

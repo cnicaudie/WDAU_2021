@@ -90,14 +90,10 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Player::OnCollision(const BoxCollideable* other)
 {
-    //std::cout << "Player had collision..." << std::endl;
-
     sf::FloatRect otherCollider = other->GetBoundingBox();
 
     if (typeid(*other) == typeid(class CollideableTile))
     {
-        //std::cout << "...with CollideableTile" << std::endl;
-        
         // Bottom collision
         if (m_BoundingBox.top + m_BoundingBox.height <= otherCollider.top
             && m_BoundingBox.top < otherCollider.top)

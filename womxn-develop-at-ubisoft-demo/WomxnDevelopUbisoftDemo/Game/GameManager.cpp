@@ -30,9 +30,6 @@ GameManager::GameManager()
     m_CameraView.setCenter(m_Player.GetCenter());
     //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
     m_Window.setView(m_CameraView);
-
-    // TODO : Move enemies in Map class
-    m_Enemies.emplace_back(m_TextureManager);
 }
 
 GameManager::~GameManager()
@@ -49,11 +46,6 @@ void GameManager::Update(float deltaTime)
         m_Player.Update(deltaTime);
         m_LevelManager.Update(deltaTime);
 
-        for (Enemy& enemy : m_Enemies)
-        {
-            enemy.Update(deltaTime);
-        }
-    
         // Move the camera view according to the player's position
         m_CameraView.setCenter(m_Player.GetCenter());
         m_Window.setView(m_CameraView);
@@ -65,12 +57,6 @@ void GameManager::Render(sf::RenderTarget& target)
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_LevelManager);
     target.draw(m_Player);
-
-    for (const Enemy& enemy : m_Enemies)
-    {
-        target.draw(enemy);
-    }
-
     target.draw(m_UiManager);
 }
 

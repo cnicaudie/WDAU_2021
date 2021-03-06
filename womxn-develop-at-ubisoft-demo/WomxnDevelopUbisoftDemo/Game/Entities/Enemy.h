@@ -7,8 +7,10 @@ public:
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
 	void Damage();
+	void OnCollision(const BoxCollideable* other) override;
+
+	inline bool IsDead() const { return m_IsDead; };
 
 private:
 	sf::Sprite m_Sprite;

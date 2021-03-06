@@ -1,15 +1,17 @@
 #pragma once
 
 #include "Tile.h"
-#include <Game/Objects/SoulChunk.h>
 #include <Game/Map/MapGrid.h>
+#include <Game/Objects/SoulChunk.h>
+#include <Game/Objects/Door.h>
+#include <Game/Entities/Enemy.h>
 
 class Map : public sf::Drawable, public sf::Transformable
 {
 public:
     static const sf::Vector2u TILE_SIZE;
 
-    Map(const sf::Texture& tileSet);
+    Map(const std::shared_ptr<TextureManager>& textureManager);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void Update(float deltaTime);
@@ -19,9 +21,11 @@ public:
     inline const MapGrid& GetMapGrid() const { return m_MapGrid; };
 
 private:
-    void LoadObjects();
+    void LoadObjectsAndEntities();
     void CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv);
     void CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize);
+    
+    // ==== Map attributes
     
     MapGrid m_MapGrid;
 
@@ -32,4 +36,9 @@ private:
     
     std::vector<SoulChunk> m_SoulChunks;
     Door m_Door;
+
+    // ==== Entities
+
+    std::vector<Enemy> m_Enemies;
+
 };
