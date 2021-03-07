@@ -87,6 +87,7 @@ void Game::RunGameLoop()
                 {
                     if (!m_InputManager->IsUsingJoystick()) 
                     {
+                        m_Window.setJoystickThreshold(15); // Test
                         m_InputManager->SetJoystickIndex(event.joystickConnect.joystickId);
                     }
                     break;
@@ -104,6 +105,7 @@ void Game::RunGameLoop()
                 case sf::Event::JoystickButtonPressed:
                 {
                     //m_InputManager->AddAction(event.joystickButton.joystickId, event.joystickButton.button);
+                    std::cout << "Button : " << event.joystickButton.button << " was pressed !" << std::endl;
                     break;
                 }
 
@@ -116,6 +118,8 @@ void Game::RunGameLoop()
                 case sf::Event::JoystickMoved:
                 {
                     // TODO
+                    std::cout << event.joystickMove.axis << " axis moved!" << std::endl;
+                    std::cout << "New position : " << event.joystickMove.position << std::endl;
                     break;
                 }
 
