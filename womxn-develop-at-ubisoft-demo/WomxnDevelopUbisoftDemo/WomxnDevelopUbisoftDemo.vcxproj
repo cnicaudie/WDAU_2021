@@ -212,6 +212,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Game.cpp" />
     <ClCompile Include="Engine\Input\InputManager.cpp" />
     <ClCompile Include="Engine\Input\Binding.cpp" />
+    <ClCompile Include="Engine\Input\JoystickButtonBinding.cpp" />
     <ClCompile Include="Engine\Input\KeyboardBinding.cpp" />
     <ClCompile Include="Engine\Input\MouseBinding.cpp" />
     <ClCompile Include="Engine\TextureManager.cpp" />
@@ -240,6 +241,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Game.h" />
     <ClInclude Include="Engine\Input\InputManager.h" />
     <ClInclude Include="Engine\Input\Binding.h" />
+    <ClInclude Include="Engine\Input\JoystickButtonBinding.h" />
     <ClInclude Include="Engine\Input\KeyboardBinding.h" />
     <ClInclude Include="Engine\Input\MouseBinding.h" />
     <ClInclude Include="Engine\TextureManager.h" />

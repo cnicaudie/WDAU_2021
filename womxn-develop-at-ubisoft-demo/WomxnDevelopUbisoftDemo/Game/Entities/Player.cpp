@@ -2,38 +2,6 @@
 #include "Player.h"
 #include <Game/Map/CollideableTile.h>
 
-// Joystick helpers
-namespace
-{
-    bool GetFirstJoystickIndex(unsigned int& index)
-    {
-        index = 0;
-        while (index < sf::Joystick::Count)
-        {
-            if (sf::Joystick::isConnected(index) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
-            {
-                return true;
-            }
-
-            index++;
-        }
-
-        return false;
-    }
-
-    float GetScaledAxis(unsigned int index, sf::Joystick::Axis axis, float deadZone, float scale)
-    {
-        float value = (sf::Joystick::getAxisPosition(index, axis) / 100.0f) * scale;
-        if (value >= -deadZone && value <= deadZone) 
-        {
-            return 0.0f;
-        }
-
-        return value;
-    }
-}
-
-
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : Entity(textureManager, { 50.f, 50.f }, 200)
     , m_InputManager{ inputManager }
@@ -190,8 +158,8 @@ void Player::ComputeVelocity()
     // TODO : Make some test to find a generic solution for joystick/keyboard movement
     if (m_InputManager->IsUsingJoystick())
     {
-        m_Velocity.x = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
-        m_Velocity.y = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::Y, DEAD_ZONE, SPEED_MAX);
+        m_Velocity.x = m_InputManager->GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
+        //m_Velocity.y = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::Y, DEAD_ZONE, SPEED_MAX);
     }
     else
     {
