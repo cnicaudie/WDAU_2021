@@ -4,6 +4,7 @@
 #include <UI/UIManager.h>
 #include <Game/Entities/Player.h>
 #include "LevelManager.h"
+#include <Game/Camera/CameraManager.h>
 
 class GameManager : public Game
 {
@@ -41,8 +42,7 @@ private:
     
     CollisionManager m_CollisionManager;
     Player m_Player;
-    
-    sf::View m_CameraView;
+    CameraManager m_CameraManager;
     
     bool m_IsGameOver;
 };

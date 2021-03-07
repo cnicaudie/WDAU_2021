@@ -83,6 +83,9 @@
     <ClCompile Include="Game\Entities\Entity.cpp">
       <Filter>Game\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Camera\CameraManager.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -164,6 +167,9 @@
     <ClInclude Include="Game\Entities\Entity.h">
       <Filter>Game\Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Camera\CameraManager.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -195,6 +201,9 @@
     </Filter>
     <Filter Include="Game\Entities">
       <UniqueIdentifier>{02c5a448-829b-4326-a01d-014738821314}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Camera">
+      <UniqueIdentifier>{4017dea4-0587-42c6-99e5-011a05bd8c70}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

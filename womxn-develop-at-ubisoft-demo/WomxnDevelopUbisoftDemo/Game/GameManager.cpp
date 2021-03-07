@@ -19,18 +19,9 @@ GameManager::GameManager()
     , m_UiManager{}
     , m_LevelManager { m_TextureManager }
     , m_Player{ m_InputManager, m_TextureManager }
-    , m_CameraView{}
+    , m_CameraManager { &m_Window, &m_Player }
     , m_IsGameOver{ false }
-{
-    // TODO : Make a camera manager
-    // Camera setup
-    sf::Vector2f viewSize{ 1024, 768 };
-    m_CameraView.setSize(viewSize);
-    //m_CameraView.zoom(1.5f);
-    m_CameraView.setCenter(m_Player.GetCenter());
-    //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
-    m_Window.setView(m_CameraView);
-}
+{}
 
 GameManager::~GameManager()
 {
@@ -45,10 +36,7 @@ void GameManager::Update(float deltaTime)
     {
         m_Player.Update(deltaTime);
         m_LevelManager.Update(deltaTime);
-
-        // Move the camera view according to the player's position
-        m_CameraView.setCenter(m_Player.GetCenter());
-        m_Window.setView(m_CameraView);
+        m_CameraManager.Update(deltaTime);
     }
 }
 
@@ -58,6 +46,7 @@ void GameManager::Render(sf::RenderTarget& target)
     target.draw(m_LevelManager);
     target.draw(m_Player);
     target.draw(m_UiManager);
+    target.draw(m_CameraManager);
 }
 
 void GameManager::RenderDebugMenu(sf::RenderTarget& target)
