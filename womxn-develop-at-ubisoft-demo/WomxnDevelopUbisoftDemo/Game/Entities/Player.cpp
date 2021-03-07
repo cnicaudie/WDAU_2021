@@ -35,11 +35,9 @@ namespace
 
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
-    : m_InputManager{ inputManager }
-    , m_TextureManager{ textureManager }
+    : Entity(textureManager, { 50.f, 50.f }, 200)
+    , m_InputManager{ inputManager }
     , m_JoystickIndex(0)
-    , m_Position(50.f, 50.f)
-    , m_IsGrounded(false)
     , m_CanShoot(true)
     , m_ShootCooldown(5.f)
     , m_AmmunitionsNumber(10)
@@ -76,15 +74,6 @@ void Player::Update(float deltaTime)
     else
     {
         m_Sprite.setScale(0.5f, 0.5f);
-    }
-}
-
-void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    target.draw(m_Sprite);
-
-    for (const Bullet& b : m_Bullets) {
-        target.draw(b);
     }
 }
 
@@ -130,6 +119,17 @@ void Player::OnCollision(const BoxCollideable* other)
             m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
             //std::cout << "Right collision" << std::endl;
         }
+    }
+}
+
+void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    //target.draw(m_Sprite);
+
+    Entity::draw(target, states);
+
+    for (const Bullet& b : m_Bullets) {
+        target.draw(b);
     }
 }
 

@@ -80,6 +80,9 @@
     <ClCompile Include="Game\Entities\Player.cpp">
       <Filter>Game\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Entities\Entity.cpp">
+      <Filter>Game\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -156,6 +159,9 @@
       <Filter>Game\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Game\Entities\Player.h">
+      <Filter>Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Entities\Entity.h">
       <Filter>Game\Entities</Filter>
     </ClInclude>
   </ItemGroup>
