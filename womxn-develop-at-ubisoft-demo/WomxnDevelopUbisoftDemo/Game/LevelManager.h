@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Game/Map/TileMap.h>
+#include <Game/Map/Map.h>
 
 class LevelManager : public sf::Drawable
 {
@@ -11,13 +11,14 @@ public:
 	void Update(float deltaTime);
 	void LoadLevel(const int levelNumber);
 
-	const TileMap& GetMap() const { return m_Map; };
+	const Map& GetMap() const { return m_Map; };
+	const sf::Vector2u GetLevelBounds() { return { m_LevelWidth * Map::TILE_SIZE.x, m_LevelHeight * Map::TILE_SIZE.y }; };
 
 private:
 	const std::vector<int> GetLevel(const int levelNumber);
 
 	std::shared_ptr<TextureManager> m_TextureManager;
-	TileMap m_Map;
+	Map m_Map;
 
 	unsigned int m_LevelWidth;
 	unsigned int m_LevelHeight;

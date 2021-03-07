@@ -1,12 +1,11 @@
 #include "stdafx.h"
 #include "Enemy.h"
+#include <Game/Objects/Bullet.h>
 
 Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
-	: m_HealthPoints(100)
-	, m_Position(300.0f, 80.0f)  // TODO : Add a parameter in constructor
+	: Entity(textureManager, { 300.0f, 80.0f }, 50)
 	, m_WasDamaged(false)
 	, m_DamageCooldown(2.f)
-	, m_IsDead(false)
 {
 	sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("ENEMY");
 
@@ -38,13 +37,17 @@ void Enemy::Update(float deltaTime)
 	}
 }
 
+void Enemy::OnCollision(const BoxCollideable* other)
+{
+	if (typeid(*other) == typeid(class Bullet) && !m_WasDamaged)
+	{
+		Damage();
+	}
+}
+
 void Enemy::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
-	if (!m_IsDead)
-	{
-		target.draw(m_Sprite);
-	}
-
+	Entity::draw(target, states);
 }
 
 void Enemy::Damage() 

@@ -8,6 +8,7 @@ public:
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void OnTrigger(const BoxCollideable* other) override;
 
 	inline const bool WasCollected() const { return m_WasCollected; };
 

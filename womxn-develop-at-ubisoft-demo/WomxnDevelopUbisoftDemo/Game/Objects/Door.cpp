@@ -10,6 +10,7 @@ Door::Door(float xCenterPos, float yCenterPos, float width, float height)
 {
 	const auto center = sf::Vector2f(xCenterPos, yCenterPos);
 	const auto size = sf::Vector2f(width, height);
+	SetTrigger(true);
 	SetBoundingBox(center, size);
 
 	m_Rectangle.setSize(size);
@@ -23,6 +24,7 @@ Door::Door(float xCenterPos, float yCenterPos, float width, float height)
 
 Door::~Door()
 {
+	std::cout << "Destroyed Door" << std::endl;
 }
 
 void Door::Update(float deltaTime)
@@ -43,6 +45,16 @@ void Door::Update(float deltaTime)
 void Door::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_Rectangle);
+}
+
+void Door::OnTrigger(const BoxCollideable* other)
+{
+	if (typeid(*other) == typeid(class Player) && !m_IsPlayingEndGame)
+	{
+		std::cout << "Walk through door !" << std::endl;
+		StartEndGame();
+		GameManager::GetInstance()->StartEndGame();
+	}
 }
 
 void Door::StartEndGame()

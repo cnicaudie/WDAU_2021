@@ -6,8 +6,9 @@
 
 LevelManager::LevelManager(const std::shared_ptr<TextureManager>& textureManager) 
 	: m_TextureManager{ textureManager }
+	, m_Map { textureManager }
 {
-	// TODO
+	LoadLevel(0);
 }
 
 void LevelManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -23,7 +24,7 @@ void LevelManager::Update(float deltaTime)
 void LevelManager::LoadLevel(const int levelNumber = 0)
 {
 	std::vector level = GetLevel(levelNumber);
-	m_Map.Load(m_TextureManager->GetTextureFromName("TILESET"), level, sf::Vector2u(m_LevelWidth, m_LevelHeight));
+	m_Map.Load(level, sf::Vector2u(m_LevelWidth, m_LevelHeight));
 }
 
 

@@ -19,10 +19,10 @@ GameManager::GameManager()
     , m_UiManager{}
     , m_LevelManager { m_TextureManager }
     , m_Player{ m_InputManager, m_TextureManager }
-    , m_Door{ 900, 600, 100, 200 }
     , m_CameraView{}
     , m_IsGameOver{ false }
 {
+    // TODO : Make a camera manager
     // Camera setup
     sf::Vector2f viewSize{ 1024, 768 };
     m_CameraView.setSize(viewSize);
@@ -30,9 +30,6 @@ GameManager::GameManager()
     m_CameraView.setCenter(m_Player.GetCenter());
     //view.setViewport(sf::FloatRect(0.0f, 0.0f, 0.5f, 1.0f));
     m_Window.setView(m_CameraView);
-
-    m_LevelManager.LoadLevel(0);
-    m_Enemies.emplace_back(m_TextureManager);
 }
 
 GameManager::~GameManager()
@@ -49,25 +46,9 @@ void GameManager::Update(float deltaTime)
         m_Player.Update(deltaTime);
         m_LevelManager.Update(deltaTime);
 
-        for (Enemy& enemy : m_Enemies)
-        {
-            enemy.Update(deltaTime);
-        }
-    
         // Move the camera view according to the player's position
         m_CameraView.setCenter(m_Player.GetCenter());
         m_Window.setView(m_CameraView);
-    
-        // TODO : Clean that
-        m_Door.Update(deltaTime);
-        
-        //if (m_Door.Contains(m_Player))
-        if (m_Door.Contains(m_Player.GetCenter()))
-        {
-            m_UiManager.StartEndGame();
-            m_Door.StartEndGame();
-            m_IsGameOver = true;
-        }
     }
 }
 
@@ -76,14 +57,6 @@ void GameManager::Render(sf::RenderTarget& target)
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_LevelManager);
     target.draw(m_Player);
-
-    for (const Enemy& enemy : m_Enemies)
-    {
-        target.draw(enemy);
-    }
-
-    target.draw(m_Door);
-
     target.draw(m_UiManager);
 }
 
@@ -93,12 +66,18 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
     ImGui::Text("Press F1 to close this debug menu");
     ImGui::NewLine();
 
-    if (ImGui::CollapsingHeader("Main character position"))
+    if (ImGui::CollapsingHeader("Main character infos"))
     {
         const auto& mainCharCenterPos = m_Player.GetCenter();
+        const auto& mainCharVelocity = m_Player.GetVelocity();
 
+        ImGui::Text("Position infos :");
         ImGui::Text("X: %f", mainCharCenterPos.x);
         ImGui::Text("Y: %f", mainCharCenterPos.y);
+
+        ImGui::Text("Velocity infos :");
+        ImGui::Text("X: %f", mainCharVelocity.x);
+        ImGui::Text("Y: %f", mainCharVelocity.y);
     }
 
     if (ImGui::CollapsingHeader("Mouse position"))

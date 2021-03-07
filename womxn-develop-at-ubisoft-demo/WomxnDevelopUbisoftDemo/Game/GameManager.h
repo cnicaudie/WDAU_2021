@@ -1,12 +1,9 @@
 #pragma once
 
-#include <Game/Objects/Bullet.h>
-#include <Game/Objects/Door.h>
-#include "Player.h"
-#include "Enemy.h"
-#include "LevelManager.h"
-#include <UI/UIManager.h>
 #include <Engine/Collision/CollisionManager.h>
+#include <UI/UIManager.h>
+#include <Game/Entities/Player.h>
+#include "LevelManager.h"
 
 class GameManager : public Game
 {
@@ -19,25 +16,17 @@ public:
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
-    inline bool CheckPlayerMovementX(const sf::Vector2f& nextPosition) 
+    inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
+
+    inline bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset)
     {
-        return m_CollisionManager.CheckPlayerCollisionX(m_Player, nextPosition, m_LevelManager.GetMap());
+        return m_CollisionManager.CheckCollision(collideable, positionOffset, m_LevelManager.GetMap().GetMapGrid());
     }
 
-    inline bool CheckPlayerMovementY(const sf::Vector2f& nextPosition)
+    inline void StartEndGame()
     {
-        return m_CollisionManager.CheckPlayerCollisionY(m_Player, nextPosition, m_LevelManager.GetMap());
-    }
-
-    inline bool CheckBulletImpact(const Bullet& bullet) 
-    {
-        return m_CollisionManager.CheckBulletCollisionWithEnemies(bullet, m_Enemies) 
-            || m_CollisionManager.CheckBulletCollisionWithMap(bullet, m_LevelManager.GetMap());
-    }
-
-    inline bool CheckPlayerCollectedSoulChunk(const SoulChunk& soulChunk)
-    {
-        return m_CollisionManager.CheckPlayerTriggerWithSoulChunk(m_Player, soulChunk);
+        m_UiManager.StartEndGame();
+        m_IsGameOver = true;
     }
 
 private:
@@ -52,9 +41,6 @@ private:
     
     CollisionManager m_CollisionManager;
     Player m_Player;
-    std::vector<Enemy> m_Enemies;
-
-    Door m_Door;
     
     sf::View m_CameraView;
     
