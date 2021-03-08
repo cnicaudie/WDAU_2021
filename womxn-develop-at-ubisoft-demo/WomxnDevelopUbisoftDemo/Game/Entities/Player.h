@@ -15,21 +15,17 @@ public:
 
 	std::vector<Bullet>& GetBullets() { return m_Bullets; };
 
-	
 private:
 	void UpdateShootingCooldown(float deltaTime);
 	void UpdateBullets(float deltaTime);
 	void Shoot();
 	
-	void ComputeVelocity();
 	void Move(float deltaTime);
+	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
 
 	//====================//
 
 	std::shared_ptr<InputManager> m_InputManager;
-	
-	// TODO : Manage input in an Input manager
-	unsigned int m_JoystickIndex;
 	
 	bool m_CanShoot;
 	float m_ShootCooldown;

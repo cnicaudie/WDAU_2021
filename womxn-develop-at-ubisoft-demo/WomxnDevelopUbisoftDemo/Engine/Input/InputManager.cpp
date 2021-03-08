@@ -34,6 +34,7 @@ InputManager::InputManager()
 	std::cout << "InputManager Created" << std::endl;
 }
 
+// TODO : Use typeid or something else to check enum type (to avoid unwanted behaviours)
 void InputManager::AddAction(const std::shared_ptr<Binding>& key)
 {
 	for (auto it = m_ActionBinding.begin(); it != m_ActionBinding.end(); it++)
@@ -72,6 +73,33 @@ void InputManager::UpdateMousePosition(const sf::RenderWindow& gameWindow)
 {
 	const sf::Vector2i& mousePixelPosition = sf::Mouse::getPosition(gameWindow);
 	m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
+}
+
+const float InputManager::GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate, float deadZone) const
+{
+	float velocity = 0.f;
+
+	if (m_IsUsingJoystick)
+	{
+		velocity = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, deadZone, maxSpeed);
+	}
+	else
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			velocity = fmin(currentVelocity + speedInc, maxSpeed);
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			velocity = fmax(currentVelocity - speedInc, -maxSpeed);
+		}
+		else
+		{
+			velocity = currentVelocity * slowdownRate;
+		}
+	}
+
+	return velocity;
 }
 
 void InputManager::InitJoystick()

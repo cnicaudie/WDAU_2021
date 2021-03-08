@@ -86,7 +86,6 @@ void Game::RunGameLoop()
 
                 case sf::Event::JoystickButtonPressed:
                 {
-                    //std::cout << "Button : " << event.joystickButton.button << " was pressed !" << std::endl;
                     m_InputManager->AddAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
                     break;
                 }
@@ -97,20 +96,7 @@ void Game::RunGameLoop()
                     break;
                 }
 
-                case sf::Event::JoystickMoved:
-                {
-                    float newPos = event.joystickMove.position;
-
-                    if ((newPos >= 5.f && newPos <= 95.f) || (newPos < -5.f && newPos > -95.f))
-                    {
-                        //std::cout << event.joystickMove.axis << " axis moved!" << std::endl;
-                        //std::cout << "New position : " << event.joystickMove.position << std::endl;
-                    }
-                    break;
-                }
-
                 default:
-                    // TODO : Joystick didn't move ?
                     break;
             }
 
