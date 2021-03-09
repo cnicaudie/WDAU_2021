@@ -34,14 +34,13 @@ InputManager::InputManager()
 	std::cout << "InputManager Created" << std::endl;
 }
 
-// TODO : Use typeid or something else to check enum type (to avoid unwanted behaviours)
 void InputManager::AddAction(const std::shared_ptr<Binding>& key)
 {
 	for (auto it = m_ActionBinding.begin(); it != m_ActionBinding.end(); it++)
 	{
 		for (std::shared_ptr<Binding>& b : it->second)
 		{
-			if (b->GetBinding() == key->GetBinding()) 
+			if (typeid(*key).name() == typeid(*b).name() && b->GetBinding() == key->GetBinding()) 
 			{
 				m_CurrentActions.insert(it->first);
 				return;
@@ -56,7 +55,7 @@ void InputManager::RemoveAction(const std::shared_ptr<Binding>& key)
 	{
 		for (std::shared_ptr<Binding>& b : it->second)
 		{
-			if (b->GetBinding() == key->GetBinding())
+			if (typeid(*key).name() == typeid(*b).name() && b->GetBinding() == key->GetBinding())
 			{
 				auto pos = m_CurrentActions.find(it->first);
 				if (pos != m_CurrentActions.end())
