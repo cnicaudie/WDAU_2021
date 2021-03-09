@@ -215,7 +215,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Input\Bindings\JoystickButtonBinding.cpp" />
     <ClCompile Include="Engine\Input\Bindings\KeyboardBinding.cpp" />
     <ClCompile Include="Engine\Input\Bindings\MouseBinding.cpp" />
-    <ClCompile Include="Engine\TextureManager.cpp" />
+    <ClCompile Include="Engine\Resources\TextureManager.cpp" />
     <ClCompile Include="Game\Camera\CameraManager.cpp" />
     <ClCompile Include="Game\Entities\Entity.cpp" />
     <ClCompile Include="Game\Map\MapGrid.cpp" />
@@ -244,7 +244,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Input\Bindings\JoystickButtonBinding.h" />
     <ClInclude Include="Engine\Input\Bindings\KeyboardBinding.h" />
     <ClInclude Include="Engine\Input\Bindings\MouseBinding.h" />
-    <ClInclude Include="Engine\TextureManager.h" />
+    <ClInclude Include="Engine\Resources\TextureManager.h" />
     <ClInclude Include="Game\Action.h" />
     <ClInclude Include="Game\Camera\CameraManager.h" />
     <ClInclude Include="Game\Entities\Entity.h" />

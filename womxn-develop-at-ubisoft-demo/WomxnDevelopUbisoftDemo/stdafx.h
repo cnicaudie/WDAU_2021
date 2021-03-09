@@ -9,7 +9,7 @@
 
 #include <Engine/Game.h>
 #include <Engine/Collision/Collision.h>
-#include <Engine/TextureManager.h>
+#include <Engine/Resources/TextureManager.h>
 #include <Engine/Input/InputManager.h>
 
 #include <Game/GameManager.h>

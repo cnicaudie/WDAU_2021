@@ -29,9 +29,6 @@
     <ClCompile Include="UI\UIManager.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\TextureManager.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Input\InputManager.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
@@ -89,6 +86,9 @@
     <ClCompile Include="Engine\Input\Bindings\MouseBinding.cpp">
       <Filter>Engine\Input\Bindings</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Resources\TextureManager.cpp">
+      <Filter>Engine\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -109,9 +109,6 @@
     </ClInclude>
     <ClInclude Include="UI\UIManager.h">
       <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\TextureManager.h">
-      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Game\Action.h">
       <Filter>Game</Filter>
@@ -176,6 +173,9 @@
     <ClInclude Include="Engine\Input\Bindings\MouseBinding.h">
       <Filter>Engine\Input\Bindings</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Resources\TextureManager.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -213,6 +213,12 @@
     </Filter>
     <Filter Include="Engine\Input\Bindings">
       <UniqueIdentifier>{55fc511f-c23c-4c08-a1e9-e773c44decb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Event">
+      <UniqueIdentifier>{2c63bcb9-9352-4ce5-be4d-170dbf827fab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources">
+      <UniqueIdentifier>{30f1a4d7-bc5f-4429-8d25-41dbee585367}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
