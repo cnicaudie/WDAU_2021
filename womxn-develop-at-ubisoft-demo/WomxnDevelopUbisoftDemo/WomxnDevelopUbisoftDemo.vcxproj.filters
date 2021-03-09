@@ -86,6 +86,9 @@
     <ClCompile Include="Game\Camera\CameraManager.cpp">
       <Filter>Game\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Input\JoystickButtonBinding.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="Game\Camera\CameraManager.h">
       <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\JoystickButtonBinding.h">
+      <Filter>Engine\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

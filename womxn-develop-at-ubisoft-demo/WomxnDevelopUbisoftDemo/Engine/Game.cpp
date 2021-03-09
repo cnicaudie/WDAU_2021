@@ -2,6 +2,7 @@
 #include <Engine/Game.h>
 #include <Engine/Input/MouseBinding.h>
 #include <Engine/Input/KeyboardBinding.h>
+#include <Engine/Input/JoystickButtonBinding.h>
 
 static constexpr float APP_MAX_FRAMERATE{ 60.0f };
 static const sf::Vector2u APP_INIT_WINDOW_SIZE{ 1024, 768 };
@@ -83,44 +84,19 @@ void Game::RunGameLoop()
                     break;
                 }
 
-                case sf::Event::JoystickConnected: 
-                {
-                    if (!m_InputManager->IsUsingJoystick()) 
-                    {
-                        m_InputManager->SetJoystickIndex(event.joystickConnect.joystickId);
-                    }
-                    break;
-                }
-
-                case sf::Event::JoystickDisconnected:
-                {
-                    if (m_InputManager->IsUsingJoystick())
-                    {
-                        m_InputManager->ResetJoystick();
-                    }
-                    break;
-                }
-
                 case sf::Event::JoystickButtonPressed:
                 {
-                    //m_InputManager->AddAction(event.joystickButton.joystickId, event.joystickButton.button);
+                    m_InputManager->AddAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
                     break;
                 }
 
                 case sf::Event::JoystickButtonReleased:
                 {
-                    //m_InputManager->RemoveAction(event.joystickButton.joystickId, event.joystickButton.button);
-                    break;
-                }
-
-                case sf::Event::JoystickMoved:
-                {
-                    // TODO
+                    m_InputManager->RemoveAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
                     break;
                 }
 
                 default:
-                    // TODO : Joystick didn't move ?
                     break;
             }
 

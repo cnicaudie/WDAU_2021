@@ -2,42 +2,9 @@
 #include "Player.h"
 #include <Game/Map/CollideableTile.h>
 
-// Joystick helpers
-namespace
-{
-    bool GetFirstJoystickIndex(unsigned int& index)
-    {
-        index = 0;
-        while (index < sf::Joystick::Count)
-        {
-            if (sf::Joystick::isConnected(index) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
-            {
-                return true;
-            }
-
-            index++;
-        }
-
-        return false;
-    }
-
-    float GetScaledAxis(unsigned int index, sf::Joystick::Axis axis, float deadZone, float scale)
-    {
-        float value = (sf::Joystick::getAxisPosition(index, axis) / 100.0f) * scale;
-        if (value >= -deadZone && value <= deadZone) 
-        {
-            return 0.0f;
-        }
-
-        return value;
-    }
-}
-
-
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : Entity(textureManager, { 50.f, 50.f }, 200)
     , m_InputManager{ inputManager }
-    , m_JoystickIndex(0)
     , m_CanShoot(true)
     , m_ShootCooldown(5.f)
     , m_AmmunitionsNumber(10)
@@ -55,7 +22,6 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 
 void Player::Update(float deltaTime)
 {
-    ComputeVelocity();
     Move(deltaTime);
 
     UpdateShootingCooldown(deltaTime);
@@ -124,8 +90,6 @@ void Player::OnCollision(const BoxCollideable* other)
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    //target.draw(m_Sprite);
-
     Entity::draw(target, states);
 
     for (const Bullet& b : m_Bullets) {
@@ -177,58 +141,33 @@ void Player::Shoot()
     m_Bullets.emplace_back(m_TextureManager, normalizedBulletDirection, m_Position);
 }
 
-void Player::ComputeVelocity()
+void Player::Move(float deltaTime) 
 {
     const float SPEED_MAX = 200.0f;
     const float SPEED_INC = 10.0f;
     const float DEAD_ZONE = 5.0f;
     const float SLOWDOWN_RATE = 0.9f;
+    const float GRAVITY = 9.8f;
+    sf::Vector2f tempVelocity(0.f, 0.f);
 
-    const float JUMP_FORCE = 400.0f;
-    
-    // Compute the velocity based on the user input
-    // TODO : Make some test to find a generic solution for joystick/keyboard movement
-    if (m_InputManager->IsUsingJoystick())
-    {
-        m_Velocity.x = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, DEAD_ZONE, SPEED_MAX);
-        m_Velocity.y = GetScaledAxis(m_JoystickIndex, sf::Joystick::Axis::Y, DEAD_ZONE, SPEED_MAX);
-    }
-    else
-    {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            m_Velocity.x = fmin(m_Velocity.x + SPEED_INC, SPEED_MAX);
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            m_Velocity.x = fmax(m_Velocity.x - SPEED_INC, -SPEED_MAX);
-        }
-        else
-        {
-            m_Velocity.x *= SLOWDOWN_RATE;
-        }
-    }
-    
+    // Compute player's velocity
+    m_Velocity.y += GRAVITY;
+    m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, SPEED_INC, SPEED_MAX, SLOWDOWN_RATE, DEAD_ZONE);
+
     if (m_InputManager->HasAction(Action::JUMP) && m_IsGrounded)
     {
-        m_IsGrounded = false; 
-        m_Velocity.y = -JUMP_FORCE;
+        m_IsGrounded = false;
+        m_Velocity.y = -400.0f;
     }
-}
 
-void Player::Move(float deltaTime) 
-{
-    const float GRAVITY = 9.8f;
-    m_Velocity.y += GRAVITY;
-  
-    // Try to move on the X axis
-    sf::Vector2f tempVelocity(m_Velocity.x, 0.0f);
+    // Check movement on X axis
+    tempVelocity.x = m_Velocity.x;
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
     }
 
-    // Try to move on the Y axis
+    // Check movement on Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_Velocity.y;
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
@@ -237,13 +176,36 @@ void Player::Move(float deltaTime)
         // Uncomment next line to avoid 1 jump when falling
         //m_IsGrounded = false;
     }
+    
+    // Clamp the player position between the bounds of the level
+    sf::Vector2u levelBounds = GameManager::GetInstance()->GetLevelBounds();
+    ClampPlayerPosition(0.f, static_cast<float>(levelBounds.x), 0.f, static_cast<float>(levelBounds.y));
 
-    // TODO : Either make a huge level or manage the sticking effect when trying to go out of the level
-    // Uncomment next lines to clamp the player position between the bounds of the level
-    //sf::Vector2u levelBounds = GameManager::GetInstance()->GetLevelBounds();
-    //m_Position.x = std::clamp(m_Position.x, 0.f, static_cast<float>(levelBounds.x));
-    //m_Position.y = std::clamp(m_Position.y, 0.f, static_cast<float>(levelBounds.y));
-
+    // Apply new position
     SetCenter(m_Position);
     m_Sprite.setPosition(m_Position);
+}
+
+void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)
+{
+    if (m_BoundingBox.left < minBoundX) 
+    {
+        m_Position.x = minBoundX + (m_BoundingBox.height / 2);
+        m_Velocity.x = 0.f;
+    } 
+    else if (m_BoundingBox.left + m_BoundingBox.width > maxBoundX)
+    {
+        m_Position.x = maxBoundX - (m_BoundingBox.height / 2);
+        m_Velocity.x = 0.f;
+    } 
+    else if (m_BoundingBox.top < minBoundY)
+    {
+        m_Position.y = minBoundY + (m_BoundingBox.height / 2);
+        m_Velocity.y = 0.f;
+    }
+    else if (m_BoundingBox.top + m_BoundingBox.height > maxBoundY)
+    {
+        m_Position.y = maxBoundY - (m_BoundingBox.height / 2);
+        m_Velocity.y = 0.f;
+    }
 }
