@@ -89,6 +89,12 @@
     <ClCompile Include="Engine\Resources\TextureManager.cpp">
       <Filter>Engine\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Event\Event.cpp">
+      <Filter>Engine\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Event\EventManager.cpp">
+      <Filter>Engine\Event</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -175,6 +181,15 @@
     </ClInclude>
     <ClInclude Include="Engine\Resources\TextureManager.h">
       <Filter>Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\Event.h">
+      <Filter>Engine\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\EventManager.h">
+      <Filter>Engine\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\EventType.h">
+      <Filter>Engine\Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 
 #include <Engine/Game.h>
 #include <Engine/Collision/Collision.h>
+#include <Engine/Event/EventManager.h>
 #include <Engine/Resources/TextureManager.h>
 #include <Engine/Input/InputManager.h>
 
@@ -21,3 +22,4 @@
 #include <cmath>
 #include <algorithm>
 #include <typeinfo> 
+#include <functional>
