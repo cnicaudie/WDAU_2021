@@ -1,8 +1,8 @@
 #include <stdafx.h>
 #include <Engine/Game.h>
-#include <Engine/Input/MouseBinding.h>
-#include <Engine/Input/KeyboardBinding.h>
-#include <Engine/Input/JoystickButtonBinding.h>
+#include <Engine/Input/Bindings/MouseBinding.h>
+#include <Engine/Input/Bindings/KeyboardBinding.h>
+#include <Engine/Input/Bindings/JoystickButtonBinding.h>
 
 static constexpr float APP_MAX_FRAMERATE{ 60.0f };
 static const sf::Vector2u APP_INIT_WINDOW_SIZE{ 1024, 768 };

@@ -2,7 +2,7 @@
 
 #include <set>
 #include <Game/Action.h>
-#include <Engine/Input/Binding.h>
+#include <Engine/Input/Bindings/Binding.h>
 
 class InputManager 
 {

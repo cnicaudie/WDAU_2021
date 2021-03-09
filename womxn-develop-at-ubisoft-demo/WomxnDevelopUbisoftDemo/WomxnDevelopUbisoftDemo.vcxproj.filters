@@ -32,16 +32,7 @@
     <ClCompile Include="Engine\TextureManager.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\Binding.cpp">
-      <Filter>Engine\Input</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Input\InputManager.cpp">
-      <Filter>Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Input\MouseBinding.cpp">
-      <Filter>Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Input\KeyboardBinding.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="Game\LevelManager.cpp">
@@ -86,8 +77,17 @@
     <ClCompile Include="Game\Camera\CameraManager.cpp">
       <Filter>Game\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\JoystickButtonBinding.cpp">
-      <Filter>Engine\Input</Filter>
+    <ClCompile Include="Engine\Input\Bindings\Binding.cpp">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\Bindings\JoystickButtonBinding.cpp">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\Bindings\KeyboardBinding.cpp">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\Bindings\MouseBinding.cpp">
+      <Filter>Engine\Input\Bindings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,16 +116,7 @@
     <ClInclude Include="Game\Action.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Input\Binding.h">
-      <Filter>Engine\Input</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Input\InputManager.h">
-      <Filter>Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Input\MouseBinding.h">
-      <Filter>Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Input\KeyboardBinding.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="Game\LevelManager.h">
@@ -173,8 +164,17 @@
     <ClInclude Include="Game\Camera\CameraManager.h">
       <Filter>Game\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Input\JoystickButtonBinding.h">
-      <Filter>Engine\Input</Filter>
+    <ClInclude Include="Engine\Input\Bindings\Binding.h">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\Bindings\JoystickButtonBinding.h">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\Bindings\KeyboardBinding.h">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\Bindings\MouseBinding.h">
+      <Filter>Engine\Input\Bindings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +210,9 @@
     </Filter>
     <Filter Include="Game\Camera">
       <UniqueIdentifier>{4017dea4-0587-42c6-99e5-011a05bd8c70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input\Bindings">
+      <UniqueIdentifier>{55fc511f-c23c-4c08-a1e9-e773c44decb5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
 #include <stdafx.h>
 #include "InputManager.h"
-#include <Engine/Input/KeyboardBinding.h>
-#include <Engine/Input/MouseBinding.h>
-#include <Engine/Input/JoystickButtonBinding.h>
+#include <Engine/Input/Bindings/KeyboardBinding.h>
+#include <Engine/Input/Bindings/MouseBinding.h>
+#include <Engine/Input/Bindings/JoystickButtonBinding.h>
 
 InputManager::InputManager() 
 	: m_MousePosition()
