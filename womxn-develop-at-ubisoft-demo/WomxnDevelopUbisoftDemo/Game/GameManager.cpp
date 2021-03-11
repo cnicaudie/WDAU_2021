@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "GameManager.h"
 
+
 GameManager* GameManager::m_GameManager = nullptr;
 
 GameManager* GameManager::GetInstance() 
@@ -21,7 +22,10 @@ GameManager::GameManager()
     , m_Player{ m_InputManager, m_TextureManager }
     , m_CameraManager { &m_Window, &m_Player }
     , m_IsGameOver{ false }
-{}
+{
+    EventHandler<GameManager>* handler = new EventHandler<GameManager>(this, &GameManager::StartEndGame);
+    EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), handler);
+}
 
 GameManager::~GameManager()
 {
@@ -38,6 +42,7 @@ void GameManager::Update(float deltaTime)
         m_LevelManager.Update(deltaTime);
         m_CameraManager.Update(deltaTime);
     }
+    EventManager::GetInstance()->Update(deltaTime);
 }
 
 void GameManager::Render(sf::RenderTarget& target)
@@ -90,4 +95,10 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
     }
 
     ImGui::End();
+}
+
+void GameManager::StartEndGame()
+{
+    std::cout << "GameManager end game" << std::endl;
+    m_IsGameOver = true;
 }

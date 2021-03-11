@@ -210,7 +210,9 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Collision\Collision.cpp" />
     <ClCompile Include="Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="Engine\Event\Event.cpp" />
+    <ClCompile Include="Engine\Event\EventHandler.cpp" />
     <ClCompile Include="Engine\Event\EventManager.cpp" />
+    <ClCompile Include="Engine\Event\IEventHandler.cpp" />
     <ClCompile Include="Engine\Game.cpp" />
     <ClCompile Include="Engine\Input\InputManager.cpp" />
     <ClCompile Include="Engine\Input\Bindings\Binding.cpp" />
@@ -241,8 +243,10 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Collision\Collision.h" />
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Engine\Event\Event.h" />
+    <ClInclude Include="Engine\Event\EventHandler.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />
     <ClInclude Include="Engine\Event\EventType.h" />
+    <ClInclude Include="Engine\Event\IEventHandler.h" />
     <ClInclude Include="Engine\Game.h" />
     <ClInclude Include="Engine\Input\InputManager.h" />
     <ClInclude Include="Engine\Input\Bindings\Binding.h" />

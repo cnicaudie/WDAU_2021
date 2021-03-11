@@ -21,5 +21,4 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
-#include <typeinfo> 
-#include <functional>
+#include <typeinfo>

@@ -20,6 +20,9 @@ Door::Door(float xCenterPos, float yCenterPos, float width, float height)
 	m_Rectangle.setFillColor(sf::Color(0, 0, 0, 0));
 	m_Rectangle.setOutlineThickness(5);
 	m_Rectangle.setOutlineColor(sf::Color{ static_cast<uint8_t>(m_rColor * 255.0f), static_cast<uint8_t>(m_gColor * 255.0f), static_cast<uint8_t>(m_bColor * 255.0f) });
+
+	EventHandler<Door>* handler = new EventHandler<Door>(this, &Door::StartEndGame);
+	EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), handler);
 }
 
 Door::~Door()
@@ -50,15 +53,14 @@ void Door::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void Door::OnTrigger(const BoxCollideable* other)
 {
 	if (typeid(*other) == typeid(class Player) && !m_IsPlayingEndGame)
-	{
-		std::cout << "Walk through door !" << std::endl;
-		StartEndGame();
-		GameManager::GetInstance()->StartEndGame();
+	{	
+		EventManager::GetInstance()->Fire(Event(GAME_OVER));
 	}
 }
 
 void Door::StartEndGame()
 {
+	std::cout << "Walk through door !" << std::endl;
 	m_IsPlayingEndGame = true;
 
 	m_rColor = 0.25f;

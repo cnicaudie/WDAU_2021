@@ -1,5 +1,6 @@
 #pragma once
-#include <Engine/Event/Event.h>
+#include "Event.h"
+#include "IEventHandler.h"
 
 class EventManager 
 {
@@ -9,11 +10,11 @@ public:
 	void operator=(const EventManager& gameManager) = delete;
 
 	void Update(float deltaTime);
+
+	void AddListener(const Event& eventType, IEventHandler* newEventHandler);
+	void RemoveListener(const Event& eventType, IEventHandler* newEventHandler);
 	
-	template<typename T>
-	void AddListener(const std::function<void(const T& listener, const Event&)>& function);
-	//void RemoveListener(const std::function<void(const Event&)>& function); 
-	void Fire(const Event& event);
+	void Fire(const Event& eventType);
 
 private:
 	EventManager();
@@ -21,5 +22,6 @@ private:
 
 	static EventManager* m_EventManager; // Singleton instance
 
-	std::map<EventType, std::vector<const std::function<void(const Event&)>>> m_EventListeners;
+	std::map<EventType, std::vector<IEventHandler*>> m_EventListeners;
+	std::vector<EventType> m_EventsToFire;
 };

@@ -4,12 +4,7 @@
 class Event
 {
 public:
-	Event();
-
-	inline void Fire()
-	{
-		EventManager::GetInstance()->Fire(*this);
-	};
+	Event(EventType eventType) : m_EventType(eventType) {};
 
 	inline const EventType GetType() const { return m_EventType; };
 
