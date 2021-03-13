@@ -10,10 +10,11 @@ public:
 	
 	void Update(float deltaTime) override;
 	void OnCollision(BoxCollideable* other) override;
+	void OnTrigger(BoxCollideable* other) override;
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	std::vector<Bullet>& GetBullets() { return m_Bullets; };
+	inline const int GetNumberOfCollectedSoulChunks() { return m_SoulChunksCollected; };
 
 private:
 	void UpdateShootingCooldown(float deltaTime);
@@ -27,9 +28,10 @@ private:
 
 	std::shared_ptr<InputManager> m_InputManager;
 	
+	std::vector<Bullet> m_Bullets;
 	bool m_CanShoot;
 	float m_ShootCooldown;
 	int m_AmmunitionsNumber;
 
-	std::vector<Bullet> m_Bullets;
+	int m_SoulChunksCollected;
 };

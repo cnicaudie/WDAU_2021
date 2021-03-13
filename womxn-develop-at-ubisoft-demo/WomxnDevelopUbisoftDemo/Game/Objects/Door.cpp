@@ -52,7 +52,9 @@ void Door::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Door::OnTrigger(BoxCollideable* other)
 {
-	if (typeid(*other) == typeid(class Player) && !m_IsPlayingEndGame)
+	Player* player = dynamic_cast<Player*>(other);
+
+	if (player != nullptr && player->GetNumberOfCollectedSoulChunks() == 1 && !m_IsPlayingEndGame)
 	{	
 		EventManager::GetInstance()->Fire(Event(GAME_OVER));
 	}

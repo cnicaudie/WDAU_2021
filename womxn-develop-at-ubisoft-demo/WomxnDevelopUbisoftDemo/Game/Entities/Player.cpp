@@ -1,14 +1,16 @@
 #include <stdafx.h>
 #include "Player.h"
 #include <Game/Map/CollideableTile.h>
+#include <Game/Objects/SoulChunk.h>
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : Entity(textureManager, { 50.f, 50.f }, 200)
     , m_InputManager{ inputManager }
+    , m_Bullets{}
     , m_CanShoot(true)
     , m_ShootCooldown(5.f)
     , m_AmmunitionsNumber(10)
-    , m_Bullets{}
+    , m_SoulChunksCollected(0)
 {
     sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("PLAYER");
 
@@ -89,6 +91,17 @@ void Player::OnCollision(BoxCollideable* other)
             m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
             //std::cout << "Right collision" << std::endl;
         }
+    }
+}
+
+void Player::OnTrigger(BoxCollideable* other)
+{
+    SoulChunk* soulChunk = dynamic_cast<SoulChunk*>(other);
+
+    if (soulChunk != nullptr && !soulChunk->WasCollected())
+    {
+        std::cout << "Player collected Soul Chunk" << std::endl;
+        m_SoulChunksCollected += 1;
     }
 }
 

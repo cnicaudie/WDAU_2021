@@ -42,6 +42,7 @@ void GameManager::Update(float deltaTime)
         m_LevelManager.Update(deltaTime);
         m_CameraManager.Update(deltaTime);
     }
+
     EventManager::GetInstance()->Update(deltaTime);
 }
 
