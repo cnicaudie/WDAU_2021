@@ -37,7 +37,7 @@ void Enemy::Update(float deltaTime)
 	}
 }
 
-void Enemy::OnCollision(const BoxCollideable* other)
+void Enemy::OnCollision(BoxCollideable* other)
 {
 	if (typeid(*other) == typeid(class Bullet) && !m_WasDamaged)
 	{

@@ -47,7 +47,7 @@ void Player::Update(float deltaTime)
     }
 }
 
-void Player::OnCollision(const BoxCollideable* other)
+void Player::OnCollision(BoxCollideable* other)
 {
     sf::FloatRect otherCollider = other->GetBoundingBox();
 

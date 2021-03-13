@@ -8,7 +8,7 @@ public:
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	void OnTrigger(const BoxCollideable* other) override;
+	void OnTrigger(BoxCollideable* other) override;
 
 	void StartEndGame();
 	inline const bool IsPlayingEndGame() const { return m_IsPlayingEndGame; };

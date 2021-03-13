@@ -4,12 +4,12 @@ class BoxCollideable
 {
 
 public:
-    virtual void OnCollision(const BoxCollideable* other)
+    virtual void OnCollision(BoxCollideable * other)
     { 
         // TODO
     };
 
-    virtual void OnTrigger(const BoxCollideable* other)
+    virtual void OnTrigger(BoxCollideable * other)
     {
         // TODO
     };

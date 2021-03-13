@@ -35,7 +35,7 @@ void SoulChunk::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_Sprite);
 }
 
-void SoulChunk::OnTrigger(const BoxCollideable* other)
+void SoulChunk::OnTrigger(BoxCollideable* other)
 {
 	if (typeid(*other) == typeid(class Player) && !m_WasCollected)
 	{

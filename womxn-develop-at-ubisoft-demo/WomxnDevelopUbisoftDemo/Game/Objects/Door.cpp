@@ -50,7 +50,7 @@ void Door::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_Rectangle);
 }
 
-void Door::OnTrigger(const BoxCollideable* other)
+void Door::OnTrigger(BoxCollideable* other)
 {
 	if (typeid(*other) == typeid(class Player) && !m_IsPlayingEndGame)
 	{	

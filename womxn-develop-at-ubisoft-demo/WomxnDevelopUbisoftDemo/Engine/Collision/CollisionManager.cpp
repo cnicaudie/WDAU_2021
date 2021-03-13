@@ -44,14 +44,14 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
                 {
                     if (otherCollideable->IsTrigger()) 
                     {
+                        collideable->OnTrigger(static_cast<BoxCollideable*>(otherCollideable));
                         otherCollideable->OnTrigger(collideable);
-                        collideable->OnTrigger(static_cast<const BoxCollideable*>(otherCollideable));
                     } 
                     else 
                     {
                         //hasCollided = true;
+                        collideable->OnCollision(static_cast<BoxCollideable*>(otherCollideable));
                         otherCollideable->OnCollision(collideable);
-                        collideable->OnCollision(static_cast<const BoxCollideable*>(otherCollideable));
                     }
                 }
             }
@@ -60,8 +60,8 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
         else if (quadBoundingBox.intersects(tile->GetBoundingBox())) 
         {
             hasCollided = true;
+            collideable->OnCollision(static_cast<BoxCollideable*>(tile.get()));
             //tile->OnCollision(collideable);
-            collideable->OnCollision(static_cast<const BoxCollideable*>(tile.get()));
         }
     }
     return hasCollided;

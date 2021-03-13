@@ -8,7 +8,7 @@ public:
 	Enemy(const std::shared_ptr<TextureManager>& textureManager);
 
 	void Update(float deltaTime) override;
-	void OnCollision(const BoxCollideable* other) override;
+	void OnCollision(BoxCollideable* other) override;
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 

@@ -40,7 +40,7 @@ void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_Sprite);
 }
 
-void Bullet::OnCollision(const BoxCollideable* other)
+void Bullet::OnCollision(BoxCollideable* other)
 {
 	if (!m_HadImpact) 
 	{
