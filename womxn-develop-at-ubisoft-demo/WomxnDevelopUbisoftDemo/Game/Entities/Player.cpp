@@ -15,9 +15,9 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     m_Sprite.setTexture(textureManager->GetTextureFromName("PLAYER"));
     m_Sprite.setOrigin(textureSize * 0.5f);
     m_Sprite.setPosition(m_Position);
-    m_Sprite.setScale(0.5f, 0.5f);
+    //m_Sprite.setScale(0.5f, 0.5f);
 
-    SetBoundingBox(m_Position, textureSize * 0.5f);
+    SetBoundingBox(m_Position, textureSize);
 }
 
 void Player::Update(float deltaTime)
@@ -32,14 +32,18 @@ void Player::Update(float deltaTime)
         Shoot();
     }
     
+    // TODO : Manage the crouch/squeeze feature differently (scaling is not ideal)
     if (m_InputManager->HasAction(Action::SQUEEZE))
     {
-        m_Sprite.setScale(0.25f, 0.25f);
-        // TODO : Adapt the bounding box
-    }
+        m_Sprite.setScale(0.8f, 0.8f);
+        sf::Vector2f textureSize = m_TextureManager->GetTextureSizeFromName("PLAYER");
+        SetBoundingBox(m_Position, textureSize * 0.8f);
+    } 
     else
     {
-        m_Sprite.setScale(0.5f, 0.5f);
+        m_Sprite.setScale(1.f, 1.f);
+        sf::Vector2f textureSize = m_TextureManager->GetTextureSizeFromName("PLAYER");
+        SetBoundingBox(m_Position, textureSize);
     }
 }
 

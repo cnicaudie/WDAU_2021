@@ -40,7 +40,7 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
             for (BoxCollideable* otherCollideable : tile->GetCollideablesOnTile()) 
             {
                 // Check collision with collideables on tile
-                if (otherCollideable->Contains(collideable->GetCenter()))
+                if (collideable->Contains(otherCollideable->GetCenter()))
                 {
                     if (otherCollideable->IsTrigger()) 
                     {

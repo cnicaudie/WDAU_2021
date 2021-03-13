@@ -5,7 +5,7 @@ TextureManager::TextureManager()
 {
 	sf::Texture player, enemy, bullet;
 	
-	player.loadFromFile(".\\Assets\\blue_ball.bmp");
+	player.loadFromFile(".\\Assets\\Skeleton.png");
 	enemy.loadFromFile(".\\Assets\\blue_ball.bmp");
 	bullet.loadFromFile(".\\Assets\\red_ball.bmp");
 
