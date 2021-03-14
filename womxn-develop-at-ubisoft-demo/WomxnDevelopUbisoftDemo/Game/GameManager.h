@@ -30,6 +30,8 @@ private:
     GameManager();
     ~GameManager();
 
+    //====================//
+
     static GameManager* m_GameManager; // Singleton instance
 
     std::shared_ptr<TextureManager> m_TextureManager;

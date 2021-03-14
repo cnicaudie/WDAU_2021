@@ -25,20 +25,16 @@ private:
     void CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv);
     void CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize);
     
-    // ==== Map attributes
+    //====================//
     
     MapGrid m_MapGrid;
-
     sf::Texture m_TileSet;
     sf::VertexArray m_BackgroundTileMap;
 
-    // ==== Other objects on the map
+    // ==== Other objects / entities on the map
     
     std::vector<SoulChunk> m_SoulChunks;
     Door m_Door;
-
-    // ==== Entities
-
     std::vector<Enemy> m_Enemies;
 
 };

@@ -61,6 +61,8 @@ protected:
 
     inline void SetTrigger(bool isTrigger) { m_IsTrigger = isTrigger; };
 
+    //====================//
+
     sf::FloatRect m_BoundingBox;
     bool m_IsTrigger;
 };

@@ -17,6 +17,8 @@ public:
 private:
 	const std::vector<int> GetLevel(const int levelNumber);
 
+	//====================//
+
 	std::shared_ptr<TextureManager> m_TextureManager;
 	Map m_Map;
 

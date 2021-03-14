@@ -15,6 +15,8 @@ protected:
     virtual void Render(sf::RenderTarget& target) = 0;
     virtual void RenderDebugMenu(sf::RenderTarget& target) = 0;
 
+    //====================//
+
     sf::RenderWindow m_Window;
     std::shared_ptr<InputManager> m_InputManager;
 };

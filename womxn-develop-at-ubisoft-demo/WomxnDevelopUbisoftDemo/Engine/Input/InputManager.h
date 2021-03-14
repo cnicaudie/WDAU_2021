@@ -37,6 +37,8 @@ private:
 		return value;
 	}
 
+	//====================//
+
 	std::set<Action> m_CurrentActions;
 	std::map<Action, std::vector<std::shared_ptr<Binding>>> m_ActionBinding;
 

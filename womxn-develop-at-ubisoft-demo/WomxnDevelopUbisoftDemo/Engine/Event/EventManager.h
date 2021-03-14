@@ -20,6 +20,8 @@ private:
 	EventManager();
 	~EventManager();
 
+	//====================//
+
 	static EventManager* m_EventManager; // Singleton instance
 
 	std::map<EventType, std::vector<IEventHandler*>> m_EventListeners;
