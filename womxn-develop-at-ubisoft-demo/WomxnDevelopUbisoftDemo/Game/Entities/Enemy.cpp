@@ -3,16 +3,13 @@
 #include <Game/Objects/Bullet.h>
 
 Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
-	: Entity(textureManager, { 300.0f, 80.0f }, 50)
-	, m_WasDamaged(false)
-	, m_DamageCooldown(2.f)
+	: Entity(textureManager, { 300.0f, 80.0f }, 50, 0.3f)
 {
 	sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("ENEMY");
 
 	m_Sprite.setTexture(textureManager->GetTextureFromName("ENEMY"));
 	m_Sprite.setOrigin(textureSize * 0.5f);
 	m_Sprite.setPosition(m_Position);
-	m_Sprite.setColor(sf::Color::Green);
 
 	SetBoundingBox(m_Position, textureSize);
 }
@@ -24,17 +21,7 @@ void Enemy::Update(float deltaTime)
 		return;
 	}
 	
-	if (m_WasDamaged) 
-	{
-		if (m_DamageCooldown >= 0.3f) {
-			m_WasDamaged = false;
-			m_Sprite.setColor(sf::Color::Green);
-		}
-		else
-		{
-			m_DamageCooldown += 1.f * deltaTime;
-		}
-	}
+	UpdateDamageCooldown(deltaTime);
 }
 
 void Enemy::OnCollision(BoxCollideable* other)
@@ -52,7 +39,7 @@ void Enemy::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Enemy::Damage() 
 {
-	std::cout << "Damaged enemy !" << std::endl;
+	std::cout << "Enemy was damaged !" << std::endl;
 	m_Sprite.setColor(sf::Color::Red);
 	m_DamageCooldown = 0.f;
 	m_WasDamaged = true;

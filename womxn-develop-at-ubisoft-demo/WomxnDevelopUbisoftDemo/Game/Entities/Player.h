@@ -16,6 +16,9 @@ public:
 
 	inline const int GetNumberOfCollectedSoulChunks() { return m_SoulChunksCollected; };
 
+protected:
+	void Damage() override;
+
 private:
 	void UpdateShootingCooldown(float deltaTime);
 	void UpdateBullets(float deltaTime);

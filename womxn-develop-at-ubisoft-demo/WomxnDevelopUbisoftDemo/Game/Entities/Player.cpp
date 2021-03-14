@@ -1,10 +1,11 @@
 #include <stdafx.h>
 #include "Player.h"
+#include "Enemy.h"
 #include <Game/Map/CollideableTile.h>
 #include <Game/Objects/SoulChunk.h>
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
-    : Entity(textureManager, { 50.f, 50.f }, 200)
+    : Entity(textureManager, { 50.f, 50.f }, 200, 1.0f)
     , m_InputManager{ inputManager }
     , m_Bullets{}
     , m_CanShoot(true)
@@ -30,6 +31,8 @@ void Player::Update(float deltaTime)
     
     UpdateBullets(deltaTime);
 
+    UpdateDamageCooldown(deltaTime);
+
     if (m_InputManager->HasAction(Action::SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0) {
         Shoot();
     }
@@ -52,6 +55,11 @@ void Player::Update(float deltaTime)
 void Player::OnCollision(BoxCollideable* other)
 {
     sf::FloatRect otherCollider = other->GetBoundingBox();
+
+    if (typeid(*other) == typeid(class Enemy) && !m_WasDamaged)
+    {
+        Damage();
+    }
 
     if (typeid(*other) == typeid(class CollideableTile))
     {
@@ -102,6 +110,22 @@ void Player::OnTrigger(BoxCollideable* other)
     {
         std::cout << "Player collected Soul Chunk" << std::endl;
         m_SoulChunksCollected += 1;
+    }
+}
+
+void Player::Damage()
+{
+    std::cout << "Player was damaged !" << std::endl;
+    m_Sprite.setColor(sf::Color::Red);
+    m_DamageCooldown = 0.f;
+    m_WasDamaged = true;
+    m_HealthPoints -= 10;
+
+    if (m_HealthPoints == 0)
+    {
+        m_IsDead = true;
+        std::cout << "Player died !" << std::endl;
+        // TODO : Fire event player died ?
     }
 }
 

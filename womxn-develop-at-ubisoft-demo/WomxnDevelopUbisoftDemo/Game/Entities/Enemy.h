@@ -12,9 +12,6 @@ public:
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	void Damage(); // TODO : Move in Entity class ?
-
-private:
-	bool m_WasDamaged;
-	float m_DamageCooldown;
+protected:
+	void Damage() override;
 };
