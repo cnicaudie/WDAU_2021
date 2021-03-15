@@ -37,4 +37,6 @@ private:
 	int m_AmmunitionsNumber;
 
 	int m_SoulChunksCollected;
+
+	bool m_IsClimbing;
 };

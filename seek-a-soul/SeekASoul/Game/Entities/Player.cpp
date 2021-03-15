@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include <Game/Map/CollideableTile.h>
+#include <Game/Map/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
@@ -12,6 +13,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_ShootCooldown(5.f)
     , m_AmmunitionsNumber(10)
     , m_SoulChunksCollected(0)
+    , m_IsClimbing(false)
 {
     sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("PLAYER");
 
@@ -111,6 +113,23 @@ void Player::OnTrigger(BoxCollideable* other)
         std::cout << "Player collected Soul Chunk" << std::endl;
         m_SoulChunksCollected += 1;
     }
+
+    if (typeid(*other).name() == typeid(class ClimbableTile).name())
+    {
+        if (!m_IsClimbing) 
+        {
+            std::cout << "Player is climbing" << std::endl;
+            m_IsClimbing = true;
+        }
+    }
+    else if (m_IsClimbing)
+    {
+        std::cout << "Player is not climbing anymore" << std::endl;
+        m_IsClimbing = false;
+        // TODO : Manage an up force when the player is all the way up of the ladder
+        // TODO : Or allow him to have one jump after climbing
+        //m_Velocity.y = -400.f;
+    }
 }
 
 void Player::Damage()
@@ -186,6 +205,9 @@ void Player::Move(float deltaTime)
 {
     const float SPEED_MAX = 200.0f;
     const float SPEED_INC = 10.0f;
+    const float JUMP_FORCE = 400.0f;
+    const float CLIMB_SPEED = 100.0f;
+
     const float DEAD_ZONE = 5.0f;
     const float SLOWDOWN_RATE = 0.9f;
     const float GRAVITY = 9.8f;
@@ -195,10 +217,25 @@ void Player::Move(float deltaTime)
     m_Velocity.y += GRAVITY;
     m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, SPEED_INC, SPEED_MAX, SLOWDOWN_RATE, DEAD_ZONE);
 
-    if (m_InputManager->HasAction(Action::JUMP) && m_IsGrounded)
+    // Resets the velocity if climbing 
+    // (we don't want the player to fall down the ladder if he's not giving any input)
+    if (m_IsClimbing) 
     {
-        m_IsGrounded = false;
-        m_Velocity.y = -400.0f;
+        m_Velocity.y = 0.f;
+    }
+
+    if (m_InputManager->HasAction(Action::JUMP))
+    {
+        if (m_IsGrounded) 
+        {
+            m_Velocity.y = -JUMP_FORCE;
+            m_IsGrounded = false;
+        } 
+        else if (m_IsClimbing)
+        {
+            // TODO : Allow the player to go down the ladder
+            m_Velocity.y = -CLIMB_SPEED;
+        }
     }
 
     // Check movement on X axis
@@ -214,7 +251,7 @@ void Player::Move(float deltaTime)
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
-        // Uncomment next line to avoid 1 jump when falling
+        // Uncomment next line to avoid 1 jump when falling off a platform
         //m_IsGrounded = false;
     }
     
