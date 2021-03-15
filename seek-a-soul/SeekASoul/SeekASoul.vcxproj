@@ -234,6 +234,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Resources\TextureManager.cpp" />
     <ClCompile Include="Game\Camera\CameraManager.cpp" />
     <ClCompile Include="Game\Entities\Entity.cpp" />
+    <ClCompile Include="Game\Map\ClimbableTile.cpp" />
     <ClCompile Include="Game\Map\MapGrid.cpp" />
     <ClCompile Include="Game\Objects\Bullet.cpp" />
     <ClCompile Include="Game\Objects\Door.cpp" />
@@ -269,6 +270,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Action.h" />
     <ClInclude Include="Game\Camera\CameraManager.h" />
     <ClInclude Include="Game\Entities\Entity.h" />
+    <ClInclude Include="Game\Map\ClimbableTile.h" />
     <ClInclude Include="Game\Map\MapGrid.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
     <ClInclude Include="Game\Objects\Door.h" />

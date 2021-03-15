@@ -101,6 +101,9 @@
     <ClCompile Include="Engine\Event\IEventHandler.cpp">
       <Filter>Engine\Event</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Map\ClimbableTile.cpp">
+      <Filter>Game\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Event\IEventHandler.h">
       <Filter>Engine\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\ClimbableTile.h">
+      <Filter>Game\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "Map.h"
 #include "CollideableTile.h"
+#include "ClimbableTile.h"
 
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 
@@ -158,6 +159,17 @@ void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLin
     case TileType::CONCRETE:
     {
         tileLine.push_back(std::make_shared<CollideableTile>
+            (static_cast<float>(xCenter)
+                , static_cast<float>(yCenter)
+                , static_cast<float>(TILE_SIZE.x)
+                , static_cast<float>(TILE_SIZE.y)
+                ));
+        break;
+    }
+
+    case TileType::LADDER:
+    {
+        tileLine.push_back(std::make_shared<ClimbableTile>
             (static_cast<float>(xCenter)
                 , static_cast<float>(yCenter)
                 , static_cast<float>(TILE_SIZE.x)

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Tile.h"
 #include <Game/Map/MapGrid.h>
 #include <Game/Objects/SoulChunk.h>
