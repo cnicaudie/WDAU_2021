@@ -268,12 +268,12 @@ void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoun
 {
     if (m_BoundingBox.left < minBoundX) 
     {
-        m_Position.x = minBoundX + (m_BoundingBox.height / 2);
+        m_Position.x = minBoundX + (m_BoundingBox.width / 2);
         m_Velocity.x = 0.f;
     } 
     else if (m_BoundingBox.left + m_BoundingBox.width > maxBoundX)
     {
-        m_Position.x = maxBoundX - (m_BoundingBox.height / 2);
+        m_Position.x = maxBoundX - (m_BoundingBox.width / 2);
         m_Velocity.x = 0.f;
     } 
     else if (m_BoundingBox.top < minBoundY)
