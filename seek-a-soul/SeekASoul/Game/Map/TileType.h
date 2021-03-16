@@ -1,3 +1,3 @@
 #pragma once
 
-enum TileType { GRASS, LADDER, TREE, CONCRETE, EMPTY };
+enum TileType { EMPTY, CONCRETE, LADDER, WATER, LAVA };

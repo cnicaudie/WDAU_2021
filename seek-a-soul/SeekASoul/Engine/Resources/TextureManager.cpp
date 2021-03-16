@@ -14,7 +14,7 @@ TextureManager::TextureManager()
 	m_Textures.emplace("BULLET", bullet);
 
 	sf::Texture tileset;
-	tileset.loadFromFile(".\\Assets\\tileset_test.png");
+	tileset.loadFromFile(".\\Assets\\Tileset_Basic.png");
 	m_Textures.emplace("TILESET", tileset);
 
 	std::cout << "Texture manager created !" << std::endl;
