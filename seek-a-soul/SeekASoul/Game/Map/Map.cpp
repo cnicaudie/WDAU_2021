@@ -10,7 +10,7 @@ Map::Map(const std::shared_ptr<TextureManager>& textureManager)
     , m_MapGrid(TILE_SIZE)
     , m_Door{ 1200, 120, 50, 100 }
 {
-    m_SoulChunks.emplace_back(m_TileSet, sf::Vector2f(336.f, 208.f));
+    m_SoulChunks.emplace_back(textureManager, sf::Vector2f(336.f, 208.f));
     m_Enemies.emplace_back(textureManager);
     std::cout << "Map created !" << std::endl;
 }

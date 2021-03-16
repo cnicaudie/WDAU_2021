@@ -3,15 +3,16 @@
 #include <Game/Objects/Bullet.h>
 
 Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
-	: Entity(textureManager, { 300.0f, 80.0f }, 50, 0.3f)
+	: Entity(textureManager, { 320.0f, 65.0f }, 50, 0.3f)
 {
 	sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("ENEMY");
 
 	m_Sprite.setTexture(textureManager->GetTextureFromName("ENEMY"));
 	m_Sprite.setOrigin(textureSize * 0.5f);
 	m_Sprite.setPosition(m_Position);
+	m_Sprite.setScale(0.8f, 0.8f);
 
-	SetBoundingBox(m_Position, textureSize);
+	SetBoundingBox(m_Position, textureSize * 0.8f);
 }
 
 void Enemy::Update(float deltaTime) 

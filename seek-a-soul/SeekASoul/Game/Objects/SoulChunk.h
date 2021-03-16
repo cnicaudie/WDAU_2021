@@ -3,7 +3,7 @@
 class SoulChunk : public sf::Drawable, public BoxCollideable 
 {
 public:
-	SoulChunk(const sf::Texture& texture, const sf::Vector2f pos);
+	SoulChunk(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f pos);
 	~SoulChunk();
 
 	void Update(float deltaTime);
