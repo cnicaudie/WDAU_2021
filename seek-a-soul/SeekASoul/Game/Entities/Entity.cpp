@@ -14,26 +14,3 @@ Entity::Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::
 {
     SetTrigger(false);
 }
-
-void Entity::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    if (!m_IsDead)
-    {
-        target.draw(m_Sprite);
-    }
-}
-
-void Entity::UpdateDamageCooldown(float deltaTime)
-{
-    if (m_WasDamaged)
-    {
-        if (m_DamageCooldown >= m_DamageCooldownRelease) {
-            m_WasDamaged = false;
-            m_Sprite.setColor(sf::Color::White);
-        }
-        else
-        {
-            m_DamageCooldown += 1.f * deltaTime;
-        }
-    }
-}

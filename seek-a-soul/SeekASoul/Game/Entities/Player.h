@@ -20,6 +20,7 @@ public:
 
 protected:
 	void Damage() override;
+	void UpdateDamageCooldown(float deltaTime) override;
 
 private:
 	void UpdateShootingCooldown(float deltaTime);

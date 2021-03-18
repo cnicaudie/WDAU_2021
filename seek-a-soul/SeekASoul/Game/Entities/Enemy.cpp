@@ -35,7 +35,10 @@ void Enemy::OnCollision(BoxCollideable* other)
 
 void Enemy::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
-	Entity::draw(target, states);
+	if (!m_IsDead)
+	{
+		target.draw(m_Sprite);
+	}
 }
 
 void Enemy::Damage() 
@@ -50,5 +53,20 @@ void Enemy::Damage()
 	{
 		m_IsDead = true;
 		std::cout << "Enemy died !" << std::endl;
+	}
+}
+
+void Enemy::UpdateDamageCooldown(float deltaTime)
+{
+	if (m_WasDamaged)
+	{
+		if (m_DamageCooldown >= m_DamageCooldownRelease) {
+			m_WasDamaged = false;
+			m_Sprite.setColor(sf::Color::White);
+		}
+		else
+		{
+			m_DamageCooldown += 1.f * deltaTime;
+		}
 	}
 }

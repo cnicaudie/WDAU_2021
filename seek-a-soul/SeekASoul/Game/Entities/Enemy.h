@@ -14,4 +14,9 @@ public:
 
 protected:
 	void Damage() override;
+	virtual void UpdateDamageCooldown(float deltaTime) override;
+
+private:
+	sf::Sprite m_Sprite;
+
 };

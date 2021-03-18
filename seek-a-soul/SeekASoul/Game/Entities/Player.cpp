@@ -135,7 +135,7 @@ void Player::OnTrigger(BoxCollideable* other)
 void Player::Damage()
 {
     std::cout << "Player was damaged !" << std::endl;
-    m_Sprite.setColor(sf::Color::Red);
+    m_AnimationSprite.setColor(sf::Color::Red);
     m_DamageCooldown = 0.f;
     m_WasDamaged = true;
     m_HealthPoints -= 10;
@@ -145,6 +145,21 @@ void Player::Damage()
         m_IsDead = true;
         std::cout << "Player died !" << std::endl;
         // TODO : Fire event player died ?
+    }
+}
+
+void Player::UpdateDamageCooldown(float deltaTime)
+{
+    if (m_WasDamaged)
+    {
+        if (m_DamageCooldown >= m_DamageCooldownRelease) {
+            m_WasDamaged = false;
+            m_AnimationSprite.setColor(sf::Color::White);
+        }
+        else
+        {
+            m_DamageCooldown += 1.f * deltaTime;
+        }
     }
 }
 
