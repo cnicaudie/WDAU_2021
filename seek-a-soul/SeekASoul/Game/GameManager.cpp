@@ -15,7 +15,7 @@ GameManager* GameManager::GetInstance()
 }
 
 GameManager::GameManager()
-    : Game{ "Game Demo" }
+    : Game{ "Seek A Soul (WIP)" }
     , m_TextureManager{ std::make_shared<TextureManager>() }
     , m_UiManager{}
     , m_LevelManager { m_TextureManager }

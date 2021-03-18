@@ -219,7 +219,8 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Engine\Collision\Collision.cpp" />
+    <ClCompile Include="Engine\Animation\Animated.cpp" />
+    <ClCompile Include="Engine\Collision\BoxCollideable.cpp" />
     <ClCompile Include="Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="Engine\Event\Event.cpp" />
     <ClCompile Include="Engine\Event\EventHandler.cpp" />
@@ -253,7 +254,8 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\external\imgui-master\imgui.h" />
     <ClInclude Include="..\external\imgui-master\imgui_internal.h" />
     <ClInclude Include="..\external\imgui-sfml-master\imgui-SFML.h" />
-    <ClInclude Include="Engine\Collision\Collision.h" />
+    <ClInclude Include="Engine\Animation\Animated.h" />
+    <ClInclude Include="Engine\Collision\BoxCollideable.h" />
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Engine\Event\Event.h" />
     <ClInclude Include="Engine\Event\EventHandler.h" />

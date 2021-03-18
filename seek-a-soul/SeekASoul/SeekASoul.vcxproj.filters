@@ -41,7 +41,7 @@
     <ClCompile Include="Engine\Collision\CollisionManager.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Collision\Collision.cpp">
+    <ClCompile Include="Engine\Collision\BoxCollideable.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Game\Map\CollideableTile.cpp">
@@ -104,6 +104,9 @@
     <ClCompile Include="Game\Map\ClimbableTile.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Animation\Animated.cpp">
+      <Filter>Engine\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -143,7 +146,7 @@
     <ClInclude Include="Engine\Collision\CollisionManager.h">
       <Filter>Engine\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Collision\Collision.h">
+    <ClInclude Include="Engine\Collision\BoxCollideable.h">
       <Filter>Engine\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Game\Map\CollideableTile.h">
@@ -209,6 +212,9 @@
     <ClInclude Include="Game\Map\ClimbableTile.h">
       <Filter>Game\Map</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Animation\Animated.h">
+      <Filter>Engine\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -252,6 +258,9 @@
     </Filter>
     <Filter Include="Engine\Resources">
       <UniqueIdentifier>{30f1a4d7-bc5f-4429-8d25-41dbee585367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Animation">
+      <UniqueIdentifier>{c5a5fbe3-1e54-4cca-a9a5-4193c996712f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
