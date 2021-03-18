@@ -11,12 +11,21 @@ InputManager::InputManager()
 {
 	InitJoystick();
 
-	std::vector<std::shared_ptr<Binding>> jumpBinding{ 
+	// TODO : Make a default bindings file to parse at construction
+	std::vector<std::shared_ptr<Binding>> moveUpBinding{ 
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Up),
+		std::make_shared<KeyboardBinding>(sf::Keyboard::Z),
 		std::make_shared<JoystickButtonBinding>(0)
 	};
-	m_ActionBinding.emplace(Action::JUMP, jumpBinding);
+	m_ActionBinding.emplace(Action::MOVE_UP, moveUpBinding);
 	
+	std::vector<std::shared_ptr<Binding>> moveDownBinding{
+		std::make_shared<KeyboardBinding>(sf::Keyboard::Down),
+		std::make_shared<KeyboardBinding>(sf::Keyboard::S)
+		// TODO : Manage joystick
+	};
+	m_ActionBinding.emplace(Action::MOVE_DOWN, moveDownBinding);
+
 	std::vector<std::shared_ptr<Binding>> squeezeBinding{ 
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Space),
 		std::make_shared<JoystickButtonBinding>(1)

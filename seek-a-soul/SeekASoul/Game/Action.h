@@ -1,3 +1,3 @@
 #pragma once
 
-enum class Action { JUMP, SQUEEZE, SHOOT};
+enum class Action { MOVE_UP, MOVE_DOWN, SQUEEZE, SHOOT};

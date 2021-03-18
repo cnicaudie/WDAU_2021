@@ -123,9 +123,12 @@ void Player::OnTrigger(BoxCollideable* other)
     {
         std::cout << "Player is not climbing anymore" << std::endl;
         m_IsClimbing = false;
-        // TODO : Manage an up force when the player is all the way up of the ladder
-        // TODO : Or allow him to have one jump after climbing
-        //m_Velocity.y = -400.f;
+
+        // Player gets a little force when he jumps out of a ladder
+        if (m_InputManager->HasAction(Action::MOVE_UP)) 
+        {
+            m_Velocity.y = -300.f;
+        }
     }
 }
 
@@ -223,18 +226,22 @@ void Player::Move(float deltaTime)
         m_Velocity.y = 0.f;
     }
 
-    if (m_InputManager->HasAction(Action::JUMP))
+    if (m_InputManager->HasAction(Action::MOVE_UP))
     {
         if (m_IsGrounded) 
-        {
+        { // Jump
             m_Velocity.y = -JUMP_FORCE;
             m_IsGrounded = false;
         } 
         else if (m_IsClimbing)
-        {
-            // TODO : Allow the player to go down the ladder
+        { // Climb up
             m_Velocity.y = -CLIMB_SPEED;
         }
+    }
+    
+    if (m_InputManager->HasAction(Action::MOVE_DOWN) && m_IsClimbing)
+    { // Climb down
+        m_Velocity.y = CLIMB_SPEED;
     }
 
     // Check movement on X axis
@@ -243,6 +250,7 @@ void Player::Move(float deltaTime)
     {
         m_Position += tempVelocity * deltaTime;
 
+        // Manage current player state
         if (m_Velocity.x > 50.f)
         {
             m_CurrentState = PlayerState::MOVING_LR;
@@ -251,6 +259,8 @@ void Player::Move(float deltaTime)
         else if (m_Velocity.x < -50.f) 
         {
             m_CurrentState = PlayerState::MOVING_LR;
+
+            // Flip the player horizontally
             m_AnimationSprite.scale(-1.f, 1.f);
         } 
         else 
