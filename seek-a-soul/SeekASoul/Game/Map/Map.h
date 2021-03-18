@@ -10,7 +10,7 @@ class Map : public sf::Drawable, public sf::Transformable
 public:
     static const sf::Vector2u TILE_SIZE;
 
-    Map(const std::shared_ptr<TextureManager>& textureManager);
+    Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void Update(float deltaTime);
@@ -18,6 +18,7 @@ public:
 
     inline const std::vector<SoulChunk>& GetSoulChunks() const { return m_SoulChunks; };
     inline const MapGrid& GetMapGrid() const { return m_MapGrid; };
+    inline const Player& GetPlayer() const { return m_Player; };
 
 private:
     void LoadObjectsAndEntities();
@@ -34,6 +35,7 @@ private:
     
     std::vector<SoulChunk> m_SoulChunks;
     Door m_Door;
-    std::vector<Enemy> m_Enemies;
 
+    std::vector<Enemy> m_Enemies;
+    Player m_Player;
 };

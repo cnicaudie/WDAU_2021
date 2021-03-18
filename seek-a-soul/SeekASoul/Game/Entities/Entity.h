@@ -1,6 +1,6 @@
 #pragma once
 
-class Entity : public sf::Drawable, public BoxCollideable 
+class Entity : public sf::Drawable, public BoxCollideable
 {
 public:
 	Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position, int healthPoints, float damageCooldownRelease);
@@ -10,7 +10,7 @@ public:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	inline const sf::Vector2f GetVelocity() { return m_Velocity; }; // For debug in GameManager
+	inline const sf::Vector2f& GetVelocity() const { return m_Velocity; }; // For debug in GameManager
 	inline bool IsDead() const { return m_IsDead; };
 
 protected:

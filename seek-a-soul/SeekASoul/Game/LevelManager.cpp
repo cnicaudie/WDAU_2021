@@ -4,9 +4,9 @@
 #include <fstream>
 #include <string>
 
-LevelManager::LevelManager(const std::shared_ptr<TextureManager>& textureManager) 
+LevelManager::LevelManager(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
 	: m_TextureManager{ textureManager }
-	, m_Map { textureManager }
+	, m_Map { inputManager, textureManager }
 {
 	LoadLevel(0);
 }
@@ -26,7 +26,6 @@ void LevelManager::LoadLevel(const int levelNumber = 0)
 	std::vector level = GetLevel(levelNumber);
 	m_Map.Load(level, sf::Vector2u(m_LevelWidth, m_LevelHeight));
 }
-
 
 const std::vector<int> LevelManager::GetLevel(const int levelNumber)
 {

@@ -18,9 +18,8 @@ GameManager::GameManager()
     : Game{ "Seek A Soul (WIP)" }
     , m_TextureManager{ std::make_shared<TextureManager>() }
     , m_UiManager{}
-    , m_LevelManager { m_TextureManager }
-    , m_Player{ m_InputManager, m_TextureManager }
-    , m_CameraManager { &m_Window, &m_Player }
+    , m_LevelManager { m_InputManager, m_TextureManager }
+    , m_CameraManager{ &m_Window, &(m_LevelManager.GetPlayerOnMap()) }
     , m_IsGameOver{ false }
 {
     EventHandler<GameManager>* handler = new EventHandler<GameManager>(this, &GameManager::StartEndGame);
@@ -38,7 +37,6 @@ void GameManager::Update(float deltaTime)
     
     if (!m_IsGameOver)
     {
-        m_Player.Update(deltaTime);
         m_LevelManager.Update(deltaTime);
         m_CameraManager.Update(deltaTime);
     }
@@ -50,7 +48,6 @@ void GameManager::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_LevelManager);
-    target.draw(m_Player);
     target.draw(m_UiManager);
     target.draw(m_CameraManager);
 }
@@ -63,8 +60,9 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 
     if (ImGui::CollapsingHeader("Main character infos"))
     {
-        const auto& mainCharCenterPos = m_Player.GetCenter();
-        const auto& mainCharVelocity = m_Player.GetVelocity();
+        const Player& player = m_LevelManager.GetPlayerOnMap();
+        const sf::Vector2f& mainCharCenterPos = player.GetCenter();
+        const sf::Vector2f& mainCharVelocity = player.GetVelocity();
 
         ImGui::Text("Position infos :");
         ImGui::Text("X: %f", mainCharCenterPos.x);
