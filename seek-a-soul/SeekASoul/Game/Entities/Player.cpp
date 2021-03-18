@@ -7,7 +7,9 @@
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : Entity(textureManager, { 50.f, 50.f }, 200, 1.0f)
+    , Animated({ 32, 56 }, textureManager->GetTextureFromName("PLAYER_SHEET"))
     , m_InputManager{ inputManager }
+    , m_CurrentState(PlayerState::IDLE)
     , m_Bullets{}
     , m_CanShoot(true)
     , m_ShootCooldown(5.f)
@@ -27,6 +29,8 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 
 void Player::Update(float deltaTime)
 {
+    PlayAnimation(m_CurrentState);
+
     Move(deltaTime);
 
     UpdateShootingCooldown(deltaTime);
@@ -150,7 +154,9 @@ void Player::Damage()
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    Entity::draw(target, states);
+    //Entity::draw(target, states);
+
+    target.draw(m_AnimationSprite);
 
     for (const Bullet& b : m_Bullets) {
         target.draw(b);
@@ -203,19 +209,19 @@ void Player::Shoot()
 
 void Player::Move(float deltaTime) 
 {
-    const float SPEED_MAX = 200.0f;
-    const float SPEED_INC = 10.0f;
-    const float JUMP_FORCE = 400.0f;
+    const float MOVE_SPEED_MAX = 200.0f;
+    const float MOVE_SPEED_INC = 10.0f;
     const float CLIMB_SPEED = 100.0f;
-
+    const float JUMP_FORCE = 400.0f;
     const float DEAD_ZONE = 5.0f;
     const float SLOWDOWN_RATE = 0.9f;
     const float GRAVITY = 9.8f;
+    
     sf::Vector2f tempVelocity(0.f, 0.f);
 
     // Compute player's velocity
     m_Velocity.y += GRAVITY;
-    m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, SPEED_INC, SPEED_MAX, SLOWDOWN_RATE, DEAD_ZONE);
+    m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE, DEAD_ZONE);
 
     // Resets the velocity if climbing 
     // (we don't want the player to fall down the ladder if he's not giving any input)
@@ -261,7 +267,8 @@ void Player::Move(float deltaTime)
 
     // Apply new position
     SetCenter(m_Position);
-    m_Sprite.setPosition(m_Position);
+    //m_Sprite.setPosition(m_Position);
+    SetAnimatedSpritePosition(m_Position);
 }
 
 void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)

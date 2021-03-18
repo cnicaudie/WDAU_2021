@@ -15,6 +15,10 @@ TextureManager::TextureManager()
 	m_Textures.emplace("BULLET", bullet);
 	m_Textures.emplace("SOUL_CHUNK", soulChunk);
 
+	sf::Texture player_sheet;
+	player_sheet.loadFromFile(".\\Assets\\Sprites\\SkeletonIdleSpriteSheet.png");
+	m_Textures.emplace("PLAYER_SHEET", player_sheet);
+
 	sf::Texture tileset;
 	tileset.loadFromFile(".\\Assets\\Sprites\\Tileset_Basic.png");
 	m_Textures.emplace("TILESET", tileset);

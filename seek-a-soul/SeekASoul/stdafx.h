@@ -8,6 +8,7 @@
 #include "imgui-SFML.h"
 
 #include <Engine/Game.h>
+#include <Engine/Animation/Animated.h>
 #include <Engine/Collision/BoxCollideable.h>
 #include <Engine/Event/EventManager.h>
 #include <Engine/Resources/TextureManager.h>

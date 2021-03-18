@@ -3,7 +3,9 @@
 #include "Entity.h"
 #include <Game/Objects/Bullet.h>
 
-class Player : public Entity
+enum PlayerState { IDLE, MOVING_RIGHT, MOVING_LEFT, JUMPING, FALLING, CLIMBING, HEAD_ROLLING, SHOOTING };
+
+class Player : public Entity, public Animated
 {
 public:	
 	Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
@@ -30,6 +32,8 @@ private:
 	//====================//
 
 	std::shared_ptr<InputManager> m_InputManager;
+
+	PlayerState m_CurrentState;
 	
 	std::vector<Bullet> m_Bullets;
 	bool m_CanShoot;
