@@ -17,34 +17,28 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_SoulChunksCollected(0)
     , m_IsClimbing(false)
 {
-    sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("PLAYER");
-
-    m_Sprite.setTexture(textureManager->GetTextureFromName("PLAYER"));
-    m_Sprite.setOrigin(textureSize * 0.5f);
-    m_Sprite.setPosition(m_Position);
-    //m_Sprite.setScale(0.5f, 0.5f);
-
-    SetBoundingBox(m_Position, textureSize);
+    m_BoundingBox = GetSpriteBoundingBox();
 }
 
 void Player::Update(float deltaTime)
 {
-    PlayAnimation(m_CurrentState);
+    m_CurrentState = PlayerState::IDLE;
 
     Move(deltaTime);
 
-    UpdateShootingCooldown(deltaTime);
-    
-    UpdateBullets(deltaTime);
+    PlayAnimation(m_CurrentState);
+    m_BoundingBox = GetSpriteBoundingBox();
 
+    UpdateShootingCooldown(deltaTime);    
     UpdateDamageCooldown(deltaTime);
+    UpdateBullets(deltaTime);
 
     if (m_InputManager->HasAction(Action::SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0) {
         Shoot();
     }
     
     // TODO : Manage the crouch/squeeze feature differently (scaling is not ideal)
-    if (m_InputManager->HasAction(Action::SQUEEZE))
+    /*if (m_InputManager->HasAction(Action::SQUEEZE))
     {
         m_Sprite.setScale(0.8f, 0.8f);
         sf::Vector2f textureSize = m_TextureManager->GetTextureSizeFromName("PLAYER");
@@ -53,9 +47,8 @@ void Player::Update(float deltaTime)
     else
     {
         m_Sprite.setScale(1.f, 1.f);
-        sf::Vector2f textureSize = m_TextureManager->GetTextureSizeFromName("PLAYER");
         SetBoundingBox(m_Position, textureSize);
-    }
+    }*/
 }
 
 void Player::OnCollision(BoxCollideable* other)
@@ -249,6 +242,21 @@ void Player::Move(float deltaTime)
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
+
+        if (m_Velocity.x > 50.f)
+        {
+            m_CurrentState = PlayerState::MOVING_LR;
+            m_AnimationSprite.scale(1.f, 1.f);
+        } 
+        else if (m_Velocity.x < -50.f) 
+        {
+            m_CurrentState = PlayerState::MOVING_LR;
+            m_AnimationSprite.scale(-1.f, 1.f);
+        } 
+        else 
+        {
+            m_AnimationSprite.scale(1.f, 1.f);
+        }
     }
 
     // Check movement on Y axis
@@ -267,7 +275,6 @@ void Player::Move(float deltaTime)
 
     // Apply new position
     SetCenter(m_Position);
-    //m_Sprite.setPosition(m_Position);
     SetAnimatedSpritePosition(m_Position);
 }
 

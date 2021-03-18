@@ -9,7 +9,6 @@ public:
 
 	void SetAnimatedSpritePosition(const sf::Vector2f& position);
 
-	inline void FlipSpriteHorizontally() { m_AnimationSprite.scale(-1.f, 1.f); };
 	inline const sf::FloatRect GetSpriteBoundingBox() const { return m_AnimationSprite.getGlobalBounds(); };
 	inline const sf::Vector2i GetSpriteSize() const { return m_SpriteSize; };
 

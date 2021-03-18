@@ -3,7 +3,7 @@
 #include "Entity.h"
 #include <Game/Objects/Bullet.h>
 
-enum PlayerState { IDLE, MOVING_RIGHT, MOVING_LEFT, JUMPING, FALLING, CLIMBING, HEAD_ROLLING, SHOOTING };
+enum PlayerState { IDLE, MOVING_LR, JUMPING, FALLING, CLIMBING, HEAD_ROLLING, SHOOTING };
 
 class Player : public Entity, public Animated
 {
