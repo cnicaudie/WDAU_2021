@@ -26,11 +26,11 @@ InputManager::InputManager()
 	};
 	m_ActionBinding.emplace(Action::MOVE_DOWN, moveDownBinding);
 
-	std::vector<std::shared_ptr<Binding>> squeezeBinding{ 
+	std::vector<std::shared_ptr<Binding>> skullRollBinding{ 
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Space),
 		std::make_shared<JoystickButtonBinding>(1)
 	};
-	m_ActionBinding.emplace(Action::SQUEEZE, squeezeBinding);
+	m_ActionBinding.emplace(Action::SKULL_ROLL, skullRollBinding);
 
 	std::vector<std::shared_ptr<Binding>> shootBinding{ 
 		std::make_shared<MouseBinding>(sf::Mouse::Button::Right)

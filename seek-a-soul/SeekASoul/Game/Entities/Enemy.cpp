@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Enemy.h"
+#include "Player.h"
 #include <Game/Objects/Bullet.h>
 
 Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
@@ -27,6 +28,13 @@ void Enemy::Update(float deltaTime)
 
 void Enemy::OnCollision(BoxCollideable* other)
 {
+	Player* player = dynamic_cast<Player*>(other);
+
+	if (player != nullptr && player->IsSkullRolling() && !m_WasDamaged)
+	{
+		Damage();
+	}	
+
 	if (typeid(*other) == typeid(class Bullet) && !m_WasDamaged)
 	{
 		Damage();

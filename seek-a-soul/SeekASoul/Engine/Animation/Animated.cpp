@@ -11,7 +11,6 @@ Animated::Animated(const sf::Vector2i& spriteSize, const sf::Texture& texture)
 	m_Clock.restart();
 }
 
-// TODO : manage animation switch
 void Animated::PlayAnimation(int animationState)
 {
 	const float ANIMATION_RATE = 0.1f;
@@ -21,7 +20,6 @@ void Animated::PlayAnimation(int animationState)
 		m_SpriteFrame.top = animationState * m_SpriteSize.y;
 		m_SpriteFrame.left += m_SpriteSize.x;
 
-		// TODO : If animation stops before the end of the sheets ? (store a tab with number of frame for each anim ?)
 		if (m_SpriteFrame.left >= (static_cast<int>(m_TextureSheet.getSize().x) - m_SpriteSize.x)) 
 		{
 			m_SpriteFrame.left = 0;

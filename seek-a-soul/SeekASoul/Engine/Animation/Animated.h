@@ -6,10 +6,22 @@ public:
 	Animated(const sf::Vector2i& spriteSize, const sf::Texture& texture);
 
 	void PlayAnimation(int animationState);
+	inline void FlipSprite(bool flip)
+	{
+		if (flip) 
+		{
+			m_AnimationSprite.scale(-1.f, 1.f);
+		}
+		else 
+		{
+			m_AnimationSprite.scale(1.f, 1.f);
+		}
+	};
+
 
 	void SetAnimatedSpritePosition(const sf::Vector2f& position);
 
-	inline const sf::FloatRect GetSpriteBoundingBox() const { return m_AnimationSprite.getGlobalBounds(); };
+	inline const sf::FloatRect GetAnimatedSpriteBoundingBox() const { return m_AnimationSprite.getGlobalBounds(); };
 	inline const sf::Vector2i GetSpriteSize() const { return m_SpriteSize; };
 
 protected:

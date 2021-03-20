@@ -16,46 +16,57 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_AmmunitionsNumber(10)
     , m_SoulChunksCollected(0)
     , m_IsClimbing(false)
+    , m_IsSkullRolling(false)
+    , m_SkullRollingCooldown(10.f)
+    , m_InGroundCollision(false)
+    , m_InCeilingCollision(false)
 {
-    m_BoundingBox = GetSpriteBoundingBox();
+    m_BoundingBox = GetAnimatedSpriteBoundingBox();
 }
 
 void Player::Update(float deltaTime)
 {
-    m_CurrentState = PlayerState::IDLE;
+    // Check for actions
+    if (m_InputManager->HasAction(Action::SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0 && !m_IsSkullRolling) {
+        Shoot();
+    }
+
+    if (m_InputManager->HasAction(Action::SKULL_ROLL) && m_SkullRollingCooldown >= 5.f)
+    {
+        m_IsSkullRolling = true;
+        m_SkullRollingCooldown = 0.f;
+    }
+
+    // Update player's bounding box
+    UpdateBoundingBox();
 
     Move(deltaTime);
 
-    PlayAnimation(m_CurrentState);
-    m_BoundingBox = GetSpriteBoundingBox();
-
-    UpdateShootingCooldown(deltaTime);    
-    UpdateDamageCooldown(deltaTime);
-    UpdateBullets(deltaTime);
-
-    if (m_InputManager->HasAction(Action::SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0) {
-        Shoot();
+    // If in ground and ceiling after collision check, player stays skull rolling
+    if (!m_IsSkullRolling && m_InGroundCollision && m_InCeilingCollision)
+    {
+        m_IsSkullRolling = true;
+        m_SkullRollingCooldown = 0.f;
     }
-    
-    // TODO : Manage the crouch/squeeze feature differently (scaling is not ideal)
-    /*if (m_InputManager->HasAction(Action::SQUEEZE))
-    {
-        m_Sprite.setScale(0.8f, 0.8f);
-        sf::Vector2f textureSize = m_TextureManager->GetTextureSizeFromName("PLAYER");
-        SetBoundingBox(m_Position, textureSize * 0.8f);
-    } 
-    else
-    {
-        m_Sprite.setScale(1.f, 1.f);
-        SetBoundingBox(m_Position, textureSize);
-    }*/
+ 
+    // Update Cooldowns
+    UpdateDamageCooldown(deltaTime);
+    UpdateShootingCooldown(deltaTime);    
+    UpdateSkullRollCooldown(deltaTime);
+
+    // Update bullets and check for impacts
+    ManageBullets(deltaTime);
+
+    // Update player's animation
+    ComputeNextPlayerState();
+    PlayAnimation(m_CurrentState);
 }
 
 void Player::OnCollision(BoxCollideable* other)
 {
     sf::FloatRect otherCollider = other->GetBoundingBox();
-
-    if (typeid(*other) == typeid(class Enemy) && !m_WasDamaged)
+    
+    if (typeid(*other) == typeid(class Enemy) && !m_WasDamaged && !m_IsSkullRolling)
     {
         Damage();
     }
@@ -98,6 +109,32 @@ void Player::OnCollision(BoxCollideable* other)
             m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
             //std::cout << "Right collision" << std::endl;
         }
+
+        // === Special checks for skull roll
+        // (Getting out of skull roll action can cause being in ceiling and/or in ground)
+
+        else if (m_BoundingBox.top < otherCollider.top + otherCollider.height
+            && m_BoundingBox.top > otherCollider.top)
+        {
+            m_InCeilingCollision = true;
+            m_Velocity.y = 0.f;
+            //std::cout << "m_InCeilingCollision" << std::endl;
+        }
+        else if (m_BoundingBox.top + m_BoundingBox.height > otherCollider.top
+            && m_BoundingBox.top < otherCollider.top)
+        {
+            m_InGroundCollision = true;
+            m_Velocity.y = 0.f;
+
+            // If only in ground, reset the position of the player
+            if (!m_InCeilingCollision) 
+            {
+                m_IsGrounded = true;
+                m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
+            }
+
+            //std::cout << "m_InGroundCollision" << std::endl;
+        }
     }
 }
 
@@ -113,22 +150,38 @@ void Player::OnTrigger(BoxCollideable* other)
 
     if (typeid(*other).name() == typeid(class ClimbableTile).name())
     {
-        if (!m_IsClimbing) 
+        if (!m_IsClimbing && m_InputManager->HasAction(Action::MOVE_UP) && !m_IsSkullRolling)
         {
             std::cout << "Player is climbing" << std::endl;
             m_IsClimbing = true;
+        } 
+        // Climbed down the ladder
+        else if (m_IsClimbing && m_IsGrounded) 
+        {
+            std::cout << "Player is not climbing anymore" << std::endl;
+            m_IsClimbing = false;
         }
     }
+    // Jumped out the ladder
     else if (m_IsClimbing)
     {
         std::cout << "Player is not climbing anymore" << std::endl;
         m_IsClimbing = false;
 
-        // Player gets a little force when he jumps out of a ladder
+        // Player gets a little force if pressing jump key
         if (m_InputManager->HasAction(Action::MOVE_UP)) 
         {
             m_Velocity.y = -300.f;
         }
+    }
+}
+
+void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(m_AnimationSprite);
+
+    for (const Bullet& b : m_Bullets) {
+        target.draw(b);
     }
 }
 
@@ -163,14 +216,15 @@ void Player::UpdateDamageCooldown(float deltaTime)
     }
 }
 
-void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Player::UpdateBoundingBox()
 {
-    //Entity::draw(target, states);
-
-    target.draw(m_AnimationSprite);
-
-    for (const Bullet& b : m_Bullets) {
-        target.draw(b);
+    if (m_IsSkullRolling)
+    {
+        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()) * 0.5f);
+    }
+    else
+    {
+        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()));
     }
 }
 
@@ -184,7 +238,19 @@ void Player::UpdateShootingCooldown(float deltaTime)
     }
 }
 
-void Player::UpdateBullets(float deltaTime)
+void Player::UpdateSkullRollCooldown(float deltaTime)
+{
+    if (m_SkullRollingCooldown < 5.f)
+    {
+        m_SkullRollingCooldown += 1.f * deltaTime;
+    }
+    else
+    {
+        m_IsSkullRolling = false;
+    }
+}
+
+void Player::ManageBullets(float deltaTime)
 {
     // Update the bullets
     for (Bullet& b : m_Bullets) {
@@ -230,6 +296,10 @@ void Player::Move(float deltaTime)
     
     sf::Vector2f tempVelocity(0.f, 0.f);
 
+    // Reset in ground/ceiling collision checks
+    m_InGroundCollision = false;
+    m_InCeilingCollision = false;
+
     // Compute player's velocity
     m_Velocity.y += GRAVITY;
     m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE, DEAD_ZONE);
@@ -243,19 +313,22 @@ void Player::Move(float deltaTime)
 
     if (m_InputManager->HasAction(Action::MOVE_UP))
     {
-        if (m_IsGrounded) 
-        { // Jump
+        // Jump
+        if (m_IsGrounded)
+        {
             m_Velocity.y = -JUMP_FORCE;
             m_IsGrounded = false;
-        } 
+        }
+        // Climb up
         else if (m_IsClimbing)
-        { // Climb up
+        {
             m_Velocity.y = -CLIMB_SPEED;
         }
     }
     
+    // Climb down
     if (m_InputManager->HasAction(Action::MOVE_DOWN) && m_IsClimbing)
-    { // Climb down
+    {
         m_Velocity.y = CLIMB_SPEED;
     }
 
@@ -264,24 +337,6 @@ void Player::Move(float deltaTime)
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime)) 
     {
         m_Position += tempVelocity * deltaTime;
-
-        // Manage current player state
-        if (m_Velocity.x > 50.f)
-        {
-            m_CurrentState = PlayerState::MOVING_LR;
-            m_AnimationSprite.scale(1.f, 1.f);
-        } 
-        else if (m_Velocity.x < -50.f) 
-        {
-            m_CurrentState = PlayerState::MOVING_LR;
-
-            // Flip the player horizontally
-            m_AnimationSprite.scale(-1.f, 1.f);
-        } 
-        else 
-        {
-            m_AnimationSprite.scale(1.f, 1.f);
-        }
     }
 
     // Check movement on Y axis
@@ -324,5 +379,30 @@ void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoun
     {
         m_Position.y = maxBoundY - (m_BoundingBox.height / 2);
         m_Velocity.y = 0.f;
+    }
+}
+
+void Player::ComputeNextPlayerState()
+{
+    const float MOVE_ANIMATION_THRESHOLD = 50.f;
+
+    if (m_IsClimbing) 
+    {
+        m_CurrentState = PlayerState::CLIMBING;
+    } 
+    // TODO : make an idle animation for skull roll ?
+    else if (m_IsSkullRolling)
+    {
+        m_CurrentState = PlayerState::SKULL_ROLLING;
+    }
+    else if (std::abs(m_Velocity.x) > MOVE_ANIMATION_THRESHOLD)
+    {
+        m_CurrentState = PlayerState::MOVING;
+        
+        FlipSprite(m_Velocity.x < 0);
+    } 
+    else 
+    {
+        m_CurrentState = PlayerState::IDLE;
     }
 }
