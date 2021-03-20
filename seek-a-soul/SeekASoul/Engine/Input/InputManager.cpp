@@ -93,11 +93,11 @@ const float InputManager::GetScaledVelocity(float currentVelocity, float speedIn
 	}
 	else
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
 			velocity = fmin(currentVelocity + speedInc, maxSpeed);
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		{
 			velocity = fmax(currentVelocity - speedInc, -maxSpeed);
 		}
