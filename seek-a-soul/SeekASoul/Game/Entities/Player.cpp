@@ -31,10 +31,18 @@ void Player::Update(float deltaTime)
         Shoot();
     }
 
-    if (m_InputManager->HasAction(Action::SKULL_ROLL) && m_SkullRollingCooldown >= 5.f)
+    if (m_InputManager->HasAction(Action::SKULL_ROLL))
     {
-        m_IsSkullRolling = true;
-        m_SkullRollingCooldown = 0.f;
+        if (m_SkullRollingCooldown >= 5.f) 
+        {
+            m_IsSkullRolling = true;
+            m_SkullRollingCooldown = 0.f;
+        } 
+        else if (m_IsSkullRolling && m_SkullRollingCooldown >= 1.f)
+        {
+            m_IsSkullRolling = false;
+            m_SkullRollingCooldown = 0.f;
+        }
     }
 
     // Update player's bounding box
@@ -116,24 +124,40 @@ void Player::OnCollision(BoxCollideable* other)
         else if (m_BoundingBox.top < otherCollider.top + otherCollider.height
             && m_BoundingBox.top > otherCollider.top)
         {
-            m_InCeilingCollision = true;
-            m_Velocity.y = 0.f;
-            //std::cout << "m_InCeilingCollision" << std::endl;
+            if (!m_InCeilingCollision)
+            {
+                m_InCeilingCollision = true;
+                m_Velocity.y = 0.f;
+
+                if (!m_InGroundCollision)
+                {
+                    m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
+                    
+                    //std::cout << "Corrected inCeiling" << std::endl;
+                }
+
+                //std::cout << "m_InCeilingCollision" << std::endl;
+            }
         }
         else if (m_BoundingBox.top + m_BoundingBox.height > otherCollider.top
             && m_BoundingBox.top < otherCollider.top)
         {
-            m_InGroundCollision = true;
-            m_Velocity.y = 0.f;
-
-            // If only in ground, reset the position of the player
-            if (!m_InCeilingCollision) 
+            if (!m_InGroundCollision)
             {
-                m_IsGrounded = true;
-                m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-            }
+                m_InGroundCollision = true;
+                m_Velocity.y = 0.f;
 
-            //std::cout << "m_InGroundCollision" << std::endl;
+                // If only in ground, reset the position of the player
+                if (!m_InCeilingCollision)
+                {
+                    m_IsGrounded = true;
+                    m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
+
+                    //std::cout << "Corrected inGround" << std::endl;
+                }
+
+                //std::cout << "m_InGroundCollision" << std::endl;
+            }
         }
     }
 }
