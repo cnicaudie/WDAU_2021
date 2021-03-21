@@ -119,6 +119,21 @@ void Game::RunGameLoop()
                     break;
                 }
 
+                case sf::Event::JoystickConnected:
+                {
+                    if (!m_InputManager->IsUsingJoystick()) 
+                    {
+                        m_InputManager->InitJoystick();
+                    }
+                    break;
+                }
+
+                case sf::Event::JoystickDisconnected:
+                {
+                    m_InputManager->ResetJoystick(event.joystickConnect.joystickId);
+                    break;
+                }
+
                 default:
                     break;
             }

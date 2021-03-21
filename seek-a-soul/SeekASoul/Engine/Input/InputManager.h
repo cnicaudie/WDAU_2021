@@ -21,12 +21,22 @@ public:
 	const float GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate) const;
 	const sf::Vector2f GetScaledShootDirection(const sf::Vector2f currentPosition) const;
 
-	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; };
+	void InitJoystick();
+
+	inline void ResetJoystick(unsigned int joystickIndex)
+	{
+		if (m_JoystickIndex == joystickIndex) 
+		{
+			m_IsUsingJoystick = false;
+			m_JoystickIndex = 0;
+		}
+	};
+	
 	inline const bool IsUsingJoystick() const { return m_IsUsingJoystick; };
 	inline const float GetJoystickDeadZone() const { return m_JoystickDeadZone; };
+	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; };
 
 private:
-	void InitJoystick();
 	const float GetJoystickScaledAxis(unsigned int index, sf::Joystick::Axis axis, float scale) const;
 	
 	//====================//
