@@ -51,7 +51,7 @@ void InputManager::AddAction(const std::shared_ptr<Binding>& key)
 	{
 		for (std::shared_ptr<Binding>& b : it->second)
 		{
-			if (typeid(*key).name() == typeid(*b).name() && b->GetBinding() == key->GetBinding()) 
+			if (*b == key.get()) 
 			{
 				m_CurrentActions.insert(it->first);
 				return;
@@ -66,7 +66,7 @@ void InputManager::RemoveAction(const std::shared_ptr<Binding>& key)
 	{
 		for (std::shared_ptr<Binding>& b : it->second)
 		{
-			if (typeid(*key).name() == typeid(*b).name() && b->GetBinding() == key->GetBinding())
+			if (*b == key.get())
 			{
 				auto pos = m_CurrentActions.find(it->first);
 				if (pos != m_CurrentActions.end())

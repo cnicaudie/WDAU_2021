@@ -7,7 +7,7 @@ class JoystickButtonBinding : public Binding
 public:
 	JoystickButtonBinding(const unsigned int& button);
 
-	int GetBinding() override;
+	bool operator==(Binding* other) override;
 
 private:
 	unsigned int m_Button;

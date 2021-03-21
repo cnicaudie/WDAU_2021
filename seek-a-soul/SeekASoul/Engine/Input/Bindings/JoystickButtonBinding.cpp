@@ -3,4 +3,8 @@
 
 JoystickButtonBinding::JoystickButtonBinding(const unsigned int& button) : m_Button(button) {}
 
-int JoystickButtonBinding::GetBinding() { return m_Button; }
+bool JoystickButtonBinding::operator==(Binding* other)
+{
+	JoystickButtonBinding* otherJoystickButton = dynamic_cast<JoystickButtonBinding*>(other);
+	return (otherJoystickButton != nullptr) && (this->m_Button == otherJoystickButton->m_Button);
+}
