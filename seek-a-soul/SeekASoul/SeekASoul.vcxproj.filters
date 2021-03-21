@@ -107,6 +107,9 @@
     <ClCompile Include="Engine\Animation\Animated.cpp">
       <Filter>Engine\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Input\Bindings\JoystickAxisBinding.cpp">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Animation\Animated.h">
       <Filter>Engine\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\Bindings\JoystickAxisBinding.h">
+      <Filter>Engine\Input\Bindings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

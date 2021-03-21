@@ -3,6 +3,7 @@
 #include <Engine/Input/Bindings/MouseBinding.h>
 #include <Engine/Input/Bindings/KeyboardBinding.h>
 #include <Engine/Input/Bindings/JoystickButtonBinding.h>
+#include <Engine/Input/Bindings/JoystickAxisBinding.h>
 
 static constexpr float APP_MAX_FRAMERATE{ 60.0f };
 static const sf::Vector2u APP_INIT_WINDOW_SIZE{ 1024, 768 };
@@ -93,6 +94,28 @@ void Game::RunGameLoop()
                 case sf::Event::JoystickButtonReleased:
                 {
                     m_InputManager->RemoveAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
+                    break;
+                }
+
+                case sf::Event::JoystickMoved:
+                {
+                    // Min threshold to consider a "press" on the the axis
+                    const float PRESSED_THRESHOLD = 60.f;
+
+                    float joystickPosition = event.joystickMove.position;
+                    sf::Joystick::Axis joystickAxis = event.joystickMove.axis;
+
+                    if (joystickAxis == sf::Joystick::Axis::Z) // Only axis used for actions for now
+                    {
+                        if (joystickPosition >= PRESSED_THRESHOLD || joystickPosition <= -PRESSED_THRESHOLD)
+                        {
+                            m_InputManager->AddAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
+                        } 
+                        else 
+                        {
+                            m_InputManager->RemoveAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
+                        }
+                    }
                     break;
                 }
 

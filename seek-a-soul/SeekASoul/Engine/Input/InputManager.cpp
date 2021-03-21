@@ -3,12 +3,13 @@
 #include <Engine/Input/Bindings/KeyboardBinding.h>
 #include <Engine/Input/Bindings/MouseBinding.h>
 #include <Engine/Input/Bindings/JoystickButtonBinding.h>
+#include <Engine/Input/Bindings/JoystickAxisBinding.h>
 
 InputManager::InputManager() 
 	: m_MousePosition()
 	, m_IsUsingJoystick(false)
 	, m_JoystickIndex(0)
-	, m_JoystickDeadZone(5.0f)
+	, m_JoystickDeadZone(30.0f)
 {
 	InitJoystick();
 
@@ -17,14 +18,14 @@ InputManager::InputManager()
 	std::vector<std::shared_ptr<Binding>> moveUpBinding{ 
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Up),
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Z),
-		std::make_shared<JoystickButtonBinding>(4) // L1 on PS3 Dualshock
+		std::make_shared<JoystickButtonBinding>(5) // R1 on PS3 Dualshock
 	};
 	m_ActionBinding.emplace(Action::MOVE_UP, moveUpBinding);
 	
 	std::vector<std::shared_ptr<Binding>> moveDownBinding{
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Down),
 		std::make_shared<KeyboardBinding>(sf::Keyboard::S),
-		std::make_shared<JoystickButtonBinding>(5) // R1 on PS3 Dualshock
+		std::make_shared<JoystickButtonBinding>(4) // L1 on PS3 Dualshock
 	};
 	m_ActionBinding.emplace(Action::MOVE_DOWN, moveDownBinding);
 
@@ -35,8 +36,8 @@ InputManager::InputManager()
 	m_ActionBinding.emplace(Action::SKULL_ROLL, skullRollBinding);
 
 	std::vector<std::shared_ptr<Binding>> shootBinding{ 
-		std::make_shared<MouseBinding>(sf::Mouse::Button::Right)
-		// TODO : Manage shoot action with L2/R2 (=> manage axis)
+		std::make_shared<MouseBinding>(sf::Mouse::Button::Right),
+		std::make_shared<JoystickAxisBinding>(sf::Joystick::Axis::Z, true) // L2 on PS3 Dualshock
 	};
 	m_ActionBinding.emplace(Action::SHOOT, shootBinding);
 
@@ -118,19 +119,20 @@ const sf::Vector2f InputManager::GetScaledShootDirection(const sf::Vector2f curr
 
 	if (m_IsUsingJoystick) 
 	{
-		const float xPos = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::U, 1.f);
-		const float yPos = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::V, 1.f);
+		const float xPos = sf::Joystick::getAxisPosition(m_JoystickIndex, sf::Joystick::Axis::U);
+		const float yPos = sf::Joystick::getAxisPosition(m_JoystickIndex, sf::Joystick::Axis::V);
 		shootDirection = sf::Vector2f(xPos, yPos);
 	} 
 	else 
 	{
 		const sf::Vector2f mousePos = m_MousePosition;
 		shootDirection = mousePos - currentPosition;
-
-		// TODO : Make a normalize function in a MathUtils file
-		float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
-		shootDirection = shootDirection / magnitude;
 	}
+
+	// Normalize the vector
+	// TODO : Make a normalize function in a MathUtils file
+	float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
+	shootDirection = shootDirection / magnitude;
 
 	return shootDirection;
 }
@@ -142,7 +144,6 @@ void InputManager::InitJoystick()
 	{
 		if (sf::Joystick::isConnected(index) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
 		{
-			std::cout << "Joystick connected!" << std::endl;
 			m_IsUsingJoystick = true;
 			m_JoystickIndex = index;
 			return;
@@ -150,4 +151,18 @@ void InputManager::InitJoystick()
 
 		index++;
 	}
+}
+
+const float InputManager::GetJoystickScaledAxis(unsigned int index, sf::Joystick::Axis axis, float scale) const
+{
+	float value = sf::Joystick::getAxisPosition(index, axis);
+
+	if (value >= -m_JoystickDeadZone && value <= m_JoystickDeadZone) 
+	{
+		return 0.0f;
+	}
+
+	value = (value / 100.0f) * scale;
+
+	return value;
 }
