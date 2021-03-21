@@ -8,6 +8,7 @@ InputManager::InputManager()
 	: m_MousePosition()
 	, m_IsUsingJoystick(false)
 	, m_JoystickIndex(0)
+	, m_JoystickDeadZone(5.0f)
 {
 	InitJoystick();
 
@@ -83,13 +84,13 @@ void InputManager::UpdateMousePosition(const sf::RenderWindow& gameWindow)
 	m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
 }
 
-const float InputManager::GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate, float deadZone) const
+const float InputManager::GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate) const
 {
 	float velocity = 0.f;
 
 	if (m_IsUsingJoystick)
 	{
-		velocity = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, deadZone, maxSpeed);
+		velocity = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, maxSpeed);
 	}
 	else
 	{

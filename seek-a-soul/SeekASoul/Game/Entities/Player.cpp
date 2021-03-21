@@ -314,7 +314,6 @@ void Player::Move(float deltaTime)
     const float MOVE_SPEED_INC = 10.0f;
     const float CLIMB_SPEED = 100.0f;
     const float JUMP_FORCE = 400.0f;
-    const float DEAD_ZONE = 5.0f;
     const float SLOWDOWN_RATE = 0.9f;
     const float GRAVITY = 9.8f;
     
@@ -326,7 +325,7 @@ void Player::Move(float deltaTime)
 
     // Compute player's velocity
     m_Velocity.y += GRAVITY;
-    m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE, DEAD_ZONE);
+    m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE);
 
     // Resets the velocity if climbing 
     // (we don't want the player to fall down the ladder if he's not giving any input)

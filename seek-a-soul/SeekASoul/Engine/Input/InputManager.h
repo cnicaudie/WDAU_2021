@@ -18,7 +18,7 @@ public:
 	}
 
 	void UpdateMousePosition(const sf::RenderWindow& gameWindow);
-	const float GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate, float deadZone) const;
+	const float GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate) const;
 
 	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; }
 	inline const bool IsUsingJoystick() const { return m_IsUsingJoystick; }
@@ -26,10 +26,10 @@ public:
 private:
 	void InitJoystick();
 
-	inline const float GetJoystickScaledAxis(unsigned int index, sf::Joystick::Axis axis, float deadZone, float scale) const
+	inline const float GetJoystickScaledAxis(unsigned int index, sf::Joystick::Axis axis, float scale) const
 	{
 		float value = (sf::Joystick::getAxisPosition(index, axis) / 100.0f) * scale;
-		if (value >= -deadZone && value <= deadZone)
+		if (value >= -m_JoystickDeadZone && value <= m_JoystickDeadZone)
 		{
 			return 0.0f;
 		}
@@ -45,4 +45,5 @@ private:
 	sf::Vector2f m_MousePosition;
 	bool m_IsUsingJoystick;
 	unsigned int m_JoystickIndex;
+	float m_JoystickDeadZone;
 };
