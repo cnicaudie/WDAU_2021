@@ -294,18 +294,13 @@ void Player::ManageBullets(float deltaTime)
 
 void Player::Shoot()
 {
-    const sf::Vector2f mousePos = m_InputManager->GetMousePosition();
-    const sf::Vector2f bulletDirection = mousePos - m_Position;
-    
-    // TODO : Make a normalize function in a MathUtils file
-    float magnitude = std::sqrt(bulletDirection.x * bulletDirection.x + bulletDirection.y * bulletDirection.y);
-    sf::Vector2f normalizedBulletDirection = bulletDirection / magnitude;
+    const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
     
     m_CanShoot = false;
     m_AmmunitionsNumber--;
     std::cout << "Ammunitions left : " << m_AmmunitionsNumber << std::endl;
     m_ShootCooldown = 0.f;
-    m_Bullets.emplace_back(m_TextureManager, normalizedBulletDirection, m_Position);
+    m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
 }
 
 void Player::Move(float deltaTime) 

@@ -19,6 +19,7 @@ public:
 
 	void UpdateMousePosition(const sf::RenderWindow& gameWindow);
 	const float GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate) const;
+	const sf::Vector2f GetScaledShootDirection(const sf::Vector2f currentPosition) const;
 
 	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; }
 	inline const bool IsUsingJoystick() const { return m_IsUsingJoystick; }

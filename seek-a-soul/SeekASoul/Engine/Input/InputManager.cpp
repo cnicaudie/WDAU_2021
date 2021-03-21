@@ -13,29 +13,30 @@ InputManager::InputManager()
 	InitJoystick();
 
 	// TODO : Make a default bindings file to parse at construction
+
 	std::vector<std::shared_ptr<Binding>> moveUpBinding{ 
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Up),
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Z),
-		std::make_shared<JoystickButtonBinding>(0)
+		std::make_shared<JoystickButtonBinding>(4) // L1 on PS3 Dualshock
 	};
 	m_ActionBinding.emplace(Action::MOVE_UP, moveUpBinding);
 	
 	std::vector<std::shared_ptr<Binding>> moveDownBinding{
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Down),
-		std::make_shared<KeyboardBinding>(sf::Keyboard::S)
-		// TODO : Manage joystick
+		std::make_shared<KeyboardBinding>(sf::Keyboard::S),
+		std::make_shared<JoystickButtonBinding>(5) // R1 on PS3 Dualshock
 	};
 	m_ActionBinding.emplace(Action::MOVE_DOWN, moveDownBinding);
 
 	std::vector<std::shared_ptr<Binding>> skullRollBinding{ 
 		std::make_shared<KeyboardBinding>(sf::Keyboard::Space),
-		std::make_shared<JoystickButtonBinding>(1)
+		std::make_shared<JoystickButtonBinding>(1) // O on PS3 Dualshock
 	};
 	m_ActionBinding.emplace(Action::SKULL_ROLL, skullRollBinding);
 
 	std::vector<std::shared_ptr<Binding>> shootBinding{ 
 		std::make_shared<MouseBinding>(sf::Mouse::Button::Right)
-		// TODO : Manage shoot direction with joystick direction ?
+		// TODO : Manage shoot action with L2/R2 (=> manage axis)
 	};
 	m_ActionBinding.emplace(Action::SHOOT, shootBinding);
 
@@ -109,6 +110,29 @@ const float InputManager::GetScaledVelocity(float currentVelocity, float speedIn
 	}
 
 	return velocity;
+}
+
+const sf::Vector2f InputManager::GetScaledShootDirection(const sf::Vector2f currentPosition) const
+{
+	sf::Vector2f shootDirection;
+
+	if (m_IsUsingJoystick) 
+	{
+		const float xPos = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::U, 1.f);
+		const float yPos = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::V, 1.f);
+		shootDirection = sf::Vector2f(xPos, yPos);
+	} 
+	else 
+	{
+		const sf::Vector2f mousePos = m_MousePosition;
+		shootDirection = mousePos - currentPosition;
+
+		// TODO : Make a normalize function in a MathUtils file
+		float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
+		shootDirection = shootDirection / magnitude;
+	}
+
+	return shootDirection;
 }
 
 void InputManager::InitJoystick()
