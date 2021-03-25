@@ -72,7 +72,7 @@ void Game::RunGameLoop()
             ImGui::SFML::ProcessEvent(event);
         }
 
-        ImGui::SFML::Update(m_Window, clock.restart());
+        ImGui::SFML::Update(m_Window, clock.getElapsedTime());
 
         Update(deltaTime);
         Render(m_Window);
