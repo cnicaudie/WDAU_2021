@@ -8,6 +8,8 @@ public:
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override; // Temporary
 
+	bool DisplayCameraZones;
+
 private:
 	sf::RenderWindow* m_Window;
 	sf::View m_CameraView;

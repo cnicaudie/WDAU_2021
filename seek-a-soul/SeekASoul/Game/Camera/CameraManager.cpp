@@ -5,6 +5,7 @@ CameraManager::CameraManager(sf::RenderWindow* window, const Player* player)
     : m_Window(window)
     , m_Player(player)
     , m_CameraView(sf::FloatRect(0.f, 0.f, static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)))
+    , DisplayCameraZones(true)
 {
     m_Viewport.setPosition(window->getSize().x * 0.25f, window->getSize().y * 0.25f);
     m_Viewport.setSize({ 640.f, 320.f });
@@ -35,5 +36,8 @@ void CameraManager::Update(float deltaTime)
 // Temporary
 void CameraManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
-    target.draw(m_Viewport);
+    if (DisplayCameraZones) 
+    {
+        target.draw(m_Viewport);
+    }
 }

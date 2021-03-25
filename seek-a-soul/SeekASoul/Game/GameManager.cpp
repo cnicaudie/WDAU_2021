@@ -57,6 +57,7 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
     ImGui::Begin("Debug Menu");
     ImGui::Text("Press F1 to close this debug menu");
     ImGui::NewLine();
+    ImGui::Checkbox("Show Camera Zones", &m_CameraManager.DisplayCameraZones);
 
     if (ImGui::CollapsingHeader("Main character infos"))
     {
