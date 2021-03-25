@@ -39,18 +39,19 @@ private:
 	std::shared_ptr<InputManager> m_InputManager;
 
 	PlayerState m_CurrentState;
-	
-	std::vector<Bullet> m_Bullets;
-	bool m_CanShoot;
-	float m_ShootCooldown;
-	int m_AmmunitionsNumber;
-
-	int m_SoulChunksCollected;
-
+	bool m_IsGrounded;
+	int m_JumpCount;
 	bool m_IsClimbing;
 
 	bool m_IsSkullRolling;
 	float m_SkullRollingCooldown;
+
+	int m_SoulChunksCollected;
+
+	std::vector<Bullet> m_Bullets;
+	bool m_CanShoot;
+	float m_ShootCooldown;
+	int m_AmmunitionsNumber;
 
 	// Checks when gettin out of skull roll
 	bool m_InGroundCollision;

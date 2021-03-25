@@ -10,14 +10,16 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , Animated({ 32, 56 }, textureManager->GetTextureFromName("PLAYER_SHEET"))
     , m_InputManager{ inputManager }
     , m_CurrentState(PlayerState::IDLE)
+    , m_IsGrounded(false)
+    , m_JumpCount(1)
+    , m_IsClimbing(false)
+    , m_IsSkullRolling(false)
+    , m_SkullRollingCooldown(10.f)
+    , m_SoulChunksCollected(0)
     , m_Bullets{}
     , m_CanShoot(true)
     , m_ShootCooldown(5.f)
     , m_AmmunitionsNumber(10)
-    , m_SoulChunksCollected(0)
-    , m_IsClimbing(false)
-    , m_IsSkullRolling(false)
-    , m_SkullRollingCooldown(10.f)
     , m_InGroundCollision(false)
     , m_InCeilingCollision(false)
 {
@@ -87,6 +89,7 @@ void Player::OnCollision(BoxCollideable* other)
         {
             m_Velocity.y = 0.f;
             m_IsGrounded = true;
+            m_JumpCount = 1;
             m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
             //LOG_DEBUG("Bottom collision");
         }
@@ -151,6 +154,7 @@ void Player::OnCollision(BoxCollideable* other)
                 if (!m_InCeilingCollision)
                 {
                     m_IsGrounded = true;
+                    m_JumpCount = 1;
                     m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
 
                     //std::cout << "Corrected inGround" << std::endl;
@@ -332,8 +336,9 @@ void Player::Move(float deltaTime)
     if (m_InputManager->HasAction(Action::MOVE_UP))
     {
         // Jump
-        if (m_IsGrounded)
+        if (m_JumpCount != 0)
         {
+            m_JumpCount -= 1;
             m_Velocity.y = -JUMP_FORCE;
             m_IsGrounded = false;
         }
@@ -341,6 +346,7 @@ void Player::Move(float deltaTime)
         else if (m_IsClimbing)
         {
             m_Velocity.y = -CLIMB_SPEED;
+            m_IsGrounded = false;
         }
     }
     
@@ -363,8 +369,6 @@ void Player::Move(float deltaTime)
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
-        // Uncomment next line to avoid 1 jump when falling off a platform
-        //m_IsGrounded = false;
     }
     
     // Clamp the player position between the bounds of the level
