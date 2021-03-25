@@ -399,6 +399,7 @@ void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoun
     }
     else if (m_BoundingBox.top + m_BoundingBox.height > maxBoundY)
     {
+        m_JumpCount = 1;
         m_Position.y = maxBoundY - (m_BoundingBox.height / 2);
         m_Velocity.y = 0.f;
     }
