@@ -168,32 +168,35 @@ void Player::OnCollision(BoxCollideable* other)
 
 void Player::OnTrigger(BoxCollideable* other)
 {
-    SoulChunk* soulChunk = dynamic_cast<SoulChunk*>(other);
+    Collectible* collectible = dynamic_cast<Collectible*>(other);
 
-    if (soulChunk != nullptr && !soulChunk->WasCollected())
+    if (collectible != nullptr && !collectible->WasCollected())
     {
-        std::cout << "Player collected Soul Chunk" << std::endl;
-        m_SoulChunksCollected += 1;
+        if (typeid(*collectible).name() == typeid(class SoulChunk).name()) 
+        {
+            LOG_INFO("Player collected SoulChunk !");
+            m_SoulChunksCollected += 1;
+        }
     }
 
     if (typeid(*other).name() == typeid(class ClimbableTile).name())
     {
         if (!m_IsClimbing && m_InputManager->HasAction(Action::MOVE_UP) && !m_IsSkullRolling)
         {
-            std::cout << "Player is climbing" << std::endl;
+            LOG_INFO("Player is climbing !");
             m_IsClimbing = true;
         } 
         // Climbed down the ladder
         else if (m_IsClimbing && m_IsGrounded) 
         {
-            std::cout << "Player is not climbing anymore" << std::endl;
+            LOG_INFO("Player is not climbing anymore.");
             m_IsClimbing = false;
         }
     }
     // Jumped out the ladder
     else if (m_IsClimbing)
     {
-        std::cout << "Player is not climbing anymore" << std::endl;
+        LOG_INFO("Player is not climbing anymore.");
         m_IsClimbing = false;
 
         // Player gets a little force if pressing jump key

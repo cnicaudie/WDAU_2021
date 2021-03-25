@@ -3,7 +3,6 @@
 #include <Game/Entities/Player.h>
 
 SoulChunk::SoulChunk(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f pos)
-	: m_WasCollected(false)
 {
 	sf::Vector2f textureSize(32.f, 32.f);
 
@@ -34,13 +33,4 @@ void SoulChunk::Update(float deltaTime)
 void SoulChunk::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 { 
 	target.draw(m_Sprite);
-}
-
-void SoulChunk::OnTrigger(BoxCollideable* other)
-{
-	if (typeid(*other) == typeid(class Player) && !m_WasCollected)
-	{
-		std::cout << "Collected soul chunk !" << std::endl;
-		m_WasCollected = true;
-	}
 }

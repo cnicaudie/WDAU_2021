@@ -240,6 +240,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Game\Map\Tiles\ClimbableTile.cpp" />
     <ClCompile Include="Game\Map\MapGrid.cpp" />
     <ClCompile Include="Game\Objects\Bullet.cpp" />
+    <ClCompile Include="Game\Objects\Collectible.cpp" />
     <ClCompile Include="Game\Objects\Door.cpp" />
     <ClCompile Include="Game\Entities\Enemy.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
@@ -279,6 +280,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Map\Tiles\ClimbableTile.h" />
     <ClInclude Include="Game\Map\MapGrid.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
+    <ClInclude Include="Game\Objects\Collectible.h" />
     <ClInclude Include="Game\Objects\Door.h" />
     <ClInclude Include="Game\Entities\Enemy.h" />
     <ClInclude Include="Game\GameManager.h" />
