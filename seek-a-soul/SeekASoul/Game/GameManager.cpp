@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include "GameManager.h"
 
-
 GameManager* GameManager::m_GameManager = nullptr;
 
 GameManager* GameManager::GetInstance() 
@@ -21,7 +20,8 @@ GameManager::GameManager()
     , m_LevelManager { m_InputManager, m_TextureManager }
     , m_CameraManager{ &m_Window, &(m_LevelManager.GetPlayerOnMap()) }
     , m_IsGameOver{ false }
-{
+    , m_FramesPerSecond(60)
+{   
     EventHandler<GameManager>* handler = new EventHandler<GameManager>(this, &GameManager::StartEndGame);
     EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), handler);
 }
@@ -33,6 +33,12 @@ GameManager::~GameManager()
 
 void GameManager::Update(float deltaTime)
 {
+    if (m_FPSUpdateClock.getElapsedTime().asSeconds() >= 1.f) 
+    {
+        m_FramesPerSecond = static_cast<int>(1.f / deltaTime);
+        m_FPSUpdateClock.restart();
+    }
+
     m_InputManager->UpdateMousePosition(m_Window);
     
     if (!m_IsGameOver)
@@ -57,6 +63,7 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
     ImGui::Begin("Debug Menu");
     ImGui::Text("Press F1 to close this debug menu");
     ImGui::NewLine();
+    ImGui::Text("FPS : %d", m_FramesPerSecond);
     ImGui::Checkbox("Show Camera Zones", &m_CameraManager.DisplayCameraZones);
 
     if (ImGui::CollapsingHeader("Main character infos"))

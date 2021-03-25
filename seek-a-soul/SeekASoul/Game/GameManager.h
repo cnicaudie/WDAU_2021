@@ -41,4 +41,7 @@ private:
     CollisionManager m_CollisionManager;
     
     bool m_IsGameOver;
+
+    sf::Clock m_FPSUpdateClock;
+    int m_FramesPerSecond; // For Debug purposes
 };
