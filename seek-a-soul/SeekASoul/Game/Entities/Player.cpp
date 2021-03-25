@@ -88,7 +88,7 @@ void Player::OnCollision(BoxCollideable* other)
             m_Velocity.y = 0.f;
             m_IsGrounded = true;
             m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-            //std::cout << "Bottom collision" << std::endl;
+            //LOG_DEBUG("Bottom collision");
         }
 
         // Top collision

@@ -13,6 +13,7 @@
 #include <Engine/Event/EventManager.h>
 #include <Engine/Resources/TextureManager.h>
 #include <Engine/Input/InputManager.h>
+#include <Engine/Log/Log.h>
 
 #include <Game/GameManager.h>
 #include <Game/Action.h>
