@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include "Map.h"
-#include "CollideableTile.h"
-#include "ClimbableTile.h"
+#include <Game/Map/Tiles/CollideableTile.h>
+#include <Game/Map/Tiles/ClimbableTile.h>
 
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 

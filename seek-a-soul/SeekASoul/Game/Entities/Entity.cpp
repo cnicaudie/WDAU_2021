@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include "Entity.h"
-#include <Game/Map/CollideableTile.h>
 
 Entity::Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position, int healthPoints, float damageCooldownRelease)
     : m_TextureManager(textureManager)

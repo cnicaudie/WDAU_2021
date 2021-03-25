@@ -1,8 +1,8 @@
 #include <stdafx.h>
 #include "Player.h"
 #include "Enemy.h"
-#include <Game/Map/CollideableTile.h>
-#include <Game/Map/ClimbableTile.h>
+#include <Game/Map/Tiles/CollideableTile.h>
+#include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)

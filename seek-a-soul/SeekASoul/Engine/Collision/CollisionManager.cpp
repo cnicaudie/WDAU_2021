@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include "CollisionManager.h"
-
-#include <Game/Map/CollideableTile.h>
+#include <Game/Map/Tiles/CollideableTile.h>
 
 CollisionManager::CollisionManager() {}
 

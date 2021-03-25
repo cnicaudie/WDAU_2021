@@ -1,5 +1,6 @@
 #pragma once
-#include "Tile.h"
+
+#include <Game/Map/Tiles/Tile.h>
 #include <Game/Map/MapGrid.h>
 #include <Game/Objects/SoulChunk.h>
 #include <Game/Objects/Door.h>
