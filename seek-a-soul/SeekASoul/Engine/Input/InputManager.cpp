@@ -5,7 +5,7 @@
 #include <Engine/Input/Bindings/JoystickButtonBinding.h>
 #include <Engine/Input/Bindings/JoystickAxisBinding.h>
 
-InputManager::InputManager() 
+InputManager::InputManager()
 	: m_MousePosition()
 	, m_IsUsingJoystick(false)
 	, m_JoystickIndex(0)
@@ -44,6 +44,88 @@ InputManager::InputManager()
 	// TODO : Eventually make a rebinding feature
 
 	std::cout << "InputManager Created" << std::endl;
+}
+
+void InputManager::ManageInputEvents(const sf::Event& event)
+{
+	switch (event.type)
+	{
+		case sf::Event::KeyPressed:
+		{
+			AddAction(std::make_shared<KeyboardBinding>(event.key.code));
+			break;
+		}
+
+		case sf::Event::KeyReleased:
+		{
+			RemoveAction(std::make_shared<KeyboardBinding>(event.key.code));
+			break;
+		}
+
+		case sf::Event::MouseButtonPressed:
+		{
+			AddAction(std::make_shared<MouseBinding>(event.mouseButton.button));
+			break;
+		}
+
+		case sf::Event::MouseButtonReleased:
+		{
+			RemoveAction(std::make_shared<MouseBinding>(event.mouseButton.button));
+			break;
+		}
+
+		case sf::Event::JoystickButtonPressed:
+		{
+			AddAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
+			break;
+		}
+
+		case sf::Event::JoystickButtonReleased:
+		{
+			RemoveAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
+			break;
+		}
+
+		case sf::Event::JoystickMoved:
+		{
+			// Min threshold to consider a "press" on the the axis
+			const float PRESSED_THRESHOLD = 60.f;
+
+			float joystickPosition = event.joystickMove.position;
+			sf::Joystick::Axis joystickAxis = event.joystickMove.axis;
+
+			if (joystickAxis == sf::Joystick::Axis::Z) // Only axis used for actions for now
+			{
+				if (joystickPosition >= PRESSED_THRESHOLD || joystickPosition <= -PRESSED_THRESHOLD)
+				{
+					AddAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
+				}
+				else
+				{
+					RemoveAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
+				}
+			}
+			break;
+		}
+
+		case sf::Event::JoystickConnected:
+		{
+			if (!IsUsingJoystick())
+			{
+				InitJoystick();
+			}
+			break;
+		}
+
+		case sf::Event::JoystickDisconnected:
+		{
+			ResetJoystick(event.joystickConnect.joystickId);
+			break;
+		}
+
+		default:
+			break;
+	}
 }
 
 void InputManager::AddAction(const std::shared_ptr<Binding>& key)

@@ -37,6 +37,8 @@ void Game::RunGameLoop()
         sf::Event event;
         while (m_Window.pollEvent(event))
         {
+            m_InputManager->ManageInputEvents(event);
+
             switch (event.type)
             {
                 case sf::Event::Closed:
@@ -50,12 +52,8 @@ void Game::RunGameLoop()
                     break;
                 }
 
-                // ==== Inputs management 
-
                 case sf::Event::KeyPressed:
                 {
-                    m_InputManager->AddAction(std::make_shared<KeyboardBinding>(event.key.code));
-
                     if (event.key.code == sf::Keyboard::Escape)
                     {
                         m_Window.close();
@@ -64,73 +62,6 @@ void Game::RunGameLoop()
                     {
                         toggleImGui = !toggleImGui;
                     }
-                    break;
-                }
-
-                case sf::Event::KeyReleased:
-                {
-                    m_InputManager->RemoveAction(std::make_shared<KeyboardBinding>(event.key.code));
-                    break;
-                }
-
-                case sf::Event::MouseButtonPressed:
-                {
-                    m_InputManager->AddAction(std::make_shared<MouseBinding>(event.mouseButton.button));
-                    break;
-                }
-
-                case sf::Event::MouseButtonReleased:
-                {
-                    m_InputManager->RemoveAction(std::make_shared<MouseBinding>(event.mouseButton.button));
-                    break;
-                }
-
-                case sf::Event::JoystickButtonPressed:
-                {
-                    m_InputManager->AddAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
-                    break;
-                }
-
-                case sf::Event::JoystickButtonReleased:
-                {
-                    m_InputManager->RemoveAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
-                    break;
-                }
-
-                case sf::Event::JoystickMoved:
-                {
-                    // Min threshold to consider a "press" on the the axis
-                    const float PRESSED_THRESHOLD = 60.f;
-
-                    float joystickPosition = event.joystickMove.position;
-                    sf::Joystick::Axis joystickAxis = event.joystickMove.axis;
-
-                    if (joystickAxis == sf::Joystick::Axis::Z) // Only axis used for actions for now
-                    {
-                        if (joystickPosition >= PRESSED_THRESHOLD || joystickPosition <= -PRESSED_THRESHOLD)
-                        {
-                            m_InputManager->AddAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
-                        } 
-                        else 
-                        {
-                            m_InputManager->RemoveAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
-                        }
-                    }
-                    break;
-                }
-
-                case sf::Event::JoystickConnected:
-                {
-                    if (!m_InputManager->IsUsingJoystick()) 
-                    {
-                        m_InputManager->InitJoystick();
-                    }
-                    break;
-                }
-
-                case sf::Event::JoystickDisconnected:
-                {
-                    m_InputManager->ResetJoystick(event.joystickConnect.joystickId);
                     break;
                 }
 

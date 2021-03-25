@@ -9,6 +9,8 @@ class InputManager
 public:
 	InputManager();
 
+	void ManageInputEvents(const sf::Event& event);
+
 	void AddAction(const std::shared_ptr<Binding>& key);
 	void RemoveAction(const std::shared_ptr<Binding>& key);
 
