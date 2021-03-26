@@ -3,8 +3,6 @@
 #include "Entity.h"
 #include <Game/Objects/Bullet.h>
 
-enum PlayerState { IDLE, MOVING, SKULL_ROLLING, CLIMBING, SHOOTING };
-
 class Player : public Entity, public Animated
 {
 public:	
@@ -38,14 +36,15 @@ private:
 
 	std::shared_ptr<InputManager> m_InputManager;
 
-	PlayerState m_CurrentState;
-	bool m_IsGrounded;
-	int m_JumpCount;
-	bool m_IsClimbing;
-
-	bool m_IsSkullRolling;
-	float m_SkullRollingCooldown;
-
+	enum class PlayerState 
+	{ 
+		IDLE			= 0, 
+		MOVING			= 1, 
+		SKULL_ROLLING	= 2, 
+		CLIMBING		= 3, 
+		SHOOTING		= 4
+	} m_CurrentState;
+	
 	int m_SoulChunksCollected;
 
 	std::vector<Bullet> m_Bullets;
