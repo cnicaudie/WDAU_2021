@@ -3,7 +3,7 @@
 class Entity : public sf::Drawable, public BoxCollideable
 {
 public:
-	Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position, int healthPoints, float damageCooldownRelease);
+	Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position, int healthPoints);
 	
 	virtual void Update(float deltaTime) = 0;
 	virtual void OnCollision(BoxCollideable* other) = 0;
@@ -15,7 +15,7 @@ public:
 
 protected:
 	virtual void Damage() = 0;
-	virtual void UpdateDamageCooldown(float deltaTime) = 0;
+	virtual void UpdateVisualDamage(uint64_t deltaTime) = 0;
 
 	//====================//
 
@@ -28,6 +28,5 @@ protected:
 	bool m_IsDead;
 
 	bool m_WasDamaged;
-	float m_DamageCooldown;
-	float m_DamageCooldownRelease;
+	uint64_t m_LastDamageTime;
 };

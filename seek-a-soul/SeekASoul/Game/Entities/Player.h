@@ -19,19 +19,18 @@ public:
 
 protected:
 	void Damage() override;
-	void UpdateDamageCooldown(float deltaTime) override;
+	void UpdateVisualDamage(uint64_t now) override;
 
 private:
-	void UpdateBoundingBox();
-	void UpdateShootingCooldown(float deltaTime);
-	void UpdateSkullRollCooldown(float deltaTime);
-	void ManageBullets(float deltaTime);
-	void Shoot();
-	
+	void ComputeNextPlayerState();
 	void Move(float deltaTime);
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
-	void ComputeNextPlayerState();
-
+	
+	void UpdateBoundingBox();
+	void Shoot(uint64_t now);
+	void UpdateSkullRollCooldown(uint64_t now);
+	void ManageBullets(float deltaTime);
+	
 	//====================//
 
 	std::shared_ptr<InputManager> m_InputManager;
@@ -46,10 +45,14 @@ private:
 	} m_CurrentState;
 	
 	int m_SoulChunksCollected;
+	int m_JumpCount;
+	bool m_IsGrounded;
+	bool m_IsClimbing; // TODO : Use player state instead
+	bool m_IsSkullRolling; // TODO : Use player state instead
+	uint64_t m_LastSkullRollTime;
+	uint64_t m_LastShootTime;
 
 	std::vector<Bullet> m_Bullets;
-	bool m_CanShoot;
-	float m_ShootCooldown;
 	int m_AmmunitionsNumber;
 
 	// Checks when gettin out of skull roll

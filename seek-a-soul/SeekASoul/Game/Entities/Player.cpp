@@ -5,21 +5,24 @@
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
 
+static constexpr uint64_t SHOOT_COOLDOWN = 500;
+static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
+static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
+
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
-    : Entity(textureManager, { 50.f, 50.f }, 200, 1.0f)
+    : Entity(textureManager, { 50.f, 50.f }, 200)
     , Animated({ 32, 56 }, textureManager->GetTextureFromName("PLAYER_SHEET"))
     , m_InputManager{ inputManager }
     , m_CurrentState(PlayerState::IDLE)
-    , m_IsGrounded(false)
+    , m_SoulChunksCollected(0)
     , m_JumpCount(1)
+    , m_IsGrounded(false)
     , m_IsClimbing(false)
     , m_IsSkullRolling(false)
-    , m_SkullRollingCooldown(10.f)
-    , m_SoulChunksCollected(0)
+    , m_LastSkullRollTime(0)
+    , m_LastShootTime(0)
     , m_Bullets{}
-    , m_CanShoot(true)
-    , m_ShootCooldown(5.f)
-    , m_AmmunitionsNumber(10)
+    , m_AmmunitionsNumber(10) // TODO : Display this number with UI
     , m_InGroundCollision(false)
     , m_InCeilingCollision(false)
 {
@@ -28,23 +31,43 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 
 void Player::Update(float deltaTime)
 {
+    auto time = std::chrono::system_clock::now().time_since_epoch();
+    uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+
     // Check for actions
-    if (m_InputManager->HasAction(Action::SHOOT) && m_CanShoot && m_AmmunitionsNumber > 0 && !m_IsSkullRolling) {
-        Shoot();
+    if (m_InputManager->HasAction(Action::SHOOT) 
+        && (now - m_LastShootTime) >= SHOOT_COOLDOWN
+        && m_AmmunitionsNumber > 0 
+        && !m_IsSkullRolling) 
+    {
+        Shoot(now);
     }
 
-    if (m_InputManager->HasAction(Action::SKULL_ROLL))
+    if (m_InputManager->HasAction(Action::SKULL_ROLL)
+        && (now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
     {
-        if (m_SkullRollingCooldown >= 5.f) 
+        if (m_IsSkullRolling)
         {
-            m_IsSkullRolling = true;
-            m_SkullRollingCooldown = 0.f;
-        } 
-        else if (m_IsSkullRolling && m_SkullRollingCooldown >= 1.f)
-        {
+            LOG_DEBUG("SKULL ROLL OUT BY INPUT");
             m_IsSkullRolling = false;
-            m_SkullRollingCooldown = 0.f;
         }
+        else
+        {
+            LOG_DEBUG("SKULL ROLL IN");
+            m_LastSkullRollTime = now;
+            m_IsSkullRolling = true;
+        } 
+    } 
+    else if (m_IsSkullRolling) 
+    {
+        UpdateSkullRollCooldown(now);
+    }
+    else if (m_InGroundCollision && m_InCeilingCollision)
+    {
+        // If in ground and ceiling after collision check, player stays skull rolling
+        LOG_DEBUG("SKULL ROLL STAY");
+        m_IsSkullRolling = true;
+        m_LastSkullRollTime = now;
     }
 
     // Update player's bounding box
@@ -52,24 +75,17 @@ void Player::Update(float deltaTime)
 
     Move(deltaTime);
 
-    // If in ground and ceiling after collision check, player stays skull rolling
-    if (!m_IsSkullRolling && m_InGroundCollision && m_InCeilingCollision)
+    if (m_WasDamaged)
     {
-        m_IsSkullRolling = true;
-        m_SkullRollingCooldown = 0.f;
+        UpdateVisualDamage(now);
     }
- 
-    // Update Cooldowns
-    UpdateDamageCooldown(deltaTime);
-    UpdateShootingCooldown(deltaTime);    
-    UpdateSkullRollCooldown(deltaTime);
 
     // Update bullets and check for impacts
     ManageBullets(deltaTime);
 
     // Update player's animation
     ComputeNextPlayerState();
-    PlayAnimation(m_CurrentState);
+    PlayAnimation(static_cast<int>(m_CurrentState));
 }
 
 void Player::OnCollision(BoxCollideable* other)
@@ -216,101 +232,32 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 }
 
-void Player::Damage()
+void Player::ComputeNextPlayerState()
 {
-    std::cout << "Player was damaged !" << std::endl;
-    m_AnimationSprite.setColor(sf::Color::Red);
-    m_DamageCooldown = 0.f;
-    m_WasDamaged = true;
-    m_HealthPoints -= 10;
+    const float MOVE_ANIMATION_THRESHOLD = 50.f;
 
-    if (m_HealthPoints == 0)
+    if (m_IsClimbing)
     {
-        m_IsDead = true;
-        std::cout << "Player died !" << std::endl;
-        // TODO : Fire event player died ?
+        m_CurrentState = PlayerState::CLIMBING;
     }
-}
-
-void Player::UpdateDamageCooldown(float deltaTime)
-{
-    if (m_WasDamaged)
+    // TODO : make an idle animation for skull roll ?
+    else if (m_IsSkullRolling)
     {
-        if (m_DamageCooldown >= m_DamageCooldownRelease) {
-            m_WasDamaged = false;
-            m_AnimationSprite.setColor(sf::Color::White);
-        }
-        else
-        {
-            m_DamageCooldown += 1.f * deltaTime;
-        }
+        m_CurrentState = PlayerState::SKULL_ROLLING;
     }
-}
-
-void Player::UpdateBoundingBox()
-{
-    if (m_IsSkullRolling)
+    else if (std::abs(m_Velocity.x) > MOVE_ANIMATION_THRESHOLD)
     {
-        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()) * 0.5f);
+        m_CurrentState = PlayerState::MOVING;
+
+        FlipSprite(m_Velocity.x < 0);
     }
     else
     {
-        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()));
+        m_CurrentState = PlayerState::IDLE;
     }
 }
 
-void Player::UpdateShootingCooldown(float deltaTime)
-{
-    if (m_ShootCooldown >= 0.5f) {
-        m_CanShoot = true;
-    }
-    else {
-        m_ShootCooldown += 1.f * deltaTime;
-    }
-}
-
-void Player::UpdateSkullRollCooldown(float deltaTime)
-{
-    if (m_SkullRollingCooldown < 5.f)
-    {
-        m_SkullRollingCooldown += 1.f * deltaTime;
-    }
-    else
-    {
-        m_IsSkullRolling = false;
-    }
-}
-
-void Player::ManageBullets(float deltaTime)
-{
-    // Update the bullets
-    for (Bullet& b : m_Bullets) {
-        b.Update(deltaTime);
-    }
-
-    // Check for impact
-    int bulletIndex = 0;
-    for (Bullet& b : m_Bullets) 
-    {
-        if (b.GetDistance() > 400.f || b.HadImpact()) {
-            m_Bullets.erase(m_Bullets.begin() + bulletIndex);
-        }
-        bulletIndex++;
-    }
-}
-
-void Player::Shoot()
-{
-    const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
-    
-    m_CanShoot = false;
-    m_AmmunitionsNumber--;
-    std::cout << "Ammunitions left : " << m_AmmunitionsNumber << std::endl;
-    m_ShootCooldown = 0.f;
-    m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
-}
-
-void Player::Move(float deltaTime) 
+void Player::Move(float deltaTime)
 {
     const float MOVE_SPEED_MAX = 200.0f;
     const float MOVE_SPEED_INC = 10.0f;
@@ -318,7 +265,7 @@ void Player::Move(float deltaTime)
     const float JUMP_FORCE = 400.0f;
     const float SLOWDOWN_RATE = 0.9f;
     const float GRAVITY = 9.8f;
-    
+
     sf::Vector2f tempVelocity(0.f, 0.f);
 
     // Reset in ground/ceiling collision checks
@@ -331,7 +278,7 @@ void Player::Move(float deltaTime)
 
     // Resets the velocity if climbing 
     // (we don't want the player to fall down the ladder if he's not giving any input)
-    if (m_IsClimbing) 
+    if (m_IsClimbing)
     {
         m_Velocity.y = 0.f;
     }
@@ -352,7 +299,7 @@ void Player::Move(float deltaTime)
             m_IsGrounded = false;
         }
     }
-    
+
     // Climb down
     if (m_InputManager->HasAction(Action::MOVE_DOWN) && m_IsClimbing)
     {
@@ -361,7 +308,7 @@ void Player::Move(float deltaTime)
 
     // Check movement on X axis
     tempVelocity.x = m_Velocity.x;
-    if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime)) 
+    if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
     }
@@ -373,7 +320,7 @@ void Player::Move(float deltaTime)
     {
         m_Position += tempVelocity * deltaTime;
     }
-    
+
     // Clamp the player position between the bounds of the level
     sf::Vector2u levelBounds = GameManager::GetInstance()->GetLevelBounds();
     ClampPlayerPosition(0.f, static_cast<float>(levelBounds.x), 0.f, static_cast<float>(levelBounds.y));
@@ -385,16 +332,16 @@ void Player::Move(float deltaTime)
 
 void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)
 {
-    if (m_BoundingBox.left < minBoundX) 
+    if (m_BoundingBox.left < minBoundX)
     {
         m_Position.x = minBoundX + (m_BoundingBox.width / 2);
         m_Velocity.x = 0.f;
-    } 
+    }
     else if (m_BoundingBox.left + m_BoundingBox.width > maxBoundX)
     {
         m_Position.x = maxBoundX - (m_BoundingBox.width / 2);
         m_Velocity.x = 0.f;
-    } 
+    }
     else if (m_BoundingBox.top < minBoundY)
     {
         m_Position.y = minBoundY + (m_BoundingBox.height / 2);
@@ -408,27 +355,80 @@ void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoun
     }
 }
 
-void Player::ComputeNextPlayerState()
+void Player::Damage()
 {
-    const float MOVE_ANIMATION_THRESHOLD = 50.f;
+    LOG_INFO("Player was damaged !");
 
-    if (m_IsClimbing) 
+    m_AnimationSprite.setColor(sf::Color::Red);
+    m_WasDamaged = true;
+    m_HealthPoints -= 10;
+
+    if (m_HealthPoints == 0)
     {
-        m_CurrentState = PlayerState::CLIMBING;
-    } 
-    // TODO : make an idle animation for skull roll ?
-    else if (m_IsSkullRolling)
-    {
-        m_CurrentState = PlayerState::SKULL_ROLLING;
+        m_IsDead = true;
+        LOG_INFO("Player died !");
+        // TODO : Fire event player died ?
     }
-    else if (std::abs(m_Velocity.x) > MOVE_ANIMATION_THRESHOLD)
+}
+
+void Player::UpdateVisualDamage(uint64_t now)
+{
+    if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) 
     {
-        m_CurrentState = PlayerState::MOVING;
-        
-        FlipSprite(m_Velocity.x < 0);
-    } 
-    else 
+        m_AnimationSprite.setColor(sf::Color::White);
+        m_WasDamaged = false;
+        m_LastDamageTime = now;
+    }
+}
+
+void Player::UpdateBoundingBox()
+{
+    if (m_IsSkullRolling)
     {
-        m_CurrentState = PlayerState::IDLE;
+        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()) * 0.5f);
+    }
+    else
+    {
+        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()));
+    }
+}
+
+void Player::Shoot(uint64_t now)
+{
+    const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
+
+    m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
+
+    m_AmmunitionsNumber--;
+    LOG_INFO("Ammunitions left : " << m_AmmunitionsNumber);
+
+    m_LastShootTime = now;
+}
+
+void Player::UpdateSkullRollCooldown(uint64_t now)
+{
+    if ((now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
+    {
+        LOG_DEBUG("SKULL ROLL OUT");
+        m_LastSkullRollTime = now;
+        m_IsSkullRolling = false;
+    }
+}
+
+void Player::ManageBullets(float deltaTime)
+{
+    // Update the bullets
+    for (Bullet& b : m_Bullets) {
+        b.Update(deltaTime);
+    }
+
+    // Check for impact
+    int bulletIndex = 0;
+    for (Bullet& b : m_Bullets) 
+    {
+        if (b.GetDistance() > 400.f || b.HadImpact()) {
+            m_Bullets.erase(m_Bullets.begin() + bulletIndex);
+        }
+        bulletIndex++;
     }
 }

@@ -3,8 +3,10 @@
 #include "Player.h"
 #include <Game/Objects/Bullet.h>
 
+static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
+
 Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
-	: Entity(textureManager, { 320.0f, 65.0f }, 50, 0.3f)
+	: Entity(textureManager, { 320.0f, 65.0f }, 50)
 {
 	sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("ENEMY");
 
@@ -18,12 +20,15 @@ Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
 
 void Enemy::Update(float deltaTime) 
 {
-	if (m_IsDead) 
+	auto time = std::chrono::system_clock::now().time_since_epoch();
+	uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+	
+	if (m_IsDead)
 	{
 		return;
 	}
 	
-	UpdateDamageCooldown(deltaTime);
+	UpdateVisualDamage(now);
 }
 
 void Enemy::OnCollision(BoxCollideable* other)
@@ -51,30 +56,29 @@ void Enemy::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Enemy::Damage() 
 {
-	std::cout << "Enemy was damaged !" << std::endl;
+	LOG_INFO("Enemy was damaged !");
+
 	m_Sprite.setColor(sf::Color::Red);
-	m_DamageCooldown = 0.f;
 	m_WasDamaged = true;
 	m_HealthPoints -= 10;
-	
-	if (m_HealthPoints == 0) 
+
+	if (m_HealthPoints == 0)
 	{
 		m_IsDead = true;
-		std::cout << "Enemy died !" << std::endl;
+		LOG_INFO("Enemy died !");
 	}
+
+	auto time = std::chrono::system_clock::now().time_since_epoch();
+	m_LastDamageTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 }
 
-void Enemy::UpdateDamageCooldown(float deltaTime)
+void Enemy::UpdateVisualDamage(uint64_t now)
 {
 	if (m_WasDamaged)
 	{
-		if (m_DamageCooldown >= m_DamageCooldownRelease) {
+		if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) {
 			m_WasDamaged = false;
 			m_Sprite.setColor(sf::Color::White);
-		}
-		else
-		{
-			m_DamageCooldown += 1.f * deltaTime;
 		}
 	}
 }
