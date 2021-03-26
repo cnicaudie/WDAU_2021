@@ -1,4 +1,3 @@
 #pragma once
 
-// TODO
-enum EventType { GAME_OVER };
+enum class EventType { GAME_OVER };

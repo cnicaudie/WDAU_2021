@@ -17,8 +17,14 @@ UIManager::UIManager()
 
     m_EndgameSound.setBuffer(m_EndgameSoundBuffer);
 
-    EventHandler<UIManager>* handler = new EventHandler<UIManager>(this, &UIManager::StartEndGame);
-    EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), handler);
+    EventListener<UIManager> listener(this, &UIManager::StartEndGame);
+    EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), listener);
+}
+
+UIManager::~UIManager() 
+{
+    EventListener<UIManager> listener(this, &UIManager::StartEndGame);
+    EventManager::GetInstance()->RemoveListener(Event(EventType::GAME_OVER), listener);
 }
 
 void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
@@ -31,7 +37,6 @@ void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void UIManager::StartEndGame() 
 {
-    std::cout << "UIManager end game" << std::endl;
     m_IsPlayingEndGame = true;
     m_EndgameSound.play();
 }

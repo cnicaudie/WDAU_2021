@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "GameManager.h"
+#include <Engine/Event/EventListener.h>
 
 GameManager* GameManager::m_GameManager = nullptr;
 
@@ -22,12 +23,15 @@ GameManager::GameManager()
     , m_IsGameOver{ false }
     , m_FramesPerSecond(60)
 {   
-    EventHandler<GameManager>* handler = new EventHandler<GameManager>(this, &GameManager::StartEndGame);
-    EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), handler);
+    EventListener<GameManager> listener(this, &GameManager::StartEndGame);
+    EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), listener);
 }
 
 GameManager::~GameManager()
 {
+    EventListener<GameManager> listener(this, &GameManager::StartEndGame);
+    EventManager::GetInstance()->RemoveListener(Event(EventType::GAME_OVER), listener);
+
     delete m_GameManager;
 }
 
@@ -106,6 +110,6 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 
 void GameManager::StartEndGame()
 {
-    std::cout << "GameManager end game" << std::endl;
+    LOG_INFO("GAME OVER !!!");
     m_IsGameOver = true;
 }

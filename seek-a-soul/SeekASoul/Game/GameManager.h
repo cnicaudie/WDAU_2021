@@ -5,7 +5,6 @@
 #include <Game/Entities/Player.h>
 #include "LevelManager.h"
 #include <Game/Camera/CameraManager.h>
-#include <Engine/Event/EventHandler.h>
 
 class GameManager : public Game
 {
