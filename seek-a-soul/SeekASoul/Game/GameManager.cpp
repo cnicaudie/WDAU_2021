@@ -19,10 +19,12 @@ GameManager::GameManager()
     , m_TextureManager{ std::make_shared<TextureManager>() }
     , m_UiManager{}
     , m_LevelManager { m_InputManager, m_TextureManager }
-    , m_CameraManager{ &m_Window, &(m_LevelManager.GetPlayerOnMap()) }
+    , m_CameraManager{ &m_Window }
     , m_IsGameOver{ false }
     , m_FramesPerSecond(60)
 {   
+    m_CameraManager.SetBoxToFollow(&(m_LevelManager.GetPlayerOnMap()));
+
     EventListener<GameManager> listener(this, &GameManager::StartEndGame);
     EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), listener);
 }

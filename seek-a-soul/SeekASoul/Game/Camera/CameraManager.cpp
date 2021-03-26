@@ -1,17 +1,21 @@
 #include <stdafx.h>
 #include "CameraManager.h"
 
-CameraManager::CameraManager(sf::RenderWindow* window, const Player* player)
+CameraManager::CameraManager(sf::RenderWindow* window)
     : m_Window(window)
-    , m_Player(player)
     , m_CameraView(sf::FloatRect(0.f, 0.f, static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)))
+    , m_ExitedHardZone(false)
     , DisplayCameraZones(false)
 {
-    m_HardMoveZone.setPosition(window->getSize().x * 0.25f, window->getSize().y * 0.25f);
-    m_SoftMoveZone.setPosition(window->getSize().x * 0.25f, window->getSize().y * 0.25f);
+    const sf::Vector2f WINDOW_CENTER{ window->getSize().x * 0.25f, window->getSize().y * 0.25f };
+    const sf::Vector2f HARD_ZONE_SIZE{ window->getSize().x / 1.6f, window->getSize().y / 2.4f };
+    const sf::Vector2f SOFT_ZONE_SIZE{ window->getSize().x / 3.2f, window->getSize().y / 4.8f };
 
-    m_HardMoveZone.setSize({ 640.f, 320.f });
-    m_SoftMoveZone.setSize({ 320.f, 160.f });
+    m_HardMoveZone.setPosition(WINDOW_CENTER);
+    m_SoftMoveZone.setPosition(WINDOW_CENTER);
+
+    m_HardMoveZone.setSize(HARD_ZONE_SIZE);
+    m_SoftMoveZone.setSize(SOFT_ZONE_SIZE);
 
     m_HardMoveZone.setFillColor(sf::Color::Transparent);
     m_SoftMoveZone.setFillColor(sf::Color::Transparent);
@@ -27,35 +31,49 @@ CameraManager::CameraManager(sf::RenderWindow* window, const Player* player)
 
 void CameraManager::Update(float deltaTime) 
 {
+    if (m_CameraMode == CameraMode::FOLLOW) 
+    {
+        FollowBox(deltaTime);
+    }
+}
+
+void CameraManager::FollowBox(float deltaTime)
+{
+    const sf::Vector2f boxToFollowPosition = m_BoxToFollow->GetCenter();
+
     sf::FloatRect hardMoveZoneBoundingBox = m_HardMoveZone.getGlobalBounds();
     sf::FloatRect softMoveZoneBoundingBox = m_SoftMoveZone.getGlobalBounds();
 
-    // Move the camera view towards the player if he's out of the zone(s)
-    if (m_Player->GetCenter().x < hardMoveZoneBoundingBox.left
-        || m_Player->GetCenter().x > hardMoveZoneBoundingBox.left + hardMoveZoneBoundingBox.width
-        || m_Player->GetCenter().y < hardMoveZoneBoundingBox.top
-        || m_Player->GetCenter().y > hardMoveZoneBoundingBox.top + hardMoveZoneBoundingBox.height)
+    float followSpeedRate = 1.f;
+
+    if (!hardMoveZoneBoundingBox.contains(boxToFollowPosition))
     {
-        m_CameraView.move((m_Player->GetCenter() - m_CameraView.getCenter()) * deltaTime);
-    }
-    else if (m_Player->GetCenter().x < softMoveZoneBoundingBox.left
-        || m_Player->GetCenter().x > softMoveZoneBoundingBox.left + softMoveZoneBoundingBox.width
-        || m_Player->GetCenter().y < softMoveZoneBoundingBox.top
-        || m_Player->GetCenter().y > softMoveZoneBoundingBox.top + softMoveZoneBoundingBox.height)
-    {
-        m_CameraView.move((m_Player->GetCenter() - m_CameraView.getCenter()) * 0.5f * deltaTime);
+        m_ExitedHardZone = true;
     } 
-    else 
-    { 
-        m_CameraView.move((m_Player->GetCenter() - m_CameraView.getCenter()) * 0.25f * deltaTime);
+    else if (m_ExitedHardZone)
+    {
+        if (softMoveZoneBoundingBox.contains(boxToFollowPosition))
+        {
+            m_ExitedHardZone = false;
+            followSpeedRate = 0.5f;
+        }
+    } 
+    else if (!softMoveZoneBoundingBox.contains(boxToFollowPosition))
+    {
+        followSpeedRate = 0.5f;
     }
+    else 
+    {
+        followSpeedRate = 0.25f;
+    }
+
+    m_CameraView.move((boxToFollowPosition - m_CameraView.getCenter()) * followSpeedRate * deltaTime);
     
-    m_SoftMoveZone.setPosition(m_CameraView.getCenter() - (m_SoftMoveZone.getSize() / 2.f));
     m_HardMoveZone.setPosition(m_CameraView.getCenter() - (m_HardMoveZone.getSize() / 2.f));
+    m_SoftMoveZone.setPosition(m_CameraView.getCenter() - (m_SoftMoveZone.getSize() / 2.f));
     m_Window->setView(m_CameraView);
 }
 
-// Temporary
 void CameraManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
     if (DisplayCameraZones) 
