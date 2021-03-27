@@ -24,6 +24,7 @@ protected:
 private:
 	void ComputeNextPlayerState();
 	void Move(float deltaTime);
+	void MoveUp();
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
 	
 	void UpdateBoundingBox();
@@ -48,6 +49,7 @@ private:
 	int m_JumpCount;
 	bool m_IsGrounded;
 	bool m_IsClimbing; // TODO : Use player state instead
+	bool m_CanClimb;
 	bool m_IsSkullRolling; // TODO : Use player state instead
 	uint64_t m_LastSkullRollTime;
 	uint64_t m_LastShootTime;

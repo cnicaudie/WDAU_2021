@@ -9,6 +9,13 @@ static constexpr uint64_t SHOOT_COOLDOWN = 500;
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
 
+static constexpr float MOVE_SPEED_MAX = 200.0f;
+static constexpr float MOVE_SPEED_INC = 10.0f;
+static constexpr float CLIMB_SPEED = 100.0f;
+static constexpr float JUMP_FORCE = 400.0f;
+static constexpr float SLOWDOWN_RATE = 0.9f;
+static constexpr float GRAVITY = 9.8f;
+
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : Entity(textureManager, { 50.f, 50.f }, 200)
     , Animated({ 32, 56 }, textureManager->GetTextureFromName("PLAYER_SHEET"))
@@ -18,6 +25,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_JumpCount(1)
     , m_IsGrounded(false)
     , m_IsClimbing(false)
+    , m_CanClimb(false)
     , m_IsSkullRolling(false)
     , m_LastSkullRollTime(0)
     , m_LastShootTime(0)
@@ -199,29 +207,11 @@ void Player::OnTrigger(BoxCollideable* other)
 
     if (typeid(*other).name() == typeid(class ClimbableTile).name())
     {
-        if (!m_IsClimbing && m_InputManager->HasAction(Action::MOVE_UP) && !m_IsSkullRolling)
-        {
-            LOG_INFO("Player is climbing !");
-            m_IsClimbing = true;
-        } 
-        // Climbed down the ladder
-        else if (m_IsClimbing && m_IsGrounded) 
-        {
-            LOG_INFO("Player is not climbing anymore.");
-            m_IsClimbing = false;
-        }
+        m_CanClimb = true;
     }
-    // Jumped out the ladder
-    else if (m_IsClimbing)
+    else 
     {
-        LOG_INFO("Player is not climbing anymore.");
-        m_IsClimbing = false;
-
-        // Player gets a little force if pressing jump key
-        if (m_InputManager->HasAction(Action::MOVE_UP)) 
-        {
-            m_Velocity.y = -300.f;
-        }
+        m_CanClimb = false;
     }
 }
 
@@ -261,13 +251,6 @@ void Player::ComputeNextPlayerState()
 
 void Player::Move(float deltaTime)
 {
-    const float MOVE_SPEED_MAX = 200.0f;
-    const float MOVE_SPEED_INC = 10.0f;
-    const float CLIMB_SPEED = 100.0f;
-    const float JUMP_FORCE = 400.0f;
-    const float SLOWDOWN_RATE = 0.9f;
-    const float GRAVITY = 9.8f;
-
     sf::Vector2f tempVelocity(0.f, 0.f);
 
     // Reset in ground/ceiling collision checks
@@ -278,27 +261,19 @@ void Player::Move(float deltaTime)
     m_Velocity.y += GRAVITY;
     m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE);
 
-    // Resets the velocity if climbing 
-    // (we don't want the player to fall down the ladder if he's not giving any input)
-    if (m_IsClimbing)
-    {
-        m_Velocity.y = 0.f;
-    }
-
     if (m_InputManager->HasAction(Action::MOVE_UP))
     {
-        // Jump
-        if (m_JumpCount != 0)
+        MoveUp();
+    } 
+    else if (m_IsClimbing) 
+    {
+        // Resets the vertical velocity if climbing 
+        // (we don't want the player to fall down the ladder if he's not giving any input)
+        m_Velocity.y = 0.f;
+
+        if (!m_CanClimb) 
         {
-            m_JumpCount -= 1;
-            m_Velocity.y = -JUMP_FORCE;
-            m_IsGrounded = false;
-        }
-        // Climb up
-        else if (m_IsClimbing)
-        {
-            m_Velocity.y = -CLIMB_SPEED;
-            m_IsGrounded = false;
+            m_IsClimbing = false;
         }
     }
 
@@ -306,6 +281,11 @@ void Player::Move(float deltaTime)
     if (m_InputManager->HasAction(Action::MOVE_DOWN) && m_IsClimbing)
     {
         m_Velocity.y = CLIMB_SPEED;
+
+        if (m_IsGrounded)
+        {
+           m_IsClimbing = false;
+        }
     }
 
     // Check movement on X axis
@@ -330,6 +310,32 @@ void Player::Move(float deltaTime)
     // Apply new position
     SetCenter(m_Position);
     SetAnimatedSpritePosition(m_Position);
+}
+
+void Player::MoveUp()
+{
+    // Climb up
+    if (m_CanClimb && !m_IsSkullRolling)
+    {
+        //LOG_INFO("Player is climbing !");
+        m_Velocity.y = -CLIMB_SPEED;
+        m_IsClimbing = true;
+        m_JumpCount = 0;
+    }
+    else if (!m_CanClimb && m_IsClimbing)
+    {
+        // Player gets a little force if he's jumping when getting out of the ladder
+        m_Velocity.y = -(JUMP_FORCE * 0.75f);
+        m_IsClimbing = false;
+    }
+    // Jump
+    else if (m_JumpCount != 0)
+    {
+        m_JumpCount -= 1;
+        m_Velocity.y = -JUMP_FORCE;
+    }
+    
+    m_IsGrounded = false;
 }
 
 void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)
