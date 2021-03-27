@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include "GameManager.h"
-#include <Engine/Event/EventListener.h>
+#include <Engine/Event/Listener/EventListener.h>
 
 GameManager* GameManager::m_GameManager = nullptr;
 
@@ -26,13 +26,13 @@ GameManager::GameManager()
     m_CameraManager.SetBoxToFollow(&(m_LevelManager.GetPlayerOnMap()));
 
     EventListener<GameManager> listener(this, &GameManager::StartEndGame);
-    EventManager::GetInstance()->AddListener(Event(EventType::GAME_OVER), listener);
+    EventManager::GetInstance()->AddListener(Event(EventType::END_GAME), listener);
 }
 
 GameManager::~GameManager()
 {
     EventListener<GameManager> listener(this, &GameManager::StartEndGame);
-    EventManager::GetInstance()->RemoveListener(Event(EventType::GAME_OVER), listener);
+    EventManager::GetInstance()->RemoveListener(Event(EventType::END_GAME), listener);
 
     delete m_GameManager;
 }

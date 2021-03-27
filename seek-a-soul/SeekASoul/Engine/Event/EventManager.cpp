@@ -22,7 +22,7 @@ EventManager::~EventManager()
 
 void EventManager::Update(float deltaTime)
 {
-	for (EventType e : m_EventsToFire)
+	for (const Event& e : m_EventsToFire)
 	{
 		for (std::unique_ptr<IEventListener>& listener : m_EventListeners[e])
 		{
@@ -34,11 +34,6 @@ void EventManager::Update(float deltaTime)
 }
 
 void EventManager::Fire(const Event& eventType)
-{
-	EventType e = eventType.GetType();
-	
-	if (std::find(m_EventsToFire.begin(), m_EventsToFire.end(), e) == m_EventsToFire.end())
-	{
-		m_EventsToFire.push_back(e);
-	}
+{	
+	m_EventsToFire.insert(eventType);
 }

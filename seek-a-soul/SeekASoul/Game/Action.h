@@ -1,3 +1,12 @@
 #pragma once
 
-enum class Action { MOVE_UP, MOVE_DOWN, SKULL_ROLL, SHOOT};
+enum class Action 
+{
+	NONE		= 0,
+	MOVE_LEFT	= 1,
+	MOVE_RIGHT	= 2,
+	MOVE_UP		= 3, 
+	MOVE_DOWN	= 4, 
+	SKULL_ROLL	= 5, 
+	SHOOT		= 6
+};

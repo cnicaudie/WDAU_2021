@@ -1,10 +1,10 @@
 #pragma once
 
 #include "IEventListener.h"
-#include "Event.h"
+#include <Engine/Event/EventTypes/Event.h>
 #include <functional>
-#include <Engine/Log/Log.h>
-#include <iostream>
+#include <Engine/Log/Log.h> // Temporary
+#include <iostream> // Temporary
 
 template<typename T>
 class EventListener : public IEventListener
@@ -14,7 +14,7 @@ public:
 
 	~EventListener()
 	{
-		LOG_INFO("Deleted listener");
+		LOG_INFO("Deleted listener"); // Temporary
 	};
 
 	bool operator==(IEventListener* other) const override
