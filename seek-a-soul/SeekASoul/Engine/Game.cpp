@@ -74,6 +74,7 @@ void Game::RunGameLoop()
 
         ImGui::SFML::Update(m_Window, clock.getElapsedTime());
 
+        m_InputManager->Update();
         Update(deltaTime);
         Render(m_Window);
         RenderDebugMenu(m_Window);

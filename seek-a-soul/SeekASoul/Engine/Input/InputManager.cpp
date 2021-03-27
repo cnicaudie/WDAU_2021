@@ -43,7 +43,16 @@ InputManager::InputManager()
 
 	// TODO : Eventually make a rebinding feature
 
-	std::cout << "InputManager Created" << std::endl;
+	LOG_INFO("InputManager Created");
+}
+
+void InputManager::Update() 
+{
+	for (Action action : m_CurrentActions)
+	{
+		Event actionEvent(EventType::ACTION, action);
+		EventManager::GetInstance()->Fire(actionEvent);
+	}
 }
 
 void InputManager::ManageInputEvents(const sf::Event& event)

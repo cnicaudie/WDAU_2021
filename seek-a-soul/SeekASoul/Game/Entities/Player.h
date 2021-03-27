@@ -28,7 +28,8 @@ private:
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
 	
 	void UpdateBoundingBox();
-	void Shoot(uint64_t now);
+	void Shoot();
+	void SkullRoll();
 	void UpdateSkullRollCooldown(uint64_t now);
 	void ManageBullets(float deltaTime);
 	

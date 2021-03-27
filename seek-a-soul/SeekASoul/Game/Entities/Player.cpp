@@ -35,38 +35,21 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_InCeilingCollision(false)
 {
     m_BoundingBox = GetAnimatedSpriteBoundingBox();
+
+    EventListener<Player> shootListener(this, &Player::Shoot);
+    EventListener<Player> skullRollListener(this, &Player::SkullRoll);
+
+    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SHOOT), shootListener);
+    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SKULL_ROLL), skullRollListener);
 }
 
 void Player::Update(float deltaTime)
 {
+    // TODO : make a unique function to get this value
     auto time = std::chrono::system_clock::now().time_since_epoch();
     uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 
-    // Check for actions
-    if (m_InputManager->HasAction(Action::SHOOT) 
-        && (now - m_LastShootTime) >= SHOOT_COOLDOWN
-        && m_AmmunitionsNumber > 0 
-        && !m_IsSkullRolling) 
-    {
-        Shoot(now);
-    }
-
-    if (m_InputManager->HasAction(Action::SKULL_ROLL)
-        && (now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
-    {
-        if (m_IsSkullRolling)
-        {
-            LOG_DEBUG("SKULL ROLL OUT BY INPUT");
-            m_IsSkullRolling = false;
-        }
-        else
-        {
-            LOG_DEBUG("SKULL ROLL IN");
-            m_LastSkullRollTime = now;
-            m_IsSkullRolling = true;
-        } 
-    } 
-    else if (m_IsSkullRolling) 
+    if (m_IsSkullRolling) 
     {
         UpdateSkullRollCooldown(now);
     }
@@ -401,16 +384,45 @@ void Player::UpdateBoundingBox()
     }
 }
 
-void Player::Shoot(uint64_t now)
+void Player::Shoot()
 {
-    const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
+    // TODO : make a unique function to get this value
+    auto time = std::chrono::system_clock::now().time_since_epoch();
+    uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 
-    m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
+    if ((now - m_LastShootTime) >= SHOOT_COOLDOWN
+        && m_AmmunitionsNumber > 0
+        && !m_IsSkullRolling) 
+    {
+        const sf::Vector2f bulletDirection = m_InputManager->GetScaledDirection(m_Position);
 
-    m_AmmunitionsNumber--;
-    LOG_INFO("Ammunitions left : " << m_AmmunitionsNumber);
+        m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
 
-    m_LastShootTime = now;
+        m_AmmunitionsNumber--;
+        LOG_INFO("Ammunitions left : " << m_AmmunitionsNumber);
+
+        m_LastShootTime = now;
+    }
+}
+
+void Player::SkullRoll()
+{
+    // TODO : make a unique function to get this value
+    auto time = std::chrono::system_clock::now().time_since_epoch();
+    uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+    
+    if (m_IsSkullRolling && (now - m_LastSkullRollTime) >= (SKULL_ROLL_COOLDOWN * 0.25f))
+    {
+        LOG_DEBUG("SKULL ROLL OUT BY INPUT");
+        m_IsSkullRolling = false;
+        m_LastSkullRollTime = now;
+    }
+    else if ((now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
+    {
+        LOG_DEBUG("SKULL ROLL IN");
+        m_IsSkullRolling = true;
+        m_LastSkullRollTime = now;
+    }
 }
 
 void Player::UpdateSkullRollCooldown(uint64_t now)
@@ -418,8 +430,8 @@ void Player::UpdateSkullRollCooldown(uint64_t now)
     if ((now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
     {
         LOG_DEBUG("SKULL ROLL OUT");
-        m_LastSkullRollTime = now;
         m_IsSkullRolling = false;
+        m_LastSkullRollTime = now;
     }
 }
 
