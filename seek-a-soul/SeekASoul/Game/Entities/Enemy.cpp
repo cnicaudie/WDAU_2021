@@ -23,24 +23,29 @@ void Enemy::Update(float deltaTime)
 	auto time = std::chrono::system_clock::now().time_since_epoch();
 	uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 	
-	if (m_IsDead)
+	if (m_HealthState == HealthState::DEAD)
 	{
 		return;
 	}
 	
-	UpdateVisualDamage(now);
+	if (m_HealthState == HealthState::DAMAGED)
+	{
+		UpdateVisualDamage(now);
+	}
 }
 
 void Enemy::OnCollision(BoxCollideable* other)
 {
 	Player* player = dynamic_cast<Player*>(other);
 
-	if (player != nullptr && player->IsSkullRolling() && !m_WasDamaged)
+	if (player != nullptr && player->IsSkullRolling() 
+		&& (m_HealthState == HealthState::OK))
 	{
 		Damage();
 	}	
 
-	if (typeid(*other) == typeid(class Bullet) && !m_WasDamaged)
+	if (typeid(*other) == typeid(class Bullet) 
+		&& (m_HealthState == HealthState::OK))
 	{
 		Damage();
 	}
@@ -48,7 +53,7 @@ void Enemy::OnCollision(BoxCollideable* other)
 
 void Enemy::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
-	if (!m_IsDead)
+	if (!(m_HealthState == HealthState::DEAD))
 	{
 		target.draw(m_Sprite);
 	}
@@ -59,12 +64,12 @@ void Enemy::Damage()
 	LOG_INFO("Enemy was damaged !");
 
 	m_Sprite.setColor(sf::Color::Red);
-	m_WasDamaged = true;
+	m_HealthState = HealthState::DAMAGED;
 	m_HealthPoints -= 10;
 
 	if (m_HealthPoints == 0)
 	{
-		m_IsDead = true;
+		m_HealthState = HealthState::DEAD;
 		LOG_INFO("Enemy died !");
 	}
 
@@ -74,11 +79,8 @@ void Enemy::Damage()
 
 void Enemy::UpdateVisualDamage(uint64_t now)
 {
-	if (m_WasDamaged)
-	{
-		if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) {
-			m_WasDamaged = false;
-			m_Sprite.setColor(sf::Color::White);
-		}
+	if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) {
+		m_HealthState = HealthState::OK;
+		m_Sprite.setColor(sf::Color::White);
 	}
 }

@@ -75,7 +75,7 @@ void Player::Update(float deltaTime)
 
     Move(deltaTime);
 
-    if (m_WasDamaged)
+    if (m_HealthState == HealthState::DAMAGED)
     {
         UpdateVisualDamage(now);
     }
@@ -92,7 +92,9 @@ void Player::OnCollision(BoxCollideable* other)
 {
     sf::FloatRect otherCollider = other->GetBoundingBox();
     
-    if (typeid(*other) == typeid(class Enemy) && !m_WasDamaged && !m_IsSkullRolling)
+    if (typeid(*other) == typeid(class Enemy) 
+        && (m_HealthState == HealthState::OK)
+        && !m_IsSkullRolling)
     {
         Damage();
     }
@@ -360,12 +362,12 @@ void Player::Damage()
     LOG_INFO("Player was damaged !");
 
     m_AnimationSprite.setColor(sf::Color::Red);
-    m_WasDamaged = true;
+    m_HealthState = HealthState::DAMAGED;
     m_HealthPoints -= 10;
 
     if (m_HealthPoints == 0)
     {
-        m_IsDead = true;
+        m_HealthState = HealthState::DEAD;
         LOG_INFO("Player died !");
         // TODO : Fire event player died ?
     }
@@ -376,7 +378,7 @@ void Player::UpdateVisualDamage(uint64_t now)
     if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) 
     {
         m_AnimationSprite.setColor(sf::Color::White);
-        m_WasDamaged = false;
+        m_HealthState = HealthState::OK;
         m_LastDamageTime = now;
     }
 }

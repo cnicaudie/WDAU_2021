@@ -11,13 +11,20 @@ public:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
 
 	inline const sf::Vector2f& GetVelocity() const { return m_Velocity; }; // For debug in GameManager
-	inline bool IsDead() const { return m_IsDead; };
+	inline bool IsDead() const { return m_HealthState == HealthState::DEAD; };
 
 protected:
 	virtual void Damage() = 0;
 	virtual void UpdateVisualDamage(uint64_t deltaTime) = 0;
 
 	//====================//
+	
+	enum class HealthState
+	{
+		OK		= 0,
+		DAMAGED	= 1,
+		DEAD	= 2,
+	} m_HealthState;
 
 	std::shared_ptr<TextureManager> m_TextureManager;
 	
@@ -25,8 +32,6 @@ protected:
 	sf::Vector2f m_Velocity;
 	
 	int m_HealthPoints;
-	bool m_IsDead;
 
-	bool m_WasDamaged;
 	uint64_t m_LastDamageTime;
 };
