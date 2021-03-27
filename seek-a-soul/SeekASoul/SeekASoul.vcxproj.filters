@@ -233,6 +233,9 @@
     <ClInclude Include="Engine\Event\EventTypes\EventType.h">
       <Filter>Engine\Event\EventTypes</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Collision\CollisionDirection.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">

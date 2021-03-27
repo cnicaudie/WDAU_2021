@@ -259,6 +259,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\external\imgui-sfml-master\imgui-SFML.h" />
     <ClInclude Include="Engine\Animation\Animated.h" />
     <ClInclude Include="Engine\Collision\BoxCollideable.h" />
+    <ClInclude Include="Engine\Collision\CollisionDirection.h" />
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Engine\Event\EventTypes\Event.h" />
     <ClInclude Include="Engine\Event\Listener\EventListener.h" />

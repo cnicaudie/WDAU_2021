@@ -10,6 +10,7 @@
 #include <Engine/Game.h>
 #include <Engine/Animation/Animated.h>
 #include <Engine/Collision/BoxCollideable.h>
+#include <Engine/Collision/CollisionDirection.h>
 #include <Engine/Event/EventManager.h>
 #include <Engine/Resources/TextureManager.h>
 #include <Engine/Input/InputManager.h>
