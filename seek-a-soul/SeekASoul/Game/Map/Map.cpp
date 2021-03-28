@@ -1,27 +1,29 @@
 #include <stdafx.h>
 #include "Map.h"
-#include "CollideableTile.h"
+#include <Game/Map/Tiles/CollideableTile.h>
+#include <Game/Map/Tiles/ClimbableTile.h>
 
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 
-Map::Map(const std::shared_ptr<TextureManager>& textureManager)
+Map::Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : m_TileSet(textureManager->GetTextureFromName("TILESET"))
     , m_MapGrid(TILE_SIZE)
     , m_Door{ 1200, 120, 50, 100 }
+    , m_Player{ inputManager, textureManager }
 {
-    m_SoulChunks.emplace_back(m_TileSet, sf::Vector2f(336.f, 208.f));
+    m_SoulChunks.emplace_back(textureManager, sf::Vector2f(336.f, 208.f));
     m_Enemies.emplace_back(textureManager);
     std::cout << "Map created !" << std::endl;
 }
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    // Draw the background map
+    // === Draw the background map
     states.transform *= getTransform(); // Apply the transform
     states.texture = &m_TileSet; // Apply the tileset texture
     target.draw(m_BackgroundTileMap, states); // Draw the vertex array
 
-    // Draw other objects
+    // === Draw other objects
     for (const SoulChunk& s : m_SoulChunks)
     {
         if (!s.WasCollected()) 
@@ -32,11 +34,13 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     target.draw(m_Door);
 
-    // Draw entities
+    // === Draw entities
     for (const Enemy& enemy : m_Enemies)
     {
         target.draw(enemy);
     }
+
+    target.draw(m_Player);
 }
 
 void Map::Update(float deltaTime) 
@@ -75,6 +79,12 @@ void Map::Update(float deltaTime)
         {
             m_MapGrid.RemoveCollideableOnTiles(enemy);
         }
+    }
+
+    // Update Player
+    if (!m_Player.IsDead())
+    {
+        m_Player.Update(deltaTime);
     }
 }
 
@@ -158,6 +168,17 @@ void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLin
     case TileType::CONCRETE:
     {
         tileLine.push_back(std::make_shared<CollideableTile>
+            (static_cast<float>(xCenter)
+                , static_cast<float>(yCenter)
+                , static_cast<float>(TILE_SIZE.x)
+                , static_cast<float>(TILE_SIZE.y)
+                ));
+        break;
+    }
+
+    case TileType::LADDER:
+    {
+        tileLine.push_back(std::make_shared<ClimbableTile>
             (static_cast<float>(xCenter)
                 , static_cast<float>(yCenter)
                 , static_cast<float>(TILE_SIZE.x)

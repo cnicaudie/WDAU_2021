@@ -7,7 +7,7 @@ class MouseBinding : public Binding
 public:
 	MouseBinding(const sf::Mouse::Button& button);
 
-	int GetBinding() override;
+	bool operator==(Binding* other) override;
 
 private:
 	sf::Mouse::Button m_Button;

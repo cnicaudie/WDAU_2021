@@ -14,4 +14,9 @@ public:
 
 protected:
 	void Damage() override;
+	void UpdateVisualDamage(uint64_t now) override;
+
+private:
+	sf::Sprite m_Sprite;
+
 };

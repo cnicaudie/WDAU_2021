@@ -3,5 +3,5 @@
 class Binding
 {
 public:
-	virtual int GetBinding() = 0;
+	virtual bool operator==(Binding* other) = 0;
 };

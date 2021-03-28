@@ -5,7 +5,6 @@
 #include <Game/Entities/Player.h>
 #include "LevelManager.h"
 #include <Game/Camera/CameraManager.h>
-#include <Engine/Event/EventHandler.h>
 
 class GameManager : public Game
 {
@@ -37,10 +36,11 @@ private:
     std::shared_ptr<TextureManager> m_TextureManager;
     UIManager m_UiManager;
     LevelManager m_LevelManager;
-    
-    CollisionManager m_CollisionManager;
-    Player m_Player;
     CameraManager m_CameraManager;
+    CollisionManager m_CollisionManager;
     
     bool m_IsGameOver;
+
+    sf::Clock m_FPSUpdateClock;
+    int m_FramesPerSecond; // For Debug purposes
 };

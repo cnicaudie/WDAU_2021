@@ -7,7 +7,7 @@ class KeyboardBinding : public Binding
 public:
 	KeyboardBinding(const sf::Keyboard::Key& key);
 
-	int GetBinding() override;
+	bool operator==(Binding* other) override;
 
 private:
 	sf::Keyboard::Key m_Key;

@@ -35,17 +35,11 @@
     <ClCompile Include="Game\LevelManager.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Map\Tile.cpp">
-      <Filter>Game\Map</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Collision\CollisionManager.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Collision\Collision.cpp">
+    <ClCompile Include="Engine\Collision\BoxCollideable.cpp">
       <Filter>Engine\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Map\CollideableTile.cpp">
-      <Filter>Game\Map</Filter>
     </ClCompile>
     <ClCompile Include="Game\Objects\Bullet.cpp">
       <Filter>Game\Objects</Filter>
@@ -89,17 +83,38 @@
     <ClCompile Include="Engine\Resources\TextureManager.cpp">
       <Filter>Engine\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Event\Event.cpp">
-      <Filter>Engine\Event</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Event\EventManager.cpp">
       <Filter>Engine\Event</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Event\EventHandler.cpp">
-      <Filter>Engine\Event</Filter>
+    <ClCompile Include="Engine\Animation\Animated.cpp">
+      <Filter>Engine\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Event\IEventHandler.cpp">
-      <Filter>Engine\Event</Filter>
+    <ClCompile Include="Engine\Input\Bindings\JoystickAxisBinding.cpp">
+      <Filter>Engine\Input\Bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Log\Log.cpp">
+      <Filter>Engine\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Map\Tiles\ClimbableTile.cpp">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Map\Tiles\CollideableTile.cpp">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Map\Tiles\Tile.cpp">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\Collectible.cpp">
+      <Filter>Game\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Event\Listener\IEventListener.cpp">
+      <Filter>Engine\Event\Listener</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Event\Listener\EventListener.cpp">
+      <Filter>Engine\Event\Listener</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Event\EventTypes\Event.cpp">
+      <Filter>Engine\Event\EventTypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -131,20 +146,11 @@
     <ClInclude Include="Game\LevelManager.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Map\Tile.h">
-      <Filter>Game\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Map\TileType.h">
-      <Filter>Game\Map</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Collision\CollisionManager.h">
       <Filter>Engine\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Collision\Collision.h">
+    <ClInclude Include="Engine\Collision\BoxCollideable.h">
       <Filter>Engine\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Map\CollideableTile.h">
-      <Filter>Game\Map</Filter>
     </ClInclude>
     <ClInclude Include="Game\Objects\Bullet.h">
       <Filter>Game\Objects</Filter>
@@ -188,20 +194,47 @@
     <ClInclude Include="Engine\Resources\TextureManager.h">
       <Filter>Engine\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Event\Event.h">
-      <Filter>Engine\Event</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Event\EventManager.h">
       <Filter>Engine\Event</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Event\EventType.h">
-      <Filter>Engine\Event</Filter>
+    <ClInclude Include="Engine\Animation\Animated.h">
+      <Filter>Engine\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Event\EventHandler.h">
-      <Filter>Engine\Event</Filter>
+    <ClInclude Include="Engine\Input\Bindings\JoystickAxisBinding.h">
+      <Filter>Engine\Input\Bindings</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Event\IEventHandler.h">
-      <Filter>Engine\Event</Filter>
+    <ClInclude Include="Engine\Log\Log.h">
+      <Filter>Engine\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\Tiles\CollideableTile.h">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\Tiles\ClimbableTile.h">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\Tiles\Tile.h">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\Tiles\TileType.h">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Collectible.h">
+      <Filter>Game\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\Listener\IEventListener.h">
+      <Filter>Engine\Event\Listener</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\Listener\EventListener.h">
+      <Filter>Engine\Event\Listener</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\EventTypes\Event.h">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\EventTypes\EventType.h">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\CollisionDirection.h">
+      <Filter>Engine\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +279,21 @@
     </Filter>
     <Filter Include="Engine\Resources">
       <UniqueIdentifier>{30f1a4d7-bc5f-4429-8d25-41dbee585367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Animation">
+      <UniqueIdentifier>{c5a5fbe3-1e54-4cca-a9a5-4193c996712f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Log">
+      <UniqueIdentifier>{aa5f247f-d98d-4b4d-a4e9-22eb33eeaa8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Map\Tiles">
+      <UniqueIdentifier>{9d482138-3175-4355-91d9-39c7bd7339c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Event\Listener">
+      <UniqueIdentifier>{5d535b09-c60a-4f88-a3e3-f6d44eded6f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Event\EventTypes">
+      <UniqueIdentifier>{edba8386-2c35-4d04-99d6-064b8253421a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

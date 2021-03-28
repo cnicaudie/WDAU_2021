@@ -9,6 +9,9 @@ class InputManager
 public:
 	InputManager();
 
+	void Update();
+	void ManageInputEvents(const sf::Event& event);
+
 	void AddAction(const std::shared_ptr<Binding>& key);
 	void RemoveAction(const std::shared_ptr<Binding>& key);
 
@@ -18,25 +21,27 @@ public:
 	}
 
 	void UpdateMousePosition(const sf::RenderWindow& gameWindow);
-	const float GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate, float deadZone) const;
+	const float GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate) const;
+	const sf::Vector2f GetScaledShootDirection(const sf::Vector2f currentPosition) const;
 
-	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; }
-	inline const bool IsUsingJoystick() const { return m_IsUsingJoystick; }
-
-private:
 	void InitJoystick();
 
-	inline const float GetJoystickScaledAxis(unsigned int index, sf::Joystick::Axis axis, float deadZone, float scale) const
+	inline void ResetJoystick(unsigned int joystickIndex)
 	{
-		float value = (sf::Joystick::getAxisPosition(index, axis) / 100.0f) * scale;
-		if (value >= -deadZone && value <= deadZone)
+		if (m_JoystickIndex == joystickIndex) 
 		{
-			return 0.0f;
+			m_IsUsingJoystick = false;
+			m_JoystickIndex = 0;
 		}
+	};
+	
+	inline const bool IsUsingJoystick() const { return m_IsUsingJoystick; };
+	inline const float GetJoystickDeadZone() const { return m_JoystickDeadZone; };
+	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; };
 
-		return value;
-	}
-
+private:
+	const float GetJoystickScaledAxis(unsigned int index, sf::Joystick::Axis axis, float scale) const;
+	
 	//====================//
 
 	std::set<Action> m_CurrentActions;
@@ -45,4 +50,5 @@ private:
 	sf::Vector2f m_MousePosition;
 	bool m_IsUsingJoystick;
 	unsigned int m_JoystickIndex;
+	float m_JoystickDeadZone;
 };

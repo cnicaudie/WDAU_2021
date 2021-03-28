@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include "CollisionManager.h"
-
-#include <Game/Map/CollideableTile.h>
+#include <Game/Map/Tiles/CollideableTile.h>
 
 CollisionManager::CollisionManager() {}
 
@@ -37,6 +36,12 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
     {
         if (tile->IsTrigger()) 
         {
+            if (tile->Contains(collideable->GetCenter()))
+            {
+                collideable->OnTrigger(static_cast<BoxCollideable*>(tile.get()));
+                //tile->OnTrigger(collideable);
+            }
+
             for (BoxCollideable* otherCollideable : tile->GetCollideablesOnTile()) 
             {
                 // Check collision with collideables on tile

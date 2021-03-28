@@ -3,4 +3,8 @@
 
 MouseBinding::MouseBinding(const sf::Mouse::Button& button) : m_Button(button) {}
 
-int MouseBinding::GetBinding() { return m_Button; }
+bool MouseBinding::operator==(Binding* other)
+{
+	MouseBinding* otherMouseButton = dynamic_cast<MouseBinding*>(other);
+	return (otherMouseButton != nullptr) && (this->m_Button == otherMouseButton->m_Button);
+}
