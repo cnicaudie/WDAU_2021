@@ -394,7 +394,7 @@ void Player::Shoot()
         && m_AmmunitionsNumber > 0
         && !m_IsSkullRolling) 
     {
-        const sf::Vector2f bulletDirection = m_InputManager->GetScaledDirection(m_Position);
+        const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
 
         m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
 
