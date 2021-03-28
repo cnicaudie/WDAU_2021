@@ -9,6 +9,7 @@ public:
 	Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
 	
 	void Update(float deltaTime) override;
+	void OnEvent(const Event* evnt);
 	void OnCollision(BoxCollideable* other) override;
 	void OnTrigger(BoxCollideable* other) override;
 	

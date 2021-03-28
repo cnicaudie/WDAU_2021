@@ -11,8 +11,6 @@ public:
 	EventManager(const EventManager& gameManager) = delete;
 	void operator=(const EventManager& gameManager) = delete;
 
-	void Update(float deltaTime);
-
 	template <typename T, typename EventT>
 	void AddListener(const EventListener<T, EventT>& eventListener)
 	{
@@ -43,7 +41,7 @@ public:
 		listenerList.erase(pos);
 	};
 	
-	void Fire(const Event& evnt);
+	void Fire(Event& evnt);
 
 private:
 	EventManager();
@@ -54,5 +52,5 @@ private:
 	static EventManager* m_EventManager; // Singleton instance
 
 	std::map<std::type_index, std::vector<std::unique_ptr<IEventListener>>> m_EventListeners;
-	std::vector<Event> m_EventsToFire;
+	//std::vector<Event*> m_EventsToFire;
 };

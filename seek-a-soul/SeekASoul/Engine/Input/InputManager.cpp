@@ -4,6 +4,7 @@
 #include <Engine/Input/Bindings/MouseBinding.h>
 #include <Engine/Input/Bindings/JoystickButtonBinding.h>
 #include <Engine/Input/Bindings/JoystickAxisBinding.h>
+#include <Engine/Event/EventTypes/ActionEvent.h>
 
 InputManager::InputManager()
 	: m_MousePosition()
@@ -50,8 +51,8 @@ void InputManager::Update()
 {
 	for (Action action : m_CurrentActions)
 	{
-		//Event actionEvent(EventType::ACTION, action);
-		//EventManager::GetInstance()->Fire(actionEvent);
+		ActionEvent actionEvent(action);
+		EventManager::GetInstance()->Fire(actionEvent);
 	}
 }
 

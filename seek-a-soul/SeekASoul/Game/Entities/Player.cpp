@@ -4,6 +4,7 @@
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
+#include <Engine/Event/EventTypes/ActionEvent.h>
 
 static constexpr uint64_t SHOOT_COOLDOWN = 500;
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
@@ -36,11 +37,8 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 {
     m_BoundingBox = GetAnimatedSpriteBoundingBox();
 
-    /*EventListener<Player> shootListener(this, &Player::Shoot);
-    EventListener<Player> skullRollListener(this, &Player::SkullRoll);
-
-    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SHOOT), shootListener);
-    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SKULL_ROLL), skullRollListener);*/
+    EventListener<Player, ActionEvent> listener(this, &Player::OnEvent);
+    EventManager::GetInstance()->AddListener(listener);
 }
 
 void Player::Update(float deltaTime)
@@ -77,6 +75,30 @@ void Player::Update(float deltaTime)
     // Update player's animation
     ComputeNextPlayerState();
     PlayAnimation(static_cast<int>(m_CurrentState));
+}
+
+void Player::OnEvent(const Event* evnt) 
+{
+    if (const ActionEvent* otherActionEvent = dynamic_cast<const ActionEvent*>(evnt))
+    {
+        switch(otherActionEvent->GetActionType()) 
+        {
+            case Action::SHOOT: 
+            {
+                Shoot();
+                break;
+            }
+
+            case Action::SKULL_ROLL:
+            {
+                SkullRoll();
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
 }
 
 void Player::OnCollision(BoxCollideable* other)

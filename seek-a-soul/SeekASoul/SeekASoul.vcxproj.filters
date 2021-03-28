@@ -116,6 +116,9 @@
     <ClCompile Include="Engine\Event\EventTypes\Event.cpp">
       <Filter>Engine\Event\EventTypes</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Event\EventTypes\ActionEvent.cpp">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -235,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Collision\CollisionDirection.h">
       <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\EventTypes\ActionEvent.h">
+      <Filter>Engine\Event\EventTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

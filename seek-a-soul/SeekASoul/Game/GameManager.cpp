@@ -49,11 +49,10 @@ void GameManager::Update(float deltaTime)
     
     if (!m_IsGameOver)
     {
+        m_InputManager->Update();
         m_LevelManager.Update(deltaTime);
         m_CameraManager.Update(deltaTime);
     }
-
-    EventManager::GetInstance()->Update(deltaTime);
 }
 
 void GameManager::Render(sf::RenderTarget& target)
