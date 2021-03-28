@@ -3,21 +3,28 @@
 #include <set>
 #include <Game/Action.h>
 #include <Engine/Input/Bindings/Binding.h>
+#include <Engine/Event/EventTypes/ActionEvent.h>
 
 class InputManager 
 {
 public:
 	InputManager();
+	~InputManager();
 
 	void Update();
 	void ManageInputEvents(const sf::Event& event);
 
-	void AddAction(const std::shared_ptr<Binding>& key);
-	void RemoveAction(const std::shared_ptr<Binding>& key);
+	void AddAction(Binding* key);
+	void RemoveAction(Binding* key);
 
 	inline bool HasAction(Action action) const
 	{
-		return m_CurrentActions.find(action) != m_CurrentActions.end();
+		auto it = std::find_if(m_CurrentActions.begin(), m_CurrentActions.end(), [&](const std::shared_ptr<ActionEvent> actionEvent)
+			{
+				return actionEvent->GetActionType() == action;
+			});
+		
+		return it != m_CurrentActions.end();
 	}
 
 	void UpdateMousePosition(const sf::RenderWindow& gameWindow);
@@ -44,8 +51,9 @@ private:
 	
 	//====================//
 
-	std::set<Action> m_CurrentActions;
-	std::map<Action, std::vector<std::shared_ptr<Binding>>> m_ActionBinding;
+	std::vector<std::shared_ptr<ActionEvent>> m_CurrentActions;
+	//std::map<Action, std::vector<std::shared_ptr<Binding>>> m_ActionBinding;
+	std::map<Binding*, Action> m_ActionBinding;
 
 	sf::Vector2f m_MousePosition;
 	bool m_IsUsingJoystick;

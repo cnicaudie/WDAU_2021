@@ -47,6 +47,8 @@ void GameManager::Update(float deltaTime)
 
     m_InputManager->UpdateMousePosition(m_Window);
     
+    EventManager::GetInstance()->Update();
+    
     if (!m_IsGameOver)
     {
         m_InputManager->Update();

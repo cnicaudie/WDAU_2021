@@ -20,14 +20,29 @@ EventManager::~EventManager()
 	delete m_EventManager;
 }
 
-void EventManager::Fire(Event& evnt)
-{	
-	auto it = m_EventListeners.find(typeid(evnt));
-	if (it != m_EventListeners.end())
+void EventManager::Update() 
+{
+	for (std::shared_ptr<Event> evnt : m_EventsToFire) 
 	{
-		for (std::unique_ptr<IEventListener>& listener : it->second)
+		auto it = m_EventListeners.find(typeid(*evnt.get()));
+
+		if (it != m_EventListeners.end())
 		{
-			listener->Fire(&evnt);
+			for (std::unique_ptr<IEventListener>& listener : it->second)
+			{
+				listener->Fire(evnt.get());
+			}
 		}
 	}
+
+	m_EventsToFire.clear();
+}
+
+void EventManager::Fire(const std::shared_ptr<Event>& evnt)
+{	
+	auto it = std::find(m_EventsToFire.begin(), m_EventsToFire.end(), evnt);
+
+	if (it != m_EventsToFire.end()) { return; }
+
+	m_EventsToFire.push_back(evnt);
 }

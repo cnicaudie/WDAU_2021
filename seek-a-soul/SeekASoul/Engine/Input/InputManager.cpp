@@ -16,42 +16,45 @@ InputManager::InputManager()
 
 	// TODO : Make a default bindings file to parse at construction
 
-	std::vector<std::shared_ptr<Binding>> moveUpBinding{ 
-		std::make_shared<KeyboardBinding>(sf::Keyboard::Up),
-		std::make_shared<KeyboardBinding>(sf::Keyboard::Z),
-		std::make_shared<JoystickButtonBinding>(5) // R1 on PS3 Dualshock
-	};
-	m_ActionBinding.emplace(Action::MOVE_UP, moveUpBinding);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Up), Action::MOVE_UP);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Z), Action::MOVE_UP);
+	m_ActionBinding.emplace(new JoystickButtonBinding(5), Action::MOVE_UP); // R1 on PS3 Dualshock
+
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Down), Action::MOVE_DOWN);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::S), Action::MOVE_DOWN);
+	m_ActionBinding.emplace(new JoystickButtonBinding(4), Action::MOVE_DOWN); // L1 on PS3 Dualshock
 	
-	std::vector<std::shared_ptr<Binding>> moveDownBinding{
-		std::make_shared<KeyboardBinding>(sf::Keyboard::Down),
-		std::make_shared<KeyboardBinding>(sf::Keyboard::S),
-		std::make_shared<JoystickButtonBinding>(4) // L1 on PS3 Dualshock
-	};
-	m_ActionBinding.emplace(Action::MOVE_DOWN, moveDownBinding);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Right), Action::MOVE_RIGHT);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::D), Action::MOVE_RIGHT);
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::X, true), Action::MOVE_RIGHT); // Left joystick on PS3 Dualshock
 
-	std::vector<std::shared_ptr<Binding>> skullRollBinding{ 
-		std::make_shared<KeyboardBinding>(sf::Keyboard::Space),
-		std::make_shared<JoystickButtonBinding>(1) // O on PS3 Dualshock
-	};
-	m_ActionBinding.emplace(Action::SKULL_ROLL, skullRollBinding);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Left), Action::MOVE_LEFT);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Q), Action::MOVE_LEFT);
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::X, false), Action::MOVE_LEFT); // Left joystick on PS3 Dualshock
 
-	std::vector<std::shared_ptr<Binding>> shootBinding{ 
-		std::make_shared<MouseBinding>(sf::Mouse::Button::Right),
-		std::make_shared<JoystickAxisBinding>(sf::Joystick::Axis::Z, true) // L2 on PS3 Dualshock
-	};
-	m_ActionBinding.emplace(Action::SHOOT, shootBinding);
+	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Space), Action::SKULL_ROLL);
+	m_ActionBinding.emplace(new JoystickButtonBinding(1), Action::SKULL_ROLL); // O on PS3 Dualshock
+
+	m_ActionBinding.emplace(new MouseBinding(sf::Mouse::Button::Right), Action::SHOOT);
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::Z, true), Action::SHOOT); // L2 on PS3 Dualshock
 
 	// TODO : Eventually make a rebinding feature
 
 	LOG_INFO("InputManager Created");
 }
 
+InputManager::~InputManager() 
+{
+	for (std::pair<Binding*, Action> actionBinding : m_ActionBinding) 
+	{
+		delete actionBinding.first;
+	}
+}
+
 void InputManager::Update() 
 {
-	for (Action action : m_CurrentActions)
+	for (std::shared_ptr<ActionEvent> actionEvent : m_CurrentActions)
 	{
-		ActionEvent actionEvent(action);
 		EventManager::GetInstance()->Fire(actionEvent);
 	}
 }
@@ -62,58 +65,60 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 	{
 		case sf::Event::KeyPressed:
 		{
-			AddAction(std::make_shared<KeyboardBinding>(event.key.code));
+			KeyboardBinding keyboardBinding(event.key.code);
+			AddAction(&keyboardBinding);
 			break;
 		}
 
 		case sf::Event::KeyReleased:
 		{
-			RemoveAction(std::make_shared<KeyboardBinding>(event.key.code));
+			KeyboardBinding keyboardBinding(event.key.code);
+			RemoveAction(&keyboardBinding);
 			break;
 		}
 
 		case sf::Event::MouseButtonPressed:
 		{
-			AddAction(std::make_shared<MouseBinding>(event.mouseButton.button));
+			MouseBinding mouseBinding(event.mouseButton.button);
+			AddAction(&mouseBinding);
 			break;
 		}
 
 		case sf::Event::MouseButtonReleased:
 		{
-			RemoveAction(std::make_shared<MouseBinding>(event.mouseButton.button));
+			MouseBinding mouseBinding(event.mouseButton.button);
+			RemoveAction(&mouseBinding);
 			break;
 		}
 
 		case sf::Event::JoystickButtonPressed:
 		{
-			AddAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
+			JoystickButtonBinding joystickButtonBinding(event.joystickButton.button);
+			AddAction(&joystickButtonBinding);
 			break;
 		}
 
 		case sf::Event::JoystickButtonReleased:
 		{
-			RemoveAction(std::make_shared<JoystickButtonBinding>(event.joystickButton.button));
+			JoystickButtonBinding joystickButtonBinding(event.joystickButton.button);
+			RemoveAction(&joystickButtonBinding);
 			break;
 		}
 
 		case sf::Event::JoystickMoved:
 		{
-			// Min threshold to consider a "press" on the the axis
-			const float PRESSED_THRESHOLD = 60.f;
-
 			float joystickPosition = event.joystickMove.position;
 			sf::Joystick::Axis joystickAxis = event.joystickMove.axis;
 
-			if (joystickAxis == sf::Joystick::Axis::Z) // Only axis used for actions for now
+			if (joystickPosition >= m_JoystickDeadZone || joystickPosition <= -m_JoystickDeadZone)
 			{
-				if (joystickPosition >= PRESSED_THRESHOLD || joystickPosition <= -PRESSED_THRESHOLD)
-				{
-					AddAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
-				}
-				else
-				{
-					RemoveAction(std::make_shared<JoystickAxisBinding>(joystickAxis, joystickPosition > 0));
-				}
+				JoystickAxisBinding joystickAxisBinding(joystickAxis, joystickPosition > 0, joystickPosition);
+				AddAction(&joystickAxisBinding);
+			}
+			else
+			{
+				JoystickAxisBinding joystickAxisBinding(joystickAxis, joystickPosition > 0, joystickPosition);
+				RemoveAction(&joystickAxisBinding);
 			}
 			break;
 		}
@@ -138,36 +143,52 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 	}
 }
 
-void InputManager::AddAction(const std::shared_ptr<Binding>& key)
+void InputManager::AddAction(Binding* key)
 {
-	for (auto it = m_ActionBinding.begin(); it != m_ActionBinding.end(); it++)
-	{
-		for (std::shared_ptr<Binding>& b : it->second)
+	auto const& it = std::find_if(m_ActionBinding.begin(), m_ActionBinding.end(), [&](std::pair<Binding*, Action> binding)
 		{
-			if (*b == key.get()) 
+			return *(binding.first) == key;
+		});
+
+	if (it != m_ActionBinding.end()) 
+	{
+		Action action = it->second;
+		
+		if (!HasAction(action)) 
+		{
+			if (JoystickAxisBinding* joystickAxisBinding = dynamic_cast<JoystickAxisBinding*>(key)) 
 			{
-				m_CurrentActions.insert(it->first);
-				return;
+				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, joystickAxisBinding->GetAxisPosition());
+				m_CurrentActions.push_back(actionEvent);
+			} 
+			else 
+			{
+				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, 0.f, m_MousePosition);
+				m_CurrentActions.push_back(actionEvent);
 			}
 		}
 	}
 }
 
-void InputManager::RemoveAction(const std::shared_ptr<Binding>& key)
+void InputManager::RemoveAction(Binding* key)
 {
-	for (auto it = m_ActionBinding.begin(); it != m_ActionBinding.end(); it++)
-	{
-		for (std::shared_ptr<Binding>& b : it->second)
+	auto const& it = std::find_if(m_ActionBinding.begin(), m_ActionBinding.end(), [&](std::pair<Binding*, Action> binding)
 		{
-			if (*b == key.get())
+			return *(binding.first) == key;
+		});
+
+	if (it != m_ActionBinding.end())
+	{
+		Action action = it->second;
+
+		auto const& pos = std::find_if(m_CurrentActions.begin(), m_CurrentActions.end(), [&](const std::shared_ptr<ActionEvent> actionEvent)
 			{
-				auto pos = m_CurrentActions.find(it->first);
-				if (pos != m_CurrentActions.end())
-				{
-					m_CurrentActions.erase(pos);
-				}
-				return;
-			}
+				return actionEvent->GetActionType() == action;
+			});
+
+		if (pos != m_CurrentActions.end())
+		{
+			m_CurrentActions.erase(pos);
 		}
 	}
 }
@@ -185,21 +206,6 @@ const float InputManager::GetScaledVelocity(float currentVelocity, float speedIn
 	if (m_IsUsingJoystick)
 	{
 		velocity = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, maxSpeed);
-	}
-	else
-	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			velocity = fmin(currentVelocity + speedInc, maxSpeed);
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-		{
-			velocity = fmax(currentVelocity - speedInc, -maxSpeed);
-		}
-		else
-		{
-			velocity = currentVelocity * slowdownRate;
-		}
 	}
 
 	return velocity;
@@ -234,7 +240,9 @@ void InputManager::InitJoystick()
 	unsigned int index = 0;
 	while (index < sf::Joystick::Count)
 	{
-		if (sf::Joystick::isConnected(index) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) && sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
+		if (sf::Joystick::isConnected(index) 
+			&& sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) 
+			&& sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
 		{
 			m_IsUsingJoystick = true;
 			m_JoystickIndex = index;

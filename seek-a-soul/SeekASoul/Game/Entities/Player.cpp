@@ -81,7 +81,7 @@ void Player::OnEvent(const Event* evnt)
 {
     if (const ActionEvent* otherActionEvent = dynamic_cast<const ActionEvent*>(evnt))
     {
-        switch(otherActionEvent->GetActionType()) 
+        switch (otherActionEvent->GetActionType()) 
         {
             case Action::SHOOT: 
             {
@@ -92,6 +92,30 @@ void Player::OnEvent(const Event* evnt)
             case Action::SKULL_ROLL:
             {
                 SkullRoll();
+                break;
+            }
+
+            case Action::MOVE_UP:
+            {
+                MoveUp();
+                break;
+            }
+
+            case Action::MOVE_DOWN:
+            {
+                MoveDown();
+                break;
+            }
+
+            case Action::MOVE_RIGHT:
+            {
+                MoveRight(otherActionEvent->GetJoystickAxisPosition());
+                break;
+            }
+
+            case Action::MOVE_LEFT:
+            {
+                MoveLeft(otherActionEvent->GetJoystickAxisPosition());
                 break;
             }
 
@@ -131,7 +155,7 @@ void Player::OnCollision(BoxCollideable* other)
         {
             m_Velocity.y = 0.f;
             m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-            //std::cout << "Top collision" << std::endl;
+            //LOG_DEBUG("Top collision");
         }
 
         // Left collision
@@ -140,7 +164,7 @@ void Player::OnCollision(BoxCollideable* other)
         {
             m_Velocity.x = 0.f;
             m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
-            //std::cout << "Left collision" << std::endl;
+            //LOG_DEBUG("Left collision");
         }
 
         // Right collision
@@ -149,7 +173,7 @@ void Player::OnCollision(BoxCollideable* other)
         {
             m_Velocity.x = 0.f;
             m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
-            //std::cout << "Right collision" << std::endl;
+            //LOG_DEBUG("Right collision");
         }
 
         // === Special checks for skull roll
@@ -264,33 +288,25 @@ void Player::Move(float deltaTime)
 
     // Compute player's velocity
     m_Velocity.y += GRAVITY;
-    m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE);
-
-    if (m_InputManager->HasAction(Action::MOVE_UP))
+    //m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE);
+    
+    if (!m_InputManager->HasAction(Action::MOVE_RIGHT)
+        && !m_InputManager->HasAction(Action::MOVE_LEFT)) 
     {
-        MoveUp();
-    } 
-    else if (m_IsClimbing) 
-    {
-        // Resets the vertical velocity if climbing 
-        // (we don't want the player to fall down the ladder if he's not giving any input)
-        m_Velocity.y = 0.f;
-
-        if (!m_CanClimb) 
-        {
-            m_IsClimbing = false;
-        }
+        m_Velocity.x *= SLOWDOWN_RATE;
     }
 
-    // Climb down
-    if (m_InputManager->HasAction(Action::MOVE_DOWN) && m_IsClimbing)
+    // Update climbing status if necessary
+    if (m_IsClimbing && !m_CanClimb)
     {
-        m_Velocity.y = CLIMB_SPEED;
-
-        if (m_IsGrounded)
-        {
-           m_IsClimbing = false;
-        }
+        m_IsClimbing = false;
+    }
+    // Reset the vertical velocity if climbing but not moving
+    else if (!m_InputManager->HasAction(Action::MOVE_UP)
+        && !m_InputManager->HasAction(Action::MOVE_DOWN) 
+        && m_IsClimbing)
+    { 
+        m_Velocity.y = 0.f;
     }
 
     // Check movement on X axis
@@ -322,7 +338,6 @@ void Player::MoveUp()
     // Climb up
     if (m_CanClimb && !m_IsSkullRolling)
     {
-        //LOG_INFO("Player is climbing !");
         m_Velocity.y = -CLIMB_SPEED;
         m_IsClimbing = true;
         m_JumpCount = 0;
@@ -331,7 +346,6 @@ void Player::MoveUp()
     {
         // Player gets a little force if he's jumping when getting out of the ladder
         m_Velocity.y = -(JUMP_FORCE * 0.75f);
-        m_IsClimbing = false;
     }
     // Jump
     else if (m_JumpCount != 0)
@@ -341,6 +355,43 @@ void Player::MoveUp()
     }
     
     m_IsGrounded = false;
+}
+
+void Player::MoveDown()
+{
+    if (m_IsClimbing)
+    {
+        m_Velocity.y = CLIMB_SPEED;
+
+        if (m_IsGrounded)
+        {
+            m_IsClimbing = false;
+        }
+    }
+}
+
+void Player::MoveRight(const float joystickAxisPosition)
+{
+    if (joystickAxisPosition != 0.f) 
+    {
+        m_Velocity.x = (joystickAxisPosition / 100.0f) * MOVE_SPEED_MAX;
+    } 
+    else 
+    {
+        m_Velocity.x = fmin(m_Velocity.x + MOVE_SPEED_INC, MOVE_SPEED_MAX);
+    }
+}
+
+void Player::MoveLeft(const float joystickAxisPosition)
+{
+    if (joystickAxisPosition != 0.f)
+    {
+        m_Velocity.x = (joystickAxisPosition / 100.0f) * MOVE_SPEED_MAX;
+    }
+    else
+    {
+        m_Velocity.x = fmax(m_Velocity.x - MOVE_SPEED_INC, -MOVE_SPEED_MAX);
+    }
 }
 
 void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)
