@@ -50,8 +50,8 @@ void InputManager::Update()
 {
 	for (Action action : m_CurrentActions)
 	{
-		Event actionEvent(EventType::ACTION, action);
-		EventManager::GetInstance()->Fire(actionEvent);
+		//Event actionEvent(EventType::ACTION, action);
+		//EventManager::GetInstance()->Fire(actionEvent);
 	}
 }
 

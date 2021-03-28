@@ -36,11 +36,11 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 {
     m_BoundingBox = GetAnimatedSpriteBoundingBox();
 
-    EventListener<Player> shootListener(this, &Player::Shoot);
+    /*EventListener<Player> shootListener(this, &Player::Shoot);
     EventListener<Player> skullRollListener(this, &Player::SkullRoll);
 
     EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SHOOT), shootListener);
-    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SKULL_ROLL), skullRollListener);
+    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SKULL_ROLL), skullRollListener);*/
 }
 
 void Player::Update(float deltaTime)
@@ -394,7 +394,7 @@ void Player::Shoot()
         && m_AmmunitionsNumber > 0
         && !m_IsSkullRolling) 
     {
-        const sf::Vector2f bulletDirection = m_InputManager->GetScaledDirection(m_Position);
+        const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
 
         m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
 
