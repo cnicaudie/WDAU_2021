@@ -66,5 +66,63 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
             //tile->OnCollision(collideable);
         }
     }
+
     return hasCollided;
+}
+
+const int8_t CollisionManager::GetCollisionDirection(BoxCollideable* boxCollideable, BoxCollideable* boxCollider) const
+{
+    sf::FloatRect collideable = boxCollideable->GetBoundingBox();
+    sf::FloatRect collider = boxCollider->GetBoundingBox();
+
+    int8_t collisionDirection = static_cast<int8_t>(CollisionDirection::NONE);
+
+    // Bottom collision
+    if (collideable.top + collideable.height <= collider.top
+        && collideable.top < collider.top)
+    {
+        //LOG_DEBUG("Bottom collision");
+        collisionDirection |= static_cast<int8_t>(CollisionDirection::BOTTOM);
+    }
+
+    // Top collision
+    if (collideable.top >= collider.top + collider.height
+        && collideable.top + collideable.height > collider.top + collider.height)
+    {
+        //LOG_DEBUG("Top collision");
+        collisionDirection |= static_cast<int8_t>(CollisionDirection::TOP);
+    }
+
+    // Left collision
+    if (collideable.left >= collider.left + collider.width
+        && collideable.left + collideable.width > collider.left + collider.width)
+    {
+        //LOG_DEBUG("Left collision");
+        collisionDirection |= static_cast<int8_t>(CollisionDirection::LEFT);
+    }
+
+    // Right collision
+    if (collideable.left + collideable.width <= collider.left
+        && collideable.left < collider.left)
+    {
+        //LOG_DEBUG("Right collision");
+        collisionDirection |= static_cast<int8_t>(CollisionDirection::RIGHT);
+    }
+
+    // === Special checks for skull roll
+    // (Getting out of skull roll action can cause being in ceiling and/or in ground)
+
+    if (collideable.top < collideable.top + collider.height
+        && collideable.top > collider.top)
+    {
+        
+    }
+
+    if (collideable.top + collideable.height > collider.top
+        && collideable.top < collider.top)
+    {
+        
+    }
+
+    return collisionDirection;
 }
