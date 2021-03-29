@@ -27,8 +27,8 @@ private:
 	void Move(float deltaTime);
 	void MoveUp();
 	void MoveDown();
-	void MoveRight(const float joystickAxisPosition);
-	void MoveLeft(const float joystickAxisPosition);
+	void MoveRight(const float scale);
+	void MoveLeft(const float scale);
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
 	
 	void UpdateBoundingBox();

@@ -158,12 +158,12 @@ void InputManager::AddAction(Binding* key)
 		{
 			if (JoystickAxisBinding* joystickAxisBinding = dynamic_cast<JoystickAxisBinding*>(key)) 
 			{
-				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, joystickAxisBinding->GetAxisPosition());
+				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, joystickAxisBinding->GetAxisPosition() / 100);
 				m_CurrentActions.push_back(actionEvent);
 			} 
 			else 
 			{
-				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, 0.f, m_MousePosition);
+				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, 1.f);
 				m_CurrentActions.push_back(actionEvent);
 			}
 		}
@@ -197,18 +197,6 @@ void InputManager::UpdateMousePosition(const sf::RenderWindow& gameWindow)
 {
 	const sf::Vector2i& mousePixelPosition = sf::Mouse::getPosition(gameWindow);
 	m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
-}
-
-const float InputManager::GetScaledVelocity(float currentVelocity, float speedInc, float maxSpeed, float slowdownRate) const
-{
-	float velocity = 0.f;
-
-	if (m_IsUsingJoystick)
-	{
-		velocity = GetJoystickScaledAxis(m_JoystickIndex, sf::Joystick::Axis::X, maxSpeed);
-	}
-
-	return velocity;
 }
 
 const sf::Vector2f InputManager::GetScaledShootDirection(const sf::Vector2f currentPosition) const
@@ -251,18 +239,4 @@ void InputManager::InitJoystick()
 
 		index++;
 	}
-}
-
-const float InputManager::GetJoystickScaledAxis(unsigned int index, sf::Joystick::Axis axis, float scale) const
-{
-	float value = sf::Joystick::getAxisPosition(index, axis);
-
-	if (value >= -m_JoystickDeadZone && value <= m_JoystickDeadZone) 
-	{
-		return 0.0f;
-	}
-
-	value = (value / 100.0f) * scale;
-
-	return value;
 }

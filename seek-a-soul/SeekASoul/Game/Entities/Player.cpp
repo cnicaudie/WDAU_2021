@@ -110,13 +110,13 @@ void Player::OnEvent(const Event* evnt)
 
             case Action::MOVE_RIGHT:
             {
-                MoveRight(otherActionEvent->GetJoystickAxisPosition());
+                MoveRight(otherActionEvent->GetActionScale());
                 break;
             }
 
             case Action::MOVE_LEFT:
             {
-                MoveLeft(otherActionEvent->GetJoystickAxisPosition());
+                MoveLeft(otherActionEvent->GetActionScale());
                 break;
             }
 
@@ -252,10 +252,10 @@ void Player::Move(float deltaTime)
     m_InGroundCollision = false;
     m_InCeilingCollision = false;
 
-    // Compute player's velocity
+    // Apply gravity
     m_Velocity.y += GRAVITY;
-    //m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE);
     
+    // If player isn't moving, he starts to slow down
     if (!m_InputManager->HasAction(Action::MOVE_RIGHT)
         && !m_InputManager->HasAction(Action::MOVE_LEFT)) 
     {
@@ -336,28 +336,14 @@ void Player::MoveDown()
     }
 }
 
-void Player::MoveRight(const float joystickAxisPosition)
+void Player::MoveRight(const float scale)
 {
-    if (joystickAxisPosition != 0.f) 
-    {
-        m_Velocity.x = (joystickAxisPosition / 100.0f) * MOVE_SPEED_MAX;
-    } 
-    else 
-    {
-        m_Velocity.x = fmin(m_Velocity.x + MOVE_SPEED_INC, MOVE_SPEED_MAX);
-    }
+    m_Velocity.x = fmin(m_Velocity.x + MOVE_SPEED_INC, scale * MOVE_SPEED_MAX);
 }
 
-void Player::MoveLeft(const float joystickAxisPosition)
+void Player::MoveLeft(const float scale)
 {
-    if (joystickAxisPosition != 0.f)
-    {
-        m_Velocity.x = (joystickAxisPosition / 100.0f) * MOVE_SPEED_MAX;
-    }
-    else
-    {
-        m_Velocity.x = fmax(m_Velocity.x - MOVE_SPEED_INC, -MOVE_SPEED_MAX);
-    }
+    m_Velocity.x = fmax(m_Velocity.x - MOVE_SPEED_INC, scale * -MOVE_SPEED_MAX);
 }
 
 void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)
