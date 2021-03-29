@@ -16,7 +16,8 @@ public:
     void Update(float deltaTime) override;
     void Render(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
-    void StartEndGame();
+
+    void OnEvent(const Event* evnt);
 
     inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
     
@@ -28,6 +29,8 @@ public:
 private:
     GameManager();
     ~GameManager();
+
+    void StartEndGame();
 
     //====================//
 

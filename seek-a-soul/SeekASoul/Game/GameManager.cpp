@@ -25,14 +25,14 @@ GameManager::GameManager()
 {   
     m_CameraManager.SetBoxToFollow(&(m_LevelManager.GetPlayerOnMap()));
 
-    EventListener<GameManager> listener(this, &GameManager::StartEndGame);
-    EventManager::GetInstance()->AddListener(Event(EventType::END_GAME), listener);
+    EventListener<GameManager, Event> listener(this, &GameManager::OnEvent);
+    EventManager::GetInstance()->AddListener(listener);
 }
 
 GameManager::~GameManager()
 {
-    EventListener<GameManager> listener(this, &GameManager::StartEndGame);
-    EventManager::GetInstance()->RemoveListener(Event(EventType::END_GAME), listener);
+    EventListener<GameManager, Event> listener(this, &GameManager::OnEvent);
+    EventManager::GetInstance()->RemoveListener(listener);
 
     delete m_GameManager;
 }
@@ -47,13 +47,14 @@ void GameManager::Update(float deltaTime)
 
     m_InputManager->UpdateMousePosition(m_Window);
     
+    EventManager::GetInstance()->Update();
+    
     if (!m_IsGameOver)
     {
+        m_InputManager->Update();
         m_LevelManager.Update(deltaTime);
         m_CameraManager.Update(deltaTime);
     }
-
-    EventManager::GetInstance()->Update(deltaTime);
 }
 
 void GameManager::Render(sf::RenderTarget& target)
@@ -108,6 +109,16 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
     }
 
     ImGui::End();
+}
+
+void GameManager::OnEvent(const Event* evnt)
+{
+    // dynamic_cast if necessary
+    
+    if (evnt->GetEventType() == EventType::END_GAME) 
+    {
+        StartEndGame();
+    }
 }
 
 void GameManager::StartEndGame()

@@ -54,7 +54,7 @@ void Door::OnTrigger(BoxCollideable* other)
 	if (player != nullptr && player->GetNumberOfCollectedSoulChunks() == 1 && !m_IsPlayingEndGame)
 	{	
 		StartEndGame();
-		Event eventType(EventType::END_GAME);
+		std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
 		EventManager::GetInstance()->Fire(eventType);
 	}
 }

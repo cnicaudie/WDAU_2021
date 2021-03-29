@@ -9,7 +9,8 @@ public:
 	Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
 	
 	void Update(float deltaTime) override;
-	void OnCollision(BoxCollideable* other) override;
+	void OnEvent(const Event* evnt);
+	void OnCollision(BoxCollideable* other, CollisionDirection direction) override;
 	void OnTrigger(BoxCollideable* other) override;
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -25,6 +26,9 @@ private:
 	void ComputeNextPlayerState();
 	void Move(float deltaTime);
 	void MoveUp();
+	void MoveDown();
+	void MoveRight(const float scale);
+	void MoveLeft(const float scale);
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
 	
 	void UpdateBoundingBox();
@@ -58,7 +62,7 @@ private:
 	std::vector<Bullet> m_Bullets;
 	int m_AmmunitionsNumber;
 
-	// Checks when gettin out of skull roll
+	// Checks when gettin out of skull roll (change of bounding box)
 	bool m_InGroundCollision;
 	bool m_InCeilingCollision;
 };

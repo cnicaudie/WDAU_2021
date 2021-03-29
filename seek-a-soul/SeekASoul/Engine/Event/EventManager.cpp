@@ -20,20 +20,29 @@ EventManager::~EventManager()
 	delete m_EventManager;
 }
 
-void EventManager::Update(float deltaTime)
+void EventManager::Update() 
 {
-	for (const Event& e : m_EventsToFire)
+	for (std::shared_ptr<Event> evnt : m_EventsToFire) 
 	{
-		for (std::unique_ptr<IEventListener>& listener : m_EventListeners[e])
+		auto it = m_EventListeners.find(typeid(*evnt.get()));
+
+		if (it != m_EventListeners.end())
 		{
-			listener->Fire();
+			for (std::unique_ptr<IEventListener>& listener : it->second)
+			{
+				listener->Fire(evnt.get());
+			}
 		}
 	}
 
 	m_EventsToFire.clear();
 }
 
-void EventManager::Fire(const Event& eventType)
+void EventManager::Fire(const std::shared_ptr<Event>& evnt)
 {	
-	m_EventsToFire.insert(eventType);
+	auto it = std::find(m_EventsToFire.begin(), m_EventsToFire.end(), evnt);
+
+	if (it != m_EventsToFire.end()) { return; }
+
+	m_EventsToFire.push_back(evnt);
 }

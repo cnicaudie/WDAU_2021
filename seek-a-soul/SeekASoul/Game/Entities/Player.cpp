@@ -4,6 +4,7 @@
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
+#include <Engine/Event/EventTypes/ActionEvent.h>
 
 static constexpr uint64_t SHOOT_COOLDOWN = 500;
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
@@ -36,11 +37,8 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 {
     m_BoundingBox = GetAnimatedSpriteBoundingBox();
 
-    EventListener<Player> shootListener(this, &Player::Shoot);
-    EventListener<Player> skullRollListener(this, &Player::SkullRoll);
-
-    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SHOOT), shootListener);
-    EventManager::GetInstance()->AddListener(Event(EventType::ACTION, Action::SKULL_ROLL), skullRollListener);
+    EventListener<Player, ActionEvent> listener(this, &Player::OnEvent);
+    EventManager::GetInstance()->AddListener(listener);
 }
 
 void Player::Update(float deltaTime)
@@ -53,18 +51,19 @@ void Player::Update(float deltaTime)
     {
         UpdateSkullRollCooldown(now);
     }
-    else if (m_InGroundCollision && m_InCeilingCollision)
+    
+    // Update player's bounding box
+    UpdateBoundingBox();
+
+    Move(deltaTime);
+    
+    if (m_InGroundCollision && m_InCeilingCollision)
     {
         // If in ground and ceiling after collision check, player stays skull rolling
         LOG_DEBUG("SKULL ROLL STAY");
         m_IsSkullRolling = true;
         m_LastSkullRollTime = now;
     }
-
-    // Update player's bounding box
-    UpdateBoundingBox();
-
-    Move(deltaTime);
 
     if (m_HealthState == HealthState::DAMAGED)
     {
@@ -79,9 +78,58 @@ void Player::Update(float deltaTime)
     PlayAnimation(static_cast<int>(m_CurrentState));
 }
 
-void Player::OnCollision(BoxCollideable* other)
+void Player::OnEvent(const Event* evnt) 
+{
+    if (const ActionEvent* otherActionEvent = dynamic_cast<const ActionEvent*>(evnt))
+    {
+        switch (otherActionEvent->GetActionType()) 
+        {
+            case Action::SHOOT: 
+            {
+                Shoot();
+                break;
+            }
+
+            case Action::SKULL_ROLL:
+            {
+                SkullRoll();
+                break;
+            }
+
+            case Action::MOVE_UP:
+            {
+                MoveUp();
+                break;
+            }
+
+            case Action::MOVE_DOWN:
+            {
+                MoveDown();
+                break;
+            }
+
+            case Action::MOVE_RIGHT:
+            {
+                MoveRight(otherActionEvent->GetActionScale());
+                break;
+            }
+
+            case Action::MOVE_LEFT:
+            {
+                MoveLeft(otherActionEvent->GetActionScale());
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+}
+
+void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
 {
     sf::FloatRect otherCollider = other->GetBoundingBox();
+    int32_t collisionDirection = static_cast<int32_t>(direction);
     
     if (typeid(*other) == typeid(class Enemy) 
         && (m_HealthState == HealthState::OK)
@@ -92,85 +140,49 @@ void Player::OnCollision(BoxCollideable* other)
 
     if (typeid(*other) == typeid(class CollideableTile))
     {
-        // Bottom collision
-        if (m_BoundingBox.top + m_BoundingBox.height <= otherCollider.top
-            && m_BoundingBox.top < otherCollider.top)
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
         {
-            m_Velocity.y = 0.f;
-            m_IsGrounded = true;
-            m_JumpCount = 1;
-            m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-            //LOG_DEBUG("Bottom collision");
+            if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_BOTTOM))
+            {
+                m_InGroundCollision = true;
+                LOG_DEBUG("IN BOTTOM COLLISION");
+            }
+            
+            if (!m_InCeilingCollision) 
+            {
+                m_Velocity.y = GRAVITY;
+                m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
+                m_IsGrounded = true;
+                m_JumpCount = 1;
+                //LOG_DEBUG("BOTTOM COLLISION");
+            }
         }
-
-        // Top collision
-        else if (m_BoundingBox.top >= otherCollider.top + otherCollider.height
-            && m_BoundingBox.top + m_BoundingBox.height > otherCollider.top + otherCollider.height)
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
         {
-            m_Velocity.y = 0.f;
-            m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-            //std::cout << "Top collision" << std::endl;
-        }
+            if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP))
+            {
+                m_InCeilingCollision = true;
+                LOG_DEBUG("IN TOP COLLISION");
+            }
 
-        // Left collision
-        else if (m_BoundingBox.left >= otherCollider.left + otherCollider.width
-            && m_BoundingBox.left + m_BoundingBox.width > otherCollider.left + otherCollider.width)
+            if (!m_InGroundCollision) 
+            {
+                m_Velocity.y = 0.f;
+                m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
+                //LOG_DEBUG("TOP COLLISION");
+            }
+        }
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
         {
             m_Velocity.x = 0.f;
             m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
-            //std::cout << "Left collision" << std::endl;
+            //LOG_DEBUG("LEFT COLLISION");
         }
-
-        // Right collision
-        else if (m_BoundingBox.left + m_BoundingBox.width <= otherCollider.left
-            && m_BoundingBox.left < otherCollider.left)
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
         {
             m_Velocity.x = 0.f;
             m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
-            //std::cout << "Right collision" << std::endl;
-        }
-
-        // === Special checks for skull roll
-        // (Getting out of skull roll action can cause being in ceiling and/or in ground)
-
-        else if (m_BoundingBox.top < otherCollider.top + otherCollider.height
-            && m_BoundingBox.top > otherCollider.top)
-        {
-            if (!m_InCeilingCollision)
-            {
-                m_InCeilingCollision = true;
-                m_Velocity.y = 0.f;
-
-                if (!m_InGroundCollision)
-                {
-                    m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-                    
-                    //std::cout << "Corrected inCeiling" << std::endl;
-                }
-
-                //std::cout << "m_InCeilingCollision" << std::endl;
-            }
-        }
-        else if (m_BoundingBox.top + m_BoundingBox.height > otherCollider.top
-            && m_BoundingBox.top < otherCollider.top)
-        {
-            if (!m_InGroundCollision)
-            {
-                m_InGroundCollision = true;
-                m_Velocity.y = 0.f;
-
-                // If only in ground, reset the position of the player
-                if (!m_InCeilingCollision)
-                {
-                    m_IsGrounded = true;
-                    m_JumpCount = 1;
-                    m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-
-                    //std::cout << "Corrected inGround" << std::endl;
-                }
-
-                //std::cout << "m_InGroundCollision" << std::endl;
-            }
+            //LOG_DEBUG("RIGHT COLLISION");
         }
     }
 }
@@ -240,35 +252,27 @@ void Player::Move(float deltaTime)
     m_InGroundCollision = false;
     m_InCeilingCollision = false;
 
-    // Compute player's velocity
+    // Apply gravity
     m_Velocity.y += GRAVITY;
-    m_Velocity.x = m_InputManager->GetScaledVelocity(m_Velocity.x, MOVE_SPEED_INC, MOVE_SPEED_MAX, SLOWDOWN_RATE);
-
-    if (m_InputManager->HasAction(Action::MOVE_UP))
+    
+    // If player isn't moving, he starts to slow down
+    if (!m_InputManager->HasAction(Action::MOVE_RIGHT)
+        && !m_InputManager->HasAction(Action::MOVE_LEFT)) 
     {
-        MoveUp();
-    } 
-    else if (m_IsClimbing) 
-    {
-        // Resets the vertical velocity if climbing 
-        // (we don't want the player to fall down the ladder if he's not giving any input)
-        m_Velocity.y = 0.f;
-
-        if (!m_CanClimb) 
-        {
-            m_IsClimbing = false;
-        }
+        m_Velocity.x *= SLOWDOWN_RATE;
     }
 
-    // Climb down
-    if (m_InputManager->HasAction(Action::MOVE_DOWN) && m_IsClimbing)
+    // Update climbing status if necessary
+    if (m_IsClimbing && !m_CanClimb)
     {
-        m_Velocity.y = CLIMB_SPEED;
-
-        if (m_IsGrounded)
-        {
-           m_IsClimbing = false;
-        }
+        m_IsClimbing = false;
+    }
+    // Reset the vertical velocity if climbing but not moving
+    else if (!m_InputManager->HasAction(Action::MOVE_UP)
+        && !m_InputManager->HasAction(Action::MOVE_DOWN) 
+        && m_IsClimbing)
+    { 
+        m_Velocity.y = 0.f;
     }
 
     // Check movement on X axis
@@ -300,7 +304,6 @@ void Player::MoveUp()
     // Climb up
     if (m_CanClimb && !m_IsSkullRolling)
     {
-        //LOG_INFO("Player is climbing !");
         m_Velocity.y = -CLIMB_SPEED;
         m_IsClimbing = true;
         m_JumpCount = 0;
@@ -309,7 +312,6 @@ void Player::MoveUp()
     {
         // Player gets a little force if he's jumping when getting out of the ladder
         m_Velocity.y = -(JUMP_FORCE * 0.75f);
-        m_IsClimbing = false;
     }
     // Jump
     else if (m_JumpCount != 0)
@@ -319,6 +321,29 @@ void Player::MoveUp()
     }
     
     m_IsGrounded = false;
+}
+
+void Player::MoveDown()
+{
+    if (m_IsClimbing)
+    {
+        m_Velocity.y = CLIMB_SPEED;
+
+        if (m_IsGrounded)
+        {
+            m_IsClimbing = false;
+        }
+    }
+}
+
+void Player::MoveRight(const float scale)
+{
+    m_Velocity.x = fmin(m_Velocity.x + MOVE_SPEED_INC, scale * MOVE_SPEED_MAX);
+}
+
+void Player::MoveLeft(const float scale)
+{
+    m_Velocity.x = fmax(m_Velocity.x - MOVE_SPEED_INC, scale * -MOVE_SPEED_MAX);
 }
 
 void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)

@@ -7,9 +7,14 @@ public:
     ~UIManager();
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void StartEndGame();
+
+    void OnEvent(const Event* evnt);
 
 private:
+    void StartEndGame();
+
+    //====================//
+
     // End Game Elements
     sf::Font m_EndgameTextFont;
     sf::Text m_EndgameText;
