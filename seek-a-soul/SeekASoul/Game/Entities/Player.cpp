@@ -6,6 +6,8 @@
 #include <Game/Objects/SoulChunk.h>
 #include <Engine/Event/EventTypes/ActionEvent.h>
 
+static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
+
 static constexpr uint64_t SHOOT_COOLDOWN = 500;
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
@@ -19,7 +21,7 @@ static constexpr float GRAVITY = 9.8f;
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : Entity(textureManager, { 50.f, 50.f }, 200)
-    , Animated({ 32, 56 }, textureManager->GetTextureFromName("PLAYER_SHEET"))
+    , Animated(PLAYER_SPRITE_SIZE, textureManager->GetTextureFromName("PLAYER_SHEET"))
     , m_InputManager{ inputManager }
     , m_CurrentState(PlayerState::IDLE)
     , m_SoulChunksCollected(0)
