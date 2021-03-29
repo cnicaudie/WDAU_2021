@@ -47,10 +47,11 @@ public:
 
 private:
 	std::vector<std::shared_ptr<ActionEvent>> m_CurrentActions;
-	//std::map<Action, std::vector<std::shared_ptr<Binding>>> m_ActionBinding;
 	std::map<Binding*, Action> m_ActionBinding;
 
 	sf::Vector2f m_MousePosition;
+	sf::Vector2f m_AimJoystickPosition;
+
 	bool m_IsUsingJoystick;
 	unsigned int m_JoystickIndex;
 	float m_JoystickDeadZone;

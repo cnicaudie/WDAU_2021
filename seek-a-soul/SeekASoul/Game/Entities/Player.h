@@ -32,6 +32,7 @@ private:
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
 	
 	void UpdateBoundingBox();
+	void UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint);
 	void Shoot();
 	void SkullRoll();
 	void UpdateSkullRollCooldown(uint64_t now);
@@ -59,6 +60,7 @@ private:
 	uint64_t m_LastSkullRollTime;
 	uint64_t m_LastShootTime;
 
+	sf::Vector2f m_ShootDirection;
 	std::vector<Bullet> m_Bullets;
 	int m_AmmunitionsNumber;
 

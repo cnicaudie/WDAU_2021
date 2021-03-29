@@ -32,6 +32,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_IsSkullRolling(false)
     , m_LastSkullRollTime(0)
     , m_LastShootTime(0)
+    , m_ShootDirection{ 0.f, 0.f }
     , m_Bullets{}
     , m_AmmunitionsNumber(10) // TODO : Display this number with UI
     , m_InGroundCollision(false)
@@ -409,6 +410,23 @@ void Player::UpdateBoundingBox()
     {
         SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()));
     }
+}
+
+void Player::UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint) 
+{
+    sf::Vector2f shootDirection = direction;
+
+    if (isPoint) 
+    {
+        shootDirection = direction - m_Position;
+    }
+
+    // Normalize the vector
+    // TODO : Make a normalize function in a MathUtils file
+    float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
+    shootDirection = shootDirection / magnitude;
+
+    m_ShootDirection = shootDirection;
 }
 
 void Player::Shoot()

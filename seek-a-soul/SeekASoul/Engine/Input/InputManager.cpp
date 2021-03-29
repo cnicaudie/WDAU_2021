@@ -38,6 +38,12 @@ InputManager::InputManager()
 	m_ActionBinding.emplace(new MouseBinding(sf::Mouse::Button::Right), Action::SHOOT);
 	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::Z, true), Action::SHOOT); // L2 on PS3 Dualshock
 
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::U, true), Action::AIM_X); // Right joystick on PS3 Dualshock
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::U, false), Action::AIM_X); // Right joystick on PS3 Dualshock
+	
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::V, true), Action::AIM_Y); // Right joystick on PS3 Dualshock
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::V, false), Action::AIM_Y); // Right joystick on PS3 Dualshock
+
 	// TODO : Eventually make a rebinding feature
 
 	LOG_INFO("InputManager Created");
@@ -57,12 +63,23 @@ void InputManager::Update()
 	{
 		EventManager::GetInstance()->Fire(actionEvent);
 	}
+
+	if (m_AimJoystickPosition.x != 0.f && m_AimJoystickPosition.y != 0.f)
+	{
+		// TODO : fire event
+		
+		// And reset the aiming position
+		m_AimJoystickPosition.x = 0.f;
+		m_AimJoystickPosition.y = 0.f;
+	}
 }
 
 void InputManager::ManageInputEvents(const sf::Event& event)
 {
 	switch (event.type)
 	{
+		// === Keyboard 
+
 		case sf::Event::KeyPressed:
 		{
 			KeyboardBinding keyboardBinding(event.key.code);
@@ -77,6 +94,8 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 			break;
 		}
 
+		// === Mouse 
+
 		case sf::Event::MouseButtonPressed:
 		{
 			MouseBinding mouseBinding(event.mouseButton.button);
@@ -90,6 +109,15 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 			RemoveAction(&mouseBinding);
 			break;
 		}
+
+		case sf::Event::MouseMoved:
+		{
+			// TODO
+			//LOG_DEBUG(event.mouseMove.x << " / " << event.mouseMove.y);
+			//m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
+		}
+
+		// === Joystick 
 
 		case sf::Event::JoystickButtonPressed:
 		{
@@ -153,10 +181,24 @@ void InputManager::AddAction(Binding* key)
 	if (it != m_ActionBinding.end()) 
 	{
 		Action action = it->second;
-		
-		if (!HasAction(action)) 
+		JoystickAxisBinding* joystickAxisBinding = dynamic_cast<JoystickAxisBinding*>(key);
+
+		// Manage aiming on joystick
+		if (joystickAxisBinding != nullptr) 
 		{
-			if (JoystickAxisBinding* joystickAxisBinding = dynamic_cast<JoystickAxisBinding*>(key)) 
+			if (action == Action::AIM_X) 
+			{
+				m_AimJoystickPosition.x = joystickAxisBinding->GetAxisPosition();
+			} 
+			else if (action == Action::AIM_Y) 
+			{
+				m_AimJoystickPosition.y = joystickAxisBinding->GetAxisPosition();
+			}
+		}
+		// Otherwise, handle the action normally
+		else if (!HasAction(action)) 
+		{
+			if (joystickAxisBinding != nullptr)
 			{
 				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, joystickAxisBinding->GetAxisPosition() / 100);
 				m_CurrentActions.push_back(actionEvent);
