@@ -47,14 +47,14 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
                 // Check collision with collideables on tile
                 if (otherCollideable->IsTrigger() && collideable->Contains(otherCollideable->GetCenter()))
                 {
-                    collideable->OnTrigger(static_cast<BoxCollideable*>(otherCollideable));
+                    collideable->OnTrigger(otherCollideable);
                     otherCollideable->OnTrigger(collideable);
                 } 
                 else if (collideable->IsColliding(*otherCollideable))
                 {
                     //hasCollided = true;
-                    collideable->OnCollision(static_cast<BoxCollideable*>(otherCollideable));
-                    otherCollideable->OnCollision(collideable);
+                    collideable->OnCollision(otherCollideable, GetCollisionDirection(collideable, otherCollideable));
+                    otherCollideable->OnCollision(collideable, GetCollisionDirection(otherCollideable, collideable));
                 }
             }
         }
@@ -62,67 +62,70 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
         else if (quadBoundingBox.intersects(tile->GetBoundingBox())) 
         {
             hasCollided = true;
-            collideable->OnCollision(static_cast<BoxCollideable*>(tile.get()));
-            //tile->OnCollision(collideable);
+            collideable->OnCollision(static_cast<BoxCollideable*>(tile.get()), GetCollisionDirection(collideable, tile.get()));
+            //tile->OnCollision(collideable, GetCollisionDirection(tile.get(), collideable));
         }
     }
 
     return hasCollided;
 }
 
-const int8_t CollisionManager::GetCollisionDirection(BoxCollideable* boxCollideable, BoxCollideable* boxCollider) const
+const CollisionDirection CollisionManager::GetCollisionDirection(BoxCollideable* boxCollideable, BoxCollideable* boxCollider) const
 {
     sf::FloatRect collideable = boxCollideable->GetBoundingBox();
     sf::FloatRect collider = boxCollider->GetBoundingBox();
 
-    int8_t collisionDirection = static_cast<int8_t>(CollisionDirection::NONE);
+    int32_t collisionDirection = static_cast<int32_t>(CollisionDirection::NONE);
 
-    // Bottom collision
+    // === Compute collision direction for anticipative collision (e.g Player will collide with Tile)
+
     if (collideable.top + collideable.height <= collider.top
         && collideable.top < collider.top)
     {
-        //LOG_DEBUG("Bottom collision");
-        collisionDirection |= static_cast<int8_t>(CollisionDirection::BOTTOM);
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::BOTTOM);
     }
-
-    // Top collision
-    if (collideable.top >= collider.top + collider.height
+    else if (collideable.top >= collider.top + collider.height
         && collideable.top + collideable.height > collider.top + collider.height)
     {
-        //LOG_DEBUG("Top collision");
-        collisionDirection |= static_cast<int8_t>(CollisionDirection::TOP);
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::TOP);
     }
-
-    // Left collision
-    if (collideable.left >= collider.left + collider.width
+    else if (collideable.left >= collider.left + collider.width
         && collideable.left + collideable.width > collider.left + collider.width)
     {
-        //LOG_DEBUG("Left collision");
-        collisionDirection |= static_cast<int8_t>(CollisionDirection::LEFT);
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::LEFT);
     }
-
-    // Right collision
-    if (collideable.left + collideable.width <= collider.left
+    else if (collideable.left + collideable.width <= collider.left
         && collideable.left < collider.left)
     {
-        //LOG_DEBUG("Right collision");
-        collisionDirection |= static_cast<int8_t>(CollisionDirection::RIGHT);
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::RIGHT);
     }
 
-    // === Special checks for skull roll
-    // (Getting out of skull roll action can cause being in ceiling and/or in ground)
+    // === Compute collision direction for direct collision (e.g Player is colliding with Tile)
 
-    if (collideable.top < collideable.top + collider.height
-        && collideable.top > collider.top)
-    {
-        
-    }
-
-    if (collideable.top + collideable.height > collider.top
+    else if (collideable.top + collideable.height > collider.top
         && collideable.top < collider.top)
     {
-        
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::BOTTOM); 
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_BOTTOM);
+    }
+    else if (collideable.top < collideable.top + collider.height
+        && collideable.top > collider.top)
+    {
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::TOP);
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_TOP);
+    }
+    else if (collideable.left < collider.left + collider.width
+        && collideable.left + collideable.width > collider.left + collider.width)
+    {
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::LEFT);
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_LEFT);
+    }
+    else if (collideable.left + collideable.width > collider.left
+        && collideable.left < collider.left)
+    {
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::RIGHT);
+        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_RIGHT);
     }
 
-    return collisionDirection;
+    return static_cast<CollisionDirection>(collisionDirection);
 }

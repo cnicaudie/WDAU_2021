@@ -10,7 +10,7 @@ public:
 	
 	void Update(float deltaTime) override;
 	void OnEvent(const Event* evnt);
-	void OnCollision(BoxCollideable* other) override;
+	void OnCollision(BoxCollideable* other, CollisionDirection direction) override;
 	void OnTrigger(BoxCollideable* other) override;
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -62,7 +62,7 @@ private:
 	std::vector<Bullet> m_Bullets;
 	int m_AmmunitionsNumber;
 
-	// Checks when gettin out of skull roll
+	// Checks when gettin out of skull roll (change of bounding box)
 	bool m_InGroundCollision;
 	bool m_InCeilingCollision;
 };

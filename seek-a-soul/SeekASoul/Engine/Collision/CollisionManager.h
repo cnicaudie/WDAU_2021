@@ -8,5 +8,5 @@ public:
 	CollisionManager();
 
 	const bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const MapGrid& mapGrid) const;
-	const int8_t GetCollisionDirection(BoxCollideable* collideable, BoxCollideable* collider) const;
+	const CollisionDirection GetCollisionDirection(BoxCollideable* collideable, BoxCollideable* collider) const;
 };
