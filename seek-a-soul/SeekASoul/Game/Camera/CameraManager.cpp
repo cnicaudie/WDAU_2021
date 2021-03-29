@@ -31,47 +31,81 @@ CameraManager::CameraManager(sf::RenderWindow* window)
 
 void CameraManager::Update(float deltaTime) 
 {
-    if (m_CameraMode == CameraMode::FOLLOW) 
+    sf::FloatRect hardMoveZoneBoundingBox = m_HardMoveZone.getGlobalBounds();
+    sf::FloatRect softMoveZoneBoundingBox = m_SoftMoveZone.getGlobalBounds();
+    
+    if (m_CameraMode == CameraMode::FOLLOW)
     {
-        FollowBox(deltaTime);
+        FollowBox(deltaTime, hardMoveZoneBoundingBox, softMoveZoneBoundingBox);
+    } 
+    else 
+    {
+        if (!softMoveZoneBoundingBox.contains(m_BoxToFollow->GetCenter()))
+        {
+            m_CameraMode = CameraMode::FOLLOW;
+            FollowBox(deltaTime, hardMoveZoneBoundingBox, softMoveZoneBoundingBox);
+        }
+        else if (m_CameraMode == CameraMode::CENTERING) 
+        {
+            RecenterCamera(deltaTime);
+        }
     }
 }
 
-void CameraManager::FollowBox(float deltaTime)
+void CameraManager::FollowBox(float deltaTime, const sf::FloatRect& hardZone, const sf::FloatRect& softZone)
 {
     const sf::Vector2f boxToFollowPosition = m_BoxToFollow->GetCenter();
 
-    sf::FloatRect hardMoveZoneBoundingBox = m_HardMoveZone.getGlobalBounds();
-    sf::FloatRect softMoveZoneBoundingBox = m_SoftMoveZone.getGlobalBounds();
-
     float followSpeedRate = 1.f;
 
-    if (!hardMoveZoneBoundingBox.contains(boxToFollowPosition))
+    if (!hardZone.contains(boxToFollowPosition))
     {
         m_ExitedHardZone = true;
     } 
     else if (m_ExitedHardZone)
     {
-        if (softMoveZoneBoundingBox.contains(boxToFollowPosition))
+        if (softZone.contains(boxToFollowPosition))
         {
             m_ExitedHardZone = false;
             followSpeedRate = 0.5f;
         }
     } 
-    else if (!softMoveZoneBoundingBox.contains(boxToFollowPosition))
+    else if (!softZone.contains(boxToFollowPosition))
     {
         followSpeedRate = 0.5f;
     }
     else 
     {
-        followSpeedRate = 0.25f;
+        //followSpeedRate = 0.4f;
+        SetFixedPoint(boxToFollowPosition);
     }
 
     m_CameraView.move((boxToFollowPosition - m_CameraView.getCenter()) * followSpeedRate * deltaTime);
-    
     m_HardMoveZone.setPosition(m_CameraView.getCenter() - (m_HardMoveZone.getSize() / 2.f));
     m_SoftMoveZone.setPosition(m_CameraView.getCenter() - (m_SoftMoveZone.getSize() / 2.f));
     m_Window->setView(m_CameraView);
+}
+
+void CameraManager::RecenterCamera(float deltaTime)
+{
+    const float RECENTER_SPEED_RATE = 0.5f;
+    const double RECENTER_DISTANCE_THRESHOLD = 20.;
+
+    // TODO : Make a getDistance(vector, vector) function in a MathUtils file
+    sf::Vector2f cameraCenter = m_CameraView.getCenter();
+    double distance = std::sqrt(std::pow(m_FixedPoint.x - cameraCenter.x, 2.0) + std::pow(m_FixedPoint.x - cameraCenter.x, 2.0));
+
+    if (distance > RECENTER_DISTANCE_THRESHOLD)
+    {
+        m_CameraView.move((m_FixedPoint - m_CameraView.getCenter()) * RECENTER_SPEED_RATE * deltaTime);
+        m_HardMoveZone.setPosition(m_CameraView.getCenter() - (m_HardMoveZone.getSize() / 2.f));
+        m_SoftMoveZone.setPosition(m_CameraView.getCenter() - (m_SoftMoveZone.getSize() / 2.f));
+        m_Window->setView(m_CameraView);
+    } 
+    else 
+    {
+        m_CameraMode = CameraMode::FIXED;
+    }
 }
 
 void CameraManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
