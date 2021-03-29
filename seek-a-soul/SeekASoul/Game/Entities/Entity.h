@@ -6,7 +6,7 @@ public:
 	Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position, int healthPoints);
 	
 	virtual void Update(float deltaTime) = 0;
-	virtual void OnCollision(BoxCollideable* other) = 0;
+	virtual void OnCollision(BoxCollideable* other, CollisionDirection direction) = 0;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
 

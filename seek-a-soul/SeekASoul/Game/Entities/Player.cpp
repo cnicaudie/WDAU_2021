@@ -51,18 +51,19 @@ void Player::Update(float deltaTime)
     {
         UpdateSkullRollCooldown(now);
     }
-    else if (m_InGroundCollision && m_InCeilingCollision)
+    
+    // Update player's bounding box
+    UpdateBoundingBox();
+
+    Move(deltaTime);
+    
+    if (m_InGroundCollision && m_InCeilingCollision)
     {
         // If in ground and ceiling after collision check, player stays skull rolling
         LOG_DEBUG("SKULL ROLL STAY");
         m_IsSkullRolling = true;
         m_LastSkullRollTime = now;
     }
-
-    // Update player's bounding box
-    UpdateBoundingBox();
-
-    Move(deltaTime);
 
     if (m_HealthState == HealthState::DAMAGED)
     {
@@ -125,9 +126,10 @@ void Player::OnEvent(const Event* evnt)
     }
 }
 
-void Player::OnCollision(BoxCollideable* other)
+void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
 {
     sf::FloatRect otherCollider = other->GetBoundingBox();
+    int32_t collisionDirection = static_cast<int32_t>(direction);
     
     if (typeid(*other) == typeid(class Enemy) 
         && (m_HealthState == HealthState::OK)
@@ -138,85 +140,49 @@ void Player::OnCollision(BoxCollideable* other)
 
     if (typeid(*other) == typeid(class CollideableTile))
     {
-        // Bottom collision
-        if (m_BoundingBox.top + m_BoundingBox.height <= otherCollider.top
-            && m_BoundingBox.top < otherCollider.top)
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
         {
-            m_Velocity.y = 0.f;
-            m_IsGrounded = true;
-            m_JumpCount = 1;
-            m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-            //LOG_DEBUG("Bottom collision");
+            if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_BOTTOM))
+            {
+                m_InGroundCollision = true;
+                LOG_DEBUG("IN BOTTOM COLLISION");
+            }
+            
+            if (!m_InCeilingCollision) 
+            {
+                m_Velocity.y = GRAVITY;
+                m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
+                m_IsGrounded = true;
+                m_JumpCount = 1;
+                //LOG_DEBUG("BOTTOM COLLISION");
+            }
         }
-
-        // Top collision
-        else if (m_BoundingBox.top >= otherCollider.top + otherCollider.height
-            && m_BoundingBox.top + m_BoundingBox.height > otherCollider.top + otherCollider.height)
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
         {
-            m_Velocity.y = 0.f;
-            m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-            //LOG_DEBUG("Top collision");
-        }
+            if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP))
+            {
+                m_InCeilingCollision = true;
+                LOG_DEBUG("IN TOP COLLISION");
+            }
 
-        // Left collision
-        else if (m_BoundingBox.left >= otherCollider.left + otherCollider.width
-            && m_BoundingBox.left + m_BoundingBox.width > otherCollider.left + otherCollider.width)
+            if (!m_InGroundCollision) 
+            {
+                m_Velocity.y = 0.f;
+                m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
+                //LOG_DEBUG("TOP COLLISION");
+            }
+        }
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
         {
             m_Velocity.x = 0.f;
             m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
-            //LOG_DEBUG("Left collision");
+            //LOG_DEBUG("LEFT COLLISION");
         }
-
-        // Right collision
-        else if (m_BoundingBox.left + m_BoundingBox.width <= otherCollider.left
-            && m_BoundingBox.left < otherCollider.left)
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
         {
             m_Velocity.x = 0.f;
             m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
-            //LOG_DEBUG("Right collision");
-        }
-
-        // === Special checks for skull roll
-        // (Getting out of skull roll action can cause being in ceiling and/or in ground)
-
-        else if (m_BoundingBox.top < otherCollider.top + otherCollider.height
-            && m_BoundingBox.top > otherCollider.top)
-        {
-            if (!m_InCeilingCollision)
-            {
-                m_InCeilingCollision = true;
-                m_Velocity.y = 0.f;
-
-                if (!m_InGroundCollision)
-                {
-                    m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-                    
-                    //std::cout << "Corrected inCeiling" << std::endl;
-                }
-
-                //std::cout << "m_InCeilingCollision" << std::endl;
-            }
-        }
-        else if (m_BoundingBox.top + m_BoundingBox.height > otherCollider.top
-            && m_BoundingBox.top < otherCollider.top)
-        {
-            if (!m_InGroundCollision)
-            {
-                m_InGroundCollision = true;
-                m_Velocity.y = 0.f;
-
-                // If only in ground, reset the position of the player
-                if (!m_InCeilingCollision)
-                {
-                    m_IsGrounded = true;
-                    m_JumpCount = 1;
-                    m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-
-                    //std::cout << "Corrected inGround" << std::endl;
-                }
-
-                //std::cout << "m_InGroundCollision" << std::endl;
-            }
+            //LOG_DEBUG("RIGHT COLLISION");
         }
     }
 }

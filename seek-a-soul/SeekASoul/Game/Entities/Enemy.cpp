@@ -34,7 +34,7 @@ void Enemy::Update(float deltaTime)
 	}
 }
 
-void Enemy::OnCollision(BoxCollideable* other)
+void Enemy::OnCollision(BoxCollideable* other, CollisionDirection direction)
 {
 	Player* player = dynamic_cast<Player*>(other);
 

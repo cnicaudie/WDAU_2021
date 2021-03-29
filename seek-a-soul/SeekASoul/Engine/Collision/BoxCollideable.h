@@ -1,15 +1,17 @@
 #pragma once
 
+#include "CollisionDirection.h"
+
 class BoxCollideable
 {
 
 public:
-    virtual void OnCollision(BoxCollideable * other)
+    virtual void OnCollision(BoxCollideable* other, CollisionDirection direction)
     { 
         // TODO
     };
 
-    virtual void OnTrigger(BoxCollideable * other)
+    virtual void OnTrigger(BoxCollideable* other)
     {
         // TODO
     };

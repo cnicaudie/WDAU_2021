@@ -7,7 +7,7 @@ public:
 	
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	void OnCollision(BoxCollideable* other) override;
+	void OnCollision(BoxCollideable* other, CollisionDirection direction) override;
 
 	inline const float GetDistance() const { return m_Distance; };
 	inline const bool HadImpact() const { return m_HadImpact; };
