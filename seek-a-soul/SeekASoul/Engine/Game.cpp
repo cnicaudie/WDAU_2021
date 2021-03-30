@@ -78,6 +78,9 @@ void Game::RunGameLoop()
         Render(m_Window);
         RenderDebugMenu(m_Window);
 
+        UpdateGUI(deltaTime);
+        RenderGUI(m_Window);
+
         ImGui::EndFrame();
         if (toggleImGui)
         {

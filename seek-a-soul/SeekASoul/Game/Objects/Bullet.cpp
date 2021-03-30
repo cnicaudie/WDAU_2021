@@ -12,12 +12,9 @@ Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::
 	
 	SetBoundingBox(pos, textureSize * 0.25f);
 	SetTrigger(false);
-	std::cout << "Bullet created !" << std::endl;
 }
 
-Bullet::~Bullet() {
-	std::cout << "Bullet destroyed !" << std::endl;
-}
+Bullet::~Bullet() {}
 
 void Bullet::Update(float deltaTime) 
 {

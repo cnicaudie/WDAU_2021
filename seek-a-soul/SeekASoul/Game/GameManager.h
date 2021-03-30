@@ -14,7 +14,9 @@ public:
     void operator=(const GameManager& gameManager) = delete;
 
     void Update(float deltaTime) override;
+    void UpdateGUI(float deltaTime) override;
     void Render(sf::RenderTarget& target) override;
+    void RenderGUI(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
     void OnEvent(const Event* evnt);
@@ -37,7 +39,7 @@ private:
     static GameManager* m_GameManager; // Singleton instance
 
     std::shared_ptr<TextureManager> m_TextureManager;
-    UIManager m_UiManager;
+    UIManager m_UIManager;
     LevelManager m_LevelManager;
     CameraManager m_CameraManager;
     CollisionManager m_CollisionManager;

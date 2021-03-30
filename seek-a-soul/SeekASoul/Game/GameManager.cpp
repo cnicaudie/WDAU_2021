@@ -17,7 +17,7 @@ GameManager* GameManager::GetInstance()
 GameManager::GameManager()
     : Game{ "Seek A Soul (WIP)" }
     , m_TextureManager{ std::make_shared<TextureManager>() }
-    , m_UiManager{}
+    , m_UIManager{ &m_Window }
     , m_LevelManager { m_InputManager, m_TextureManager }
     , m_CameraManager{ &m_Window }
     , m_IsGameOver{ false }
@@ -55,12 +55,21 @@ void GameManager::Update(float deltaTime)
     }
 }
 
+void GameManager::UpdateGUI(float deltaTime)
+{
+    m_UIManager.Update(deltaTime);
+}
+
 void GameManager::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_LevelManager);
-    target.draw(m_UiManager);
     target.draw(m_CameraManager);
+}
+
+void GameManager::RenderGUI(sf::RenderTarget& target) 
+{
+    target.draw(m_UIManager);
 }
 
 void GameManager::RenderDebugMenu(sf::RenderTarget& target)

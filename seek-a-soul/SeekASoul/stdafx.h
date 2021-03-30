@@ -19,6 +19,8 @@
 #include <Game/GameManager.h>
 #include <Game/Action.h>
 
+#include <UI/UIViewModel.h>
+
 #include <iostream>
 #include <vector>
 #include <memory>

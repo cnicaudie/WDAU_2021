@@ -40,6 +40,8 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 {
     m_BoundingBox = GetAnimatedSpriteBoundingBox();
 
+    UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
+
     EventListener<Player, ActionEvent> listener(this, &Player::OnEvent);
     EventManager::GetInstance()->AddListener(listener);
 }
@@ -306,6 +308,8 @@ void Player::Move(float deltaTime)
     // Apply new position
     SetCenter(m_Position);
     SetAnimatedSpritePosition(m_Position);
+
+    UIViewModel::GetInstance()->SetPlayerPosition(m_Position);
 }
 
 void Player::MoveUp()
@@ -448,8 +452,8 @@ void Player::Shoot()
         m_Bullets.emplace_back(m_TextureManager, m_ShootDirection, m_Position);
 
         m_AmmunitionsNumber--;
-        LOG_INFO("Ammunitions left : " << m_AmmunitionsNumber);
-
+        UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
+        
         m_LastShootTime = now;
     }
 }
