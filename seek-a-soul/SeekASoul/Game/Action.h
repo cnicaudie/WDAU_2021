@@ -9,6 +9,7 @@ enum class Action
 	MOVE_DOWN	= 4,
 	SKULL_ROLL	= 5,
 	SHOOT		= 6,
-	AIM_X		= 7,
-	AIM_Y		= 8
+	AIM			= 7,
+	AIM_X		= 8,
+	AIM_Y		= 9
 };

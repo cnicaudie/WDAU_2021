@@ -6,14 +6,11 @@
 #include <Engine/Input/Bindings/JoystickAxisBinding.h>
 #include <Engine/Event/EventTypes/ActionEvent.h>
 
-InputManager::InputManager()
-	: m_MousePosition()
-	, m_IsUsingJoystick(false)
-	, m_JoystickIndex(0)
-	, m_JoystickDeadZone(20.0f)
-{
-	InitJoystick();
+static constexpr float JOYSTICK_DEAD_ZONE = 20.f;
 
+InputManager::InputManager(const sf::RenderWindow* window)
+	: m_Window(window)
+{
 	// TODO : Make a default bindings file to parse at construction
 
 	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Up), Action::MOVE_UP);
@@ -66,8 +63,9 @@ void InputManager::Update()
 
 	if (m_AimJoystickPosition.x != 0.f && m_AimJoystickPosition.y != 0.f)
 	{
-		// TODO : fire event
-		
+		std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(Action::AIM, 1.f, m_AimJoystickPosition, false);
+		EventManager::GetInstance()->Fire(actionEvent);
+
 		// And reset the aiming position
 		m_AimJoystickPosition.x = 0.f;
 		m_AimJoystickPosition.y = 0.f;
@@ -112,9 +110,9 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 
 		case sf::Event::MouseMoved:
 		{
-			// TODO
-			//LOG_DEBUG(event.mouseMove.x << " / " << event.mouseMove.y);
-			//m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
+			m_MousePosition = m_Window->mapPixelToCoords({ event.mouseMove.x, event.mouseMove.y });
+			std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(Action::AIM, 1.f, m_MousePosition, true);
+			EventManager::GetInstance()->Fire(actionEvent);
 		}
 
 		// === Joystick 
@@ -140,7 +138,7 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 			sf::Joystick::Axis joystickAxis = event.joystickMove.axis;
 			JoystickAxisBinding joystickAxisBinding(joystickAxis, joystickPosition > 0, joystickPosition);
 
-			if (joystickPosition >= m_JoystickDeadZone || joystickPosition <= -m_JoystickDeadZone)
+			if (joystickPosition >= JOYSTICK_DEAD_ZONE || joystickPosition <= -JOYSTICK_DEAD_ZONE)
 			{
 				AddAction(&joystickAxisBinding);
 			}
@@ -149,22 +147,6 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 				RemoveAction(&joystickAxisBinding);
 			}
 
-			break;
-		}
-
-		case sf::Event::JoystickConnected:
-		{
-			if (!IsUsingJoystick())
-			{
-				InitJoystick();
-			}
-
-			break;
-		}
-
-		case sf::Event::JoystickDisconnected:
-		{
-			ResetJoystick(event.joystickConnect.joystickId);
 			break;
 		}
 
@@ -196,7 +178,7 @@ void InputManager::AddAction(Binding* key)
 		{
 			if (!hasAction)
 			{
-				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, 1.f);
+				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action);
 				m_CurrentActions.push_back(actionEvent);
 			}
 		}
@@ -256,46 +238,4 @@ void InputManager::UpdateMousePosition(const sf::RenderWindow& gameWindow)
 {
 	const sf::Vector2i& mousePixelPosition = sf::Mouse::getPosition(gameWindow);
 	m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
-}
-
-const sf::Vector2f InputManager::GetScaledShootDirection(const sf::Vector2f currentPosition) const
-{
-	sf::Vector2f shootDirection;
-
-	if (m_IsUsingJoystick) 
-	{
-		const float xPos = sf::Joystick::getAxisPosition(m_JoystickIndex, sf::Joystick::Axis::U);
-		const float yPos = sf::Joystick::getAxisPosition(m_JoystickIndex, sf::Joystick::Axis::V);
-		shootDirection = sf::Vector2f(xPos, yPos);
-	} 
-	else 
-	{
-		const sf::Vector2f mousePos = m_MousePosition;
-		shootDirection = mousePos - currentPosition;
-	}
-
-	// Normalize the vector
-	// TODO : Make a normalize function in a MathUtils file
-	float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
-	shootDirection = shootDirection / magnitude;
-
-	return shootDirection;
-}
-
-void InputManager::InitJoystick()
-{
-	unsigned int index = 0;
-	while (index < sf::Joystick::Count)
-	{
-		if (sf::Joystick::isConnected(index) 
-			&& sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) 
-			&& sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
-		{
-			m_IsUsingJoystick = true;
-			m_JoystickIndex = index;
-			return;
-		}
-
-		index++;
-	}
 }

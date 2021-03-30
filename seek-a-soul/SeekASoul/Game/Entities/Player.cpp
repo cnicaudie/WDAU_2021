@@ -83,9 +83,9 @@ void Player::Update(float deltaTime)
 
 void Player::OnEvent(const Event* evnt) 
 {
-    if (const ActionEvent* otherActionEvent = dynamic_cast<const ActionEvent*>(evnt))
+    if (const ActionEvent* actionEvent = dynamic_cast<const ActionEvent*>(evnt))
     {
-        switch (otherActionEvent->GetActionType()) 
+        switch (actionEvent->GetActionType()) 
         {
             case Action::SHOOT: 
             {
@@ -113,13 +113,19 @@ void Player::OnEvent(const Event* evnt)
 
             case Action::MOVE_RIGHT:
             {
-                MoveRight(otherActionEvent->GetActionScale());
+                MoveRight(actionEvent->GetActionScale());
                 break;
             }
 
             case Action::MOVE_LEFT:
             {
-                MoveLeft(otherActionEvent->GetActionScale());
+                MoveLeft(actionEvent->GetActionScale());
+                break;
+            }
+
+            case Action::AIM: 
+            {
+                UpdateShootDirection(actionEvent->GetActionDirection(), actionEvent->IsPointActionDirection());
                 break;
             }
 
@@ -439,9 +445,7 @@ void Player::Shoot()
         && m_AmmunitionsNumber > 0
         && !m_IsSkullRolling) 
     {
-        const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
-
-        m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
+        m_Bullets.emplace_back(m_TextureManager, m_ShootDirection, m_Position);
 
         m_AmmunitionsNumber--;
         LOG_INFO("Ammunitions left : " << m_AmmunitionsNumber);
