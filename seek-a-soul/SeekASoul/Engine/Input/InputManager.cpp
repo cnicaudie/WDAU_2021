@@ -6,14 +6,11 @@
 #include <Engine/Input/Bindings/JoystickAxisBinding.h>
 #include <Engine/Event/EventTypes/ActionEvent.h>
 
-InputManager::InputManager()
-	: m_MousePosition()
-	, m_IsUsingJoystick(false)
-	, m_JoystickIndex(0)
-	, m_JoystickDeadZone(30.0f)
-{
-	InitJoystick();
+static constexpr float JOYSTICK_DEAD_ZONE = 20.f;
 
+InputManager::InputManager(const sf::RenderWindow* window)
+	: m_Window(window)
+{
 	// TODO : Make a default bindings file to parse at construction
 
 	m_ActionBinding.emplace(new KeyboardBinding(sf::Keyboard::Up), Action::MOVE_UP);
@@ -38,6 +35,12 @@ InputManager::InputManager()
 	m_ActionBinding.emplace(new MouseBinding(sf::Mouse::Button::Right), Action::SHOOT);
 	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::Z, true), Action::SHOOT); // L2 on PS3 Dualshock
 
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::U, true), Action::AIM_X); // Right joystick on PS3 Dualshock
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::U, false), Action::AIM_X); // Right joystick on PS3 Dualshock
+	
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::V, true), Action::AIM_Y); // Right joystick on PS3 Dualshock
+	m_ActionBinding.emplace(new JoystickAxisBinding(sf::Joystick::Axis::V, false), Action::AIM_Y); // Right joystick on PS3 Dualshock
+
 	// TODO : Eventually make a rebinding feature
 
 	LOG_INFO("InputManager Created");
@@ -57,12 +60,24 @@ void InputManager::Update()
 	{
 		EventManager::GetInstance()->Fire(actionEvent);
 	}
+
+	if (m_AimJoystickPosition.x != 0.f && m_AimJoystickPosition.y != 0.f)
+	{
+		std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(Action::AIM, 1.f, m_AimJoystickPosition, false);
+		EventManager::GetInstance()->Fire(actionEvent);
+
+		// And reset the aiming position
+		m_AimJoystickPosition.x = 0.f;
+		m_AimJoystickPosition.y = 0.f;
+	}
 }
 
 void InputManager::ManageInputEvents(const sf::Event& event)
 {
 	switch (event.type)
 	{
+		// === Keyboard 
+
 		case sf::Event::KeyPressed:
 		{
 			KeyboardBinding keyboardBinding(event.key.code);
@@ -77,6 +92,8 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 			break;
 		}
 
+		// === Mouse 
+
 		case sf::Event::MouseButtonPressed:
 		{
 			MouseBinding mouseBinding(event.mouseButton.button);
@@ -90,6 +107,15 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 			RemoveAction(&mouseBinding);
 			break;
 		}
+
+		case sf::Event::MouseMoved:
+		{
+			m_MousePosition = m_Window->mapPixelToCoords({ event.mouseMove.x, event.mouseMove.y });
+			std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(Action::AIM, 1.f, m_MousePosition, true);
+			EventManager::GetInstance()->Fire(actionEvent);
+		}
+
+		// === Joystick 
 
 		case sf::Event::JoystickButtonPressed:
 		{
@@ -107,34 +133,20 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 
 		case sf::Event::JoystickMoved:
 		{
+			// TODO : Manage artifacts ?
 			float joystickPosition = event.joystickMove.position;
 			sf::Joystick::Axis joystickAxis = event.joystickMove.axis;
+			JoystickAxisBinding joystickAxisBinding(joystickAxis, joystickPosition > 0, joystickPosition);
 
-			if (joystickPosition >= m_JoystickDeadZone || joystickPosition <= -m_JoystickDeadZone)
+			if (joystickPosition >= JOYSTICK_DEAD_ZONE || joystickPosition <= -JOYSTICK_DEAD_ZONE)
 			{
-				JoystickAxisBinding joystickAxisBinding(joystickAxis, joystickPosition > 0, joystickPosition);
 				AddAction(&joystickAxisBinding);
 			}
 			else
 			{
-				JoystickAxisBinding joystickAxisBinding(joystickAxis, joystickPosition > 0, joystickPosition);
 				RemoveAction(&joystickAxisBinding);
 			}
-			break;
-		}
 
-		case sf::Event::JoystickConnected:
-		{
-			if (!IsUsingJoystick())
-			{
-				InitJoystick();
-			}
-			break;
-		}
-
-		case sf::Event::JoystickDisconnected:
-		{
-			ResetJoystick(event.joystickConnect.joystickId);
 			break;
 		}
 
@@ -153,17 +165,44 @@ void InputManager::AddAction(Binding* key)
 	if (it != m_ActionBinding.end()) 
 	{
 		Action action = it->second;
-		
-		if (!HasAction(action)) 
+		auto const& actionPosition = std::find_if(m_CurrentActions.begin(), m_CurrentActions.end(), [&](const std::shared_ptr<ActionEvent> actionEvent)
+			{
+				return actionEvent->GetActionType() == action;
+			});
+		const bool hasAction = m_CurrentActions.size() != 0 && actionPosition != m_CurrentActions.end();
+
+		JoystickAxisBinding* joystickAxisBinding = dynamic_cast<JoystickAxisBinding*>(key);
+
+		// Handle actions other than related to a joystick axis input
+		if (joystickAxisBinding == nullptr)
 		{
-			if (JoystickAxisBinding* joystickAxisBinding = dynamic_cast<JoystickAxisBinding*>(key)) 
+			if (!hasAction)
 			{
-				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, joystickAxisBinding->GetAxisPosition() / 100);
+				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action);
 				m_CurrentActions.push_back(actionEvent);
-			} 
-			else 
+			}
+		}
+		// Manage joystick axis actions
+		else {
+			if (action == Action::AIM_X) 
 			{
-				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, 1.f);
+				m_AimJoystickPosition.x = joystickAxisBinding->GetAxisPosition();
+			} 
+			else if (action == Action::AIM_Y) 
+			{
+				m_AimJoystickPosition.y = joystickAxisBinding->GetAxisPosition();
+			} 
+			else
+			{
+				float actionScale = std::abs(joystickAxisBinding->GetAxisPosition()) / 100.f;
+
+				// We want to replace the existing action (position update)
+				if (hasAction)
+				{
+					m_CurrentActions.erase(actionPosition);
+				} 
+				
+				std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(action, actionScale);
 				m_CurrentActions.push_back(actionEvent);
 			}
 		}
@@ -180,15 +219,17 @@ void InputManager::RemoveAction(Binding* key)
 	if (it != m_ActionBinding.end())
 	{
 		Action action = it->second;
-
-		auto const& pos = std::find_if(m_CurrentActions.begin(), m_CurrentActions.end(), [&](const std::shared_ptr<ActionEvent> actionEvent)
+		
+		auto const& actionPosition = std::find_if(m_CurrentActions.begin(), m_CurrentActions.end(), [&](const std::shared_ptr<ActionEvent> actionEvent)
 			{
 				return actionEvent->GetActionType() == action;
 			});
 
-		if (pos != m_CurrentActions.end())
+		if (m_CurrentActions.size() != 0 && actionPosition != m_CurrentActions.end())
 		{
-			m_CurrentActions.erase(pos);
+			LOG_DEBUG("Before " << m_CurrentActions.size());
+			m_CurrentActions.erase(actionPosition);
+			LOG_DEBUG("After remove " << m_CurrentActions.size());
 		}
 	}
 }
@@ -197,46 +238,4 @@ void InputManager::UpdateMousePosition(const sf::RenderWindow& gameWindow)
 {
 	const sf::Vector2i& mousePixelPosition = sf::Mouse::getPosition(gameWindow);
 	m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
-}
-
-const sf::Vector2f InputManager::GetScaledShootDirection(const sf::Vector2f currentPosition) const
-{
-	sf::Vector2f shootDirection;
-
-	if (m_IsUsingJoystick) 
-	{
-		const float xPos = sf::Joystick::getAxisPosition(m_JoystickIndex, sf::Joystick::Axis::U);
-		const float yPos = sf::Joystick::getAxisPosition(m_JoystickIndex, sf::Joystick::Axis::V);
-		shootDirection = sf::Vector2f(xPos, yPos);
-	} 
-	else 
-	{
-		const sf::Vector2f mousePos = m_MousePosition;
-		shootDirection = mousePos - currentPosition;
-	}
-
-	// Normalize the vector
-	// TODO : Make a normalize function in a MathUtils file
-	float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
-	shootDirection = shootDirection / magnitude;
-
-	return shootDirection;
-}
-
-void InputManager::InitJoystick()
-{
-	unsigned int index = 0;
-	while (index < sf::Joystick::Count)
-	{
-		if (sf::Joystick::isConnected(index) 
-			&& sf::Joystick::hasAxis(index, sf::Joystick::Axis::X) 
-			&& sf::Joystick::hasAxis(index, sf::Joystick::Axis::Y))
-		{
-			m_IsUsingJoystick = true;
-			m_JoystickIndex = index;
-			return;
-		}
-
-		index++;
-	}
 }

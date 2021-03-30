@@ -32,6 +32,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_IsSkullRolling(false)
     , m_LastSkullRollTime(0)
     , m_LastShootTime(0)
+    , m_ShootDirection{ 0.f, 0.f }
     , m_Bullets{}
     , m_AmmunitionsNumber(10) // TODO : Display this number with UI
     , m_InGroundCollision(false)
@@ -82,9 +83,9 @@ void Player::Update(float deltaTime)
 
 void Player::OnEvent(const Event* evnt) 
 {
-    if (const ActionEvent* otherActionEvent = dynamic_cast<const ActionEvent*>(evnt))
+    if (const ActionEvent* actionEvent = dynamic_cast<const ActionEvent*>(evnt))
     {
-        switch (otherActionEvent->GetActionType()) 
+        switch (actionEvent->GetActionType()) 
         {
             case Action::SHOOT: 
             {
@@ -112,13 +113,19 @@ void Player::OnEvent(const Event* evnt)
 
             case Action::MOVE_RIGHT:
             {
-                MoveRight(otherActionEvent->GetActionScale());
+                MoveRight(actionEvent->GetActionScale());
                 break;
             }
 
             case Action::MOVE_LEFT:
             {
-                MoveLeft(otherActionEvent->GetActionScale());
+                MoveLeft(actionEvent->GetActionScale());
+                break;
+            }
+
+            case Action::AIM: 
+            {
+                UpdateShootDirection(actionEvent->GetActionDirection(), actionEvent->IsPointActionDirection());
                 break;
             }
 
@@ -411,6 +418,23 @@ void Player::UpdateBoundingBox()
     }
 }
 
+void Player::UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint) 
+{
+    sf::Vector2f shootDirection = direction;
+
+    if (isPoint) 
+    {
+        shootDirection = direction - m_Position;
+    }
+
+    // Normalize the vector
+    // TODO : Make a normalize function in a MathUtils file
+    float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
+    shootDirection = shootDirection / magnitude;
+
+    m_ShootDirection = shootDirection;
+}
+
 void Player::Shoot()
 {
     // TODO : make a unique function to get this value
@@ -421,9 +445,7 @@ void Player::Shoot()
         && m_AmmunitionsNumber > 0
         && !m_IsSkullRolling) 
     {
-        const sf::Vector2f bulletDirection = m_InputManager->GetScaledShootDirection(m_Position);
-
-        m_Bullets.emplace_back(m_TextureManager, bulletDirection, m_Position);
+        m_Bullets.emplace_back(m_TextureManager, m_ShootDirection, m_Position);
 
         m_AmmunitionsNumber--;
         LOG_INFO("Ammunitions left : " << m_AmmunitionsNumber);
