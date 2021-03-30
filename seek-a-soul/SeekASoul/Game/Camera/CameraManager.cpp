@@ -88,8 +88,8 @@ void CameraManager::FollowBox(float deltaTime, const sf::FloatRect& hardZone, co
 
 void CameraManager::RecenterCamera(float deltaTime)
 {
-    const float RECENTER_SPEED_RATE = 0.5f;
-    const double RECENTER_DISTANCE_THRESHOLD = 20.;
+    const float RECENTER_SPEED_RATE = 0.65f;
+    const double RECENTER_DISTANCE_THRESHOLD = 30.;
 
     // TODO : Make a getDistance(vector, vector) function in a MathUtils file
     sf::Vector2f cameraCenter = m_CameraView.getCenter();

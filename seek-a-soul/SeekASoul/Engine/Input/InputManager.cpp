@@ -113,6 +113,7 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 			m_MousePosition = m_Window->mapPixelToCoords({ event.mouseMove.x, event.mouseMove.y });
 			std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(Action::AIM, 1.f, m_MousePosition, true);
 			EventManager::GetInstance()->Fire(actionEvent);
+			break;
 		}
 
 		// === Joystick 
@@ -227,9 +228,7 @@ void InputManager::RemoveAction(Binding* key)
 
 		if (m_CurrentActions.size() != 0 && actionPosition != m_CurrentActions.end())
 		{
-			LOG_DEBUG("Before " << m_CurrentActions.size());
 			m_CurrentActions.erase(actionPosition);
-			LOG_DEBUG("After remove " << m_CurrentActions.size());
 		}
 	}
 }
