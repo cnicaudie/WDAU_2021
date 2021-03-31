@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include "Door.h"
-
+#include <Game/Entities/Player.h>
 
 Door::Door(float xCenterPos, float yCenterPos, float width, float height)
 	: m_IsPlayingEndGame{ false }

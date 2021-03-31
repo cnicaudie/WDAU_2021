@@ -1,4 +1,5 @@
 #include <stdafx.h>
+#include "Bullet.h"
 
 Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos)
 	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f), m_HadImpact(false)
