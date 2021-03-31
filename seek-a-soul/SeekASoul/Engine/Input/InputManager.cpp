@@ -8,8 +8,7 @@
 
 static constexpr float JOYSTICK_DEAD_ZONE = 20.f;
 
-InputManager::InputManager(const sf::RenderWindow* window)
-	: m_Window(window)
+InputManager::InputManager()
 {
 	// TODO : Make a default bindings file to parse at construction
 
@@ -110,8 +109,7 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 
 		case sf::Event::MouseMoved:
 		{
-			m_MousePosition = m_Window->mapPixelToCoords({ event.mouseMove.x, event.mouseMove.y });
-			std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(Action::AIM, 1.f, m_MousePosition, true);
+			std::shared_ptr<ActionEvent> actionEvent = std::make_shared<ActionEvent>(Action::AIM, 1.f, m_GameMousePosition, true);
 			EventManager::GetInstance()->Fire(actionEvent);
 			break;
 		}
@@ -231,10 +229,4 @@ void InputManager::RemoveAction(Binding* key)
 			m_CurrentActions.erase(actionPosition);
 		}
 	}
-}
-
-void InputManager::UpdateMousePosition(const sf::RenderWindow& gameWindow)
-{
-	const sf::Vector2i& mousePixelPosition = sf::Mouse::getPosition(gameWindow);
-	m_MousePosition = gameWindow.mapPixelToCoords(mousePixelPosition);
 }

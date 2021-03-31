@@ -47,17 +47,20 @@ void GameManager::Update(float deltaTime)
 
     EventManager::GetInstance()->Update();
     
+    m_CameraManager.Update(deltaTime);
+
     if (!m_IsGameOver)
     {
+        m_InputManager->UpdateMousePosition(m_Window, true);
         m_InputManager->Update();
         m_LevelManager.Update(deltaTime);
-        m_CameraManager.Update(deltaTime);
     }
 }
 
 void GameManager::UpdateGUI(float deltaTime)
 {
     m_UIManager.Update(deltaTime);
+    m_InputManager->UpdateMousePosition(m_Window, false);
 }
 
 void GameManager::Render(sf::RenderTarget& target)
@@ -97,7 +100,7 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 
     if (ImGui::CollapsingHeader("Mouse position"))
     {
-        const sf::Vector2f& mouseWorldPosition = m_InputManager->GetMousePosition();
+        const sf::Vector2f& mouseWorldPosition = m_InputManager->GetGameMousePosition();
 
         ImGui::Text("X: %f", mouseWorldPosition.x);
         ImGui::Text("Y: %f", mouseWorldPosition.y);
