@@ -254,6 +254,9 @@
     <ClInclude Include="Engine\Time\Time.h">
       <Filter>Engine\Time</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Resources\FileReader.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
