@@ -1,10 +1,11 @@
 #include <stdafx.h>
 #include "Player.h"
 #include "Enemy.h"
+#include <Engine/Event/EventTypes/ActionEvent.h>
+#include <Engine/Maths/Maths.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
-#include <Engine/Event/EventTypes/ActionEvent.h>
 
 static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
 
@@ -431,10 +432,7 @@ void Player::UpdateShootDirection(const sf::Vector2f& direction, const bool isPo
         shootDirection = direction - m_Position;
     }
 
-    // Normalize the vector
-    // TODO : Make a normalize function in a MathUtils file
-    float magnitude = std::sqrt(shootDirection.x * shootDirection.x + shootDirection.y * shootDirection.y);
-    shootDirection = shootDirection / magnitude;
+    Maths::NormalizeVector(shootDirection);
 
     m_ShootDirection = shootDirection;
 }

@@ -248,6 +248,9 @@
     <ClInclude Include="UI\UIViewModel.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Maths\Maths.h">
+      <Filter>Engine\Maths</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -306,6 +309,9 @@
     </Filter>
     <Filter Include="Engine\Event\EventTypes">
       <UniqueIdentifier>{edba8386-2c35-4d04-99d6-064b8253421a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Maths">
+      <UniqueIdentifier>{57e2942f-a6e4-4eae-8f70-f9dfe95a6086}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

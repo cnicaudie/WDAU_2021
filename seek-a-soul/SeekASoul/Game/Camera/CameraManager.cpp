@@ -1,15 +1,20 @@
 #include <stdafx.h>
 #include "CameraManager.h"
+#include <Engine/Maths/Maths.h>
 
 CameraManager::CameraManager(sf::RenderWindow* window)
-    : m_Window(window)
+    : m_CameraMode(CameraMode::FIXED)
+    , m_Window(window)
     , m_CameraView(sf::FloatRect(0.f, 0.f, static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)))
+    , m_BoxToFollow(nullptr)
     , m_ExitedHardZone(false)
     , DisplayCameraZones(false)
 {
     const sf::Vector2f WINDOW_CENTER{ m_CameraView.getCenter() };
     const sf::Vector2f HARD_ZONE_SIZE{ m_Window->getSize().x / 1.6f, m_Window->getSize().y / 2.4f };
     const sf::Vector2f SOFT_ZONE_SIZE{ m_Window->getSize().x / 3.2f, m_Window->getSize().y / 4.8f };
+
+    m_FixedPoint = WINDOW_CENTER;
 
     m_HardMoveZone.setPosition(WINDOW_CENTER);
     m_SoftMoveZone.setPosition(WINDOW_CENTER);
@@ -88,11 +93,9 @@ void CameraManager::FollowBox(float deltaTime, const sf::FloatRect& hardZone, co
 void CameraManager::RecenterCamera(float deltaTime)
 {
     const float RECENTER_SPEED_RATE = 0.65f;
-    const double RECENTER_DISTANCE_THRESHOLD = 30.;
+    const float RECENTER_DISTANCE_THRESHOLD = 30.f;
 
-    // TODO : Make a getDistance(vector, vector) function in a MathUtils file
-    sf::Vector2f cameraCenter = m_CameraView.getCenter();
-    double distance = std::sqrt(std::pow(m_FixedPoint.x - cameraCenter.x, 2.0) + std::pow(m_FixedPoint.x - cameraCenter.x, 2.0));
+    float distance = Maths::GetDistance(m_FixedPoint, m_CameraView.getCenter());
 
     if (distance > RECENTER_DISTANCE_THRESHOLD)
     {
