@@ -10,10 +10,13 @@ public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void OnTrigger(BoxCollideable* other) override;
 
-	void StartEndGame();
 	inline const bool IsPlayingEndGame() const { return m_IsPlayingEndGame; };
 
 private:
+	void StartEndGame();
+
+	//====================//
+
     sf::RectangleShape m_Rectangle;
 
 	float m_rColor;

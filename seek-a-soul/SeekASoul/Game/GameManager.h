@@ -18,8 +18,6 @@ public:
     void RenderGUI(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
-    void OnEvent(const Event* evnt);
-
     inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
     
     inline bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset)
@@ -31,6 +29,7 @@ private:
     GameManager();
     ~GameManager();
 
+    void OnEvent(const Event* evnt);
     void StartEndGame();
 
     //====================//

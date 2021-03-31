@@ -9,9 +9,8 @@ public:
     void Update(float deltaTime);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    void OnEvent(const Event* evnt);
-
 private:
+    void OnEvent(const Event* evnt);
     void StartEndGame();
 
     //====================//
