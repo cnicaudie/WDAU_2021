@@ -3,9 +3,10 @@
 class UIManager : public sf::Drawable
 {
 public:
-    UIManager();
+    UIManager(sf::RenderWindow* window);
     ~UIManager();
 
+    void Update(float deltaTime);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     void OnEvent(const Event* evnt);
@@ -15,9 +16,15 @@ private:
 
     //====================//
 
-    // End Game Elements
-    sf::Font m_EndgameTextFont;
+    sf::RenderWindow* m_Window;
+    sf::View m_GUIView;
+
+    sf::Font m_MainFont;
+
+    sf::Text m_AmmunitionsText;
     sf::Text m_EndgameText;
+
+    // TODO : Make a sound manager
     sf::SoundBuffer m_EndgameSoundBuffer;
     sf::Sound m_EndgameSound;
 

@@ -17,7 +17,7 @@ GameManager* GameManager::GetInstance()
 GameManager::GameManager()
     : Game{ "Seek A Soul (WIP)" }
     , m_TextureManager{ std::make_shared<TextureManager>() }
-    , m_UiManager{}
+    , m_UIManager{ &m_Window }
     , m_LevelManager { m_InputManager, m_TextureManager }
     , m_CameraManager{ &m_Window }
     , m_IsGameOver{ false }
@@ -47,20 +47,32 @@ void GameManager::Update(float deltaTime)
 
     EventManager::GetInstance()->Update();
     
+    m_CameraManager.Update(deltaTime);
+
     if (!m_IsGameOver)
     {
+        m_InputManager->UpdateMousePosition(m_Window, true);
         m_InputManager->Update();
         m_LevelManager.Update(deltaTime);
-        m_CameraManager.Update(deltaTime);
     }
+}
+
+void GameManager::UpdateGUI(float deltaTime)
+{
+    m_UIManager.Update(deltaTime);
+    m_InputManager->UpdateMousePosition(m_Window, false);
 }
 
 void GameManager::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
     target.draw(m_LevelManager);
-    target.draw(m_UiManager);
     target.draw(m_CameraManager);
+}
+
+void GameManager::RenderGUI(sf::RenderTarget& target) 
+{
+    target.draw(m_UIManager);
 }
 
 void GameManager::RenderDebugMenu(sf::RenderTarget& target)
@@ -88,7 +100,7 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 
     if (ImGui::CollapsingHeader("Mouse position"))
     {
-        const sf::Vector2f& mouseWorldPosition = m_InputManager->GetMousePosition();
+        const sf::Vector2f& mouseWorldPosition = m_InputManager->GetGameMousePosition();
 
         ImGui::Text("X: %f", mouseWorldPosition.x);
         ImGui::Text("Y: %f", mouseWorldPosition.y);

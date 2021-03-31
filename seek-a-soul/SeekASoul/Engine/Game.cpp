@@ -10,7 +10,7 @@ static const sf::Vector2u APP_INIT_WINDOW_SIZE{ 1024, 768 };
 
 Game::Game(const char* windowTitle)
     : m_Window{ sf::VideoMode(APP_INIT_WINDOW_SIZE.x, APP_INIT_WINDOW_SIZE.y), windowTitle, sf::Style::Titlebar | sf::Style::Close }
-    , m_InputManager{ std::make_shared<InputManager>(&m_Window) }
+    , m_InputManager{ std::make_shared<InputManager>() }
 {
     m_Window.setVerticalSyncEnabled(true);
     m_Window.setFramerateLimit(static_cast<uint32_t>(APP_MAX_FRAMERATE));
@@ -77,6 +77,9 @@ void Game::RunGameLoop()
         Update(deltaTime);
         Render(m_Window);
         RenderDebugMenu(m_Window);
+
+        UpdateGUI(deltaTime);
+        RenderGUI(m_Window);
 
         ImGui::EndFrame();
         if (toggleImGui)

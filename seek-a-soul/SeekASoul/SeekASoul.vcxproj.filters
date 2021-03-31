@@ -119,6 +119,9 @@
     <ClCompile Include="Engine\Event\EventTypes\ActionEvent.cpp">
       <Filter>Engine\Event\EventTypes</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UIViewModel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Event\EventTypes\ActionEvent.h">
       <Filter>Engine\Event\EventTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIViewModel.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

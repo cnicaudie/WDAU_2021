@@ -8,7 +8,7 @@
 class InputManager 
 {
 public:
-	InputManager(const sf::RenderWindow* window);
+	InputManager();
 	~InputManager();
 
 	void Update();
@@ -27,15 +27,27 @@ public:
 		return it != m_CurrentActions.end();
 	}
 
-	void UpdateMousePosition(const sf::RenderWindow& gameWindow);
-	inline const sf::Vector2f GetMousePosition() const { return m_MousePosition; };
+	inline void UpdateMousePosition(const sf::RenderWindow& gameWindow, bool isInGame)
+	{
+		const sf::Vector2f& mousePosition = gameWindow.mapPixelToCoords(sf::Mouse::getPosition(gameWindow));
+
+		if (isInGame) 
+		{
+			m_GameMousePosition = mousePosition;
+		} 
+		else 
+		{
+			m_GUIMousePosition = mousePosition;
+		}
+	};
+
+	inline const sf::Vector2f GetGameMousePosition() const { return m_GameMousePosition; };
 
 private:
-	const sf::RenderWindow* m_Window;
-
 	std::vector<std::shared_ptr<ActionEvent>> m_CurrentActions;
 	std::map<Binding*, Action> m_ActionBinding;
 
-	sf::Vector2f m_MousePosition;
+	sf::Vector2f m_GameMousePosition;
+	sf::Vector2f m_GUIMousePosition;
 	sf::Vector2f m_AimJoystickPosition;
 };
