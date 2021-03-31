@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Engine/Event/EventTypes/Event.h>
 #include <Engine/Event/Listener/EventListener.h>
 #include <typeindex>
 

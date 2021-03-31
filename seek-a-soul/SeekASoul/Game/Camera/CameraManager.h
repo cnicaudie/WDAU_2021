@@ -1,5 +1,7 @@
 #pragma once
 
+class BoxCollideable;
+
 class CameraManager : public sf::Drawable
 {
 public:

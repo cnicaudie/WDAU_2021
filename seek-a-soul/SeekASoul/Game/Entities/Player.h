@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.h"
+#include <Engine/Animation/Animated.h>
 #include <Game/Objects/Bullet.h>
 
 class Player : public Entity, public Animated

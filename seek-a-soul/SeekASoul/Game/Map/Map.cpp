@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "Map.h"
+#include <Game/Map/Tiles/Tile.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 

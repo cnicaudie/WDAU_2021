@@ -1,10 +1,9 @@
 #pragma once
 
 #include <Engine/Collision/CollisionManager.h>
-#include <UI/UIManager.h>
-#include <Game/Entities/Player.h>
-#include "LevelManager.h"
 #include <Game/Camera/CameraManager.h>
+#include <UI/UIManager.h>
+#include "LevelManager.h"
 
 class GameManager : public Game
 {

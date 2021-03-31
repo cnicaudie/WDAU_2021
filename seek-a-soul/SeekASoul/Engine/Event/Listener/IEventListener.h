@@ -1,5 +1,7 @@
 #pragma once
 
+class Event;
+
 class IEventListener 
 {
 public: 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Engine/Input/InputManager.h>
+class InputManager;
 
 class Game
 {

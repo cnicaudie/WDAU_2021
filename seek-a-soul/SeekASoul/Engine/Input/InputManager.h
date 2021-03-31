@@ -1,9 +1,9 @@
 #pragma once
 
-#include <set>
 #include <Game/Action.h>
-#include <Engine/Input/Bindings/Binding.h>
 #include <Engine/Event/EventTypes/ActionEvent.h>
+
+class Binding;
 
 class InputManager 
 {

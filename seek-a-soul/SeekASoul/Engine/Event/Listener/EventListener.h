@@ -1,21 +1,16 @@
 #pragma once
 
 #include "IEventListener.h"
-#include <Engine/Event/EventTypes/Event.h>
 #include <functional>
-#include <Engine/Log/Log.h> // Temporary
-#include <iostream> // Temporary
+
+class Event;
 
 template<typename T, typename EventT>
 class EventListener : public IEventListener
 {
 public:
 	EventListener(T* instance, std::function<void(T*, EventT*)> callbackFunction) : m_Instance(instance), m_CallbackFunction(callbackFunction) {};
-
-	~EventListener()
-	{
-		LOG_INFO("Deleted listener"); // Temporary
-	};
+	~EventListener() {};
 
 	bool operator==(IEventListener* other) const override
 	{
