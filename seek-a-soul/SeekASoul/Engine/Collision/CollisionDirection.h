@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-enum class CollisionDirection : std::int32_t
+enum class CollisionDirection : int32_t
 {
 	NONE		= 0b00000000,
 	BOTTOM		= 0b00000001,

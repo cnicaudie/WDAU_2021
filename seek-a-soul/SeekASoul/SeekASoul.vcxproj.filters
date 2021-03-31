@@ -251,6 +251,9 @@
     <ClInclude Include="Engine\Maths\Maths.h">
       <Filter>Engine\Maths</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Time\Time.h">
+      <Filter>Engine\Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -312,6 +315,9 @@
     </Filter>
     <Filter Include="Engine\Maths">
       <UniqueIdentifier>{57e2942f-a6e4-4eae-8f70-f9dfe95a6086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Time">
+      <UniqueIdentifier>{e5da6b97-e228-45b4-9bcf-6b149e73ee06}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

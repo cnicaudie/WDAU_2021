@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include <Engine/Event/EventTypes/ActionEvent.h>
 #include <Engine/Maths/Maths.h>
+#include <Engine/Time/Time.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
@@ -49,9 +50,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 
 void Player::Update(float deltaTime)
 {
-    // TODO : make a unique function to get this value
-    auto time = std::chrono::system_clock::now().time_since_epoch();
-    uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+    uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 
     if (m_IsSkullRolling) 
     {
@@ -439,9 +438,7 @@ void Player::UpdateShootDirection(const sf::Vector2f& direction, const bool isPo
 
 void Player::Shoot()
 {
-    // TODO : make a unique function to get this value
-    auto time = std::chrono::system_clock::now().time_since_epoch();
-    uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+    uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 
     if ((now - m_LastShootTime) >= SHOOT_COOLDOWN
         && m_AmmunitionsNumber > 0
@@ -458,9 +455,7 @@ void Player::Shoot()
 
 void Player::SkullRoll()
 {
-    // TODO : make a unique function to get this value
-    auto time = std::chrono::system_clock::now().time_since_epoch();
-    uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+    uint64_t now = Time::GetCurrentTimeAsMilliseconds();
     
     if (m_IsSkullRolling && (now - m_LastSkullRollTime) >= (SKULL_ROLL_COOLDOWN * 0.25f))
     {

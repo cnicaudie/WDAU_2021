@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "UIManager.h"
+#include <sstream>
 
 UIManager::UIManager(sf::RenderWindow* window)
     : m_Window(window)
