@@ -52,12 +52,12 @@ void GameManager::Update(float deltaTime)
     EventManager::GetInstance()->Update();
     
     m_CameraManager->Update(deltaTime);
+    m_LevelManager->Update(deltaTime);
 
     if (!m_IsGameOver)
     {
         m_InputManager->UpdateMousePosition(m_Window, true);
         m_InputManager->Update();
-        m_LevelManager->Update(deltaTime);
     }
 }
 

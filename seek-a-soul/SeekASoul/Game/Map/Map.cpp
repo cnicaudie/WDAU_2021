@@ -12,6 +12,7 @@ Map::Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_pt
     , m_Door{ 1200, 120, 50, 100 }
     , m_Player{ inputManager, textureManager }
 {
+    // TODO : Use a config file to get soul chuncks positions
     m_SoulChunks.emplace_back(textureManager, sf::Vector2f(336.f, 208.f));
     m_Enemies.emplace_back(textureManager);
     std::cout << "Map created !" << std::endl;
@@ -55,19 +56,17 @@ void Map::Update(float deltaTime)
         {
             m_MapGrid.RemoveCollideableOnTiles(s);
             m_SoulChunks.erase(m_SoulChunks.begin() + soulIndex);
+
+            if (m_SoulChunks.size() == 0) 
+            {
+                m_Door.OpenDoor();
+            }
         }
         soulIndex++;
     }
 
     // Update Door
-    if (!m_Door.IsPlayingEndGame()) 
-    {
-        m_Door.Update(deltaTime);
-    } 
-    else 
-    {
-        m_MapGrid.RemoveCollideableOnTiles(m_Door);
-    }
+    m_Door.Update(deltaTime);
 
     // Update Enemies
     for (Enemy& enemy : m_Enemies)

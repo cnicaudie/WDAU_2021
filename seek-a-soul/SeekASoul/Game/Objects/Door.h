@@ -10,6 +10,7 @@ public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void OnTrigger(BoxCollideable* other) override;
 
+	inline void OpenDoor() { m_IsDoorOpen = true; };
 	inline const bool IsPlayingEndGame() const { return m_IsPlayingEndGame; };
 
 private:
@@ -23,5 +24,6 @@ private:
 	float m_gColor;
 	float m_bColor;
 
+	bool m_IsDoorOpen;
 	bool m_IsPlayingEndGame;
 };
