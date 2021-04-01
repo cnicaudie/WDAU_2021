@@ -17,6 +17,7 @@ public:
 
 	inline const int GetNumberOfCollectedSoulChunks() const { return m_SoulChunksCollected; };
 	inline const bool IsSkullRolling() const { return m_IsSkullRolling; };
+	inline void SetPosition(const sf::Vector2f& position) { m_Position = position; };
 
 protected:
 	void Damage() override;
