@@ -25,7 +25,7 @@ void LevelManager::LoadLevel(const int levelNumber = 0)
 	std::string levelConfigFileName(".\\Assets\\Levels\\level" + std::to_string(levelNumber) + "_config.txt");
 	
 	std::pair<std::vector<int>, sf::Vector2u> levelData = FileReader::ReadLevelFromFile(levelFileName);
-	std::map<std::string, std::string> configKeymap = FileReader::ReadConfigFile(levelConfigFileName);
+	std::map<std::string, std::vector<std::string>> configKeymap = FileReader::ReadConfigFile(levelConfigFileName);
 	
 	m_LevelWidth = levelData.second.x;
 	m_LevelHeight = levelData.second.y;
