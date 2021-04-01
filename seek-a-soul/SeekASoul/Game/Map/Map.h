@@ -18,14 +18,17 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void Update(float deltaTime);
-    bool Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize);
     
+    bool LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize);
     void InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap);
 
     inline const MapGrid& GetMapGrid() const { return m_MapGrid; };
     inline const Player& GetPlayer() const { return m_Player; };
 
 private:
+    void UpdateEnemies(float deltaTime);
+    void UpdateSoulChunks(float deltaTime);
+    
     void CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv);
     void CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize);
     

@@ -61,7 +61,7 @@ namespace FileReader
 					// Safe duplicate check 
 					if (configKeymap.find(key) != configKeymap.end()) 
 					{
-						LOG_WARNING("The key" << key << " already exists, please verify the following config file : \n" << path);
+						LOG_WARNING("The key " << key << " already exists, please verify the following config file : \n" << path);
 						continue;
 					}
 					

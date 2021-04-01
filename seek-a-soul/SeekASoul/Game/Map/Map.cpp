@@ -48,16 +48,31 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Map::Update(float deltaTime) 
 {
-    // Update Soul Chunks
+    // Update Door
+    m_Door.Update(deltaTime);
+
+    // Update Player
+    if (!m_Player.IsDead())
+    {
+        m_Player.Update(deltaTime);
+    }
+
+    UpdateSoulChunks(deltaTime);
+    UpdateEnemies(deltaTime);
+}
+
+void Map::UpdateSoulChunks(float deltaTime)
+{
     for (auto it = m_SoulChunks.begin(); it < m_SoulChunks.end(); it++)
     {
         (*it)->Update(deltaTime);
+
         if ((*it)->WasCollected())
         {
             m_MapGrid.RemoveCollideableOnTiles(*(*it));
             it = m_SoulChunks.erase(it);
 
-            if (m_SoulChunks.size() == 0) 
+            if (m_SoulChunks.size() == 0)
             {
                 m_Door.OpenDoor();
             }
@@ -65,33 +80,26 @@ void Map::Update(float deltaTime)
             if (it == m_SoulChunks.end()) { break; }
         }
     }
+}
 
-    // Update Door
-    m_Door.Update(deltaTime);
-
-    // Update Enemies
+void Map::UpdateEnemies(float deltaTime)
+{
     for (Enemy& enemy : m_Enemies)
     {
-        if (!enemy.IsDead()) 
+        if (!enemy.IsDead())
         {
             // TODO : Uncomment next line when enemies are moving
             //m_MapGrid.SetCollideableOnTiles(enemy);
             enemy.Update(deltaTime);
-        } 
-        else 
+        }
+        else
         {
             m_MapGrid.RemoveCollideableOnTiles(enemy);
         }
     }
-
-    // Update Player
-    if (!m_Player.IsDead())
-    {
-        m_Player.Update(deltaTime);
-    }
 }
 
-bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
+bool Map::LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
 {
     // Resize the vertex array to fit the level size
     m_BackgroundTileMap.setPrimitiveType(sf::Quads);
@@ -125,14 +133,6 @@ bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
     }
 
     return true;
-}
-
-void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap)
-{
-    InitDoor(configKeymap);
-    InitPlayer(configKeymap);
-    InitEnemies(configKeymap);
-    InitSoulChunks(configKeymap);
 }
 
 void Map::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)
@@ -194,6 +194,14 @@ void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLin
         break;
     }
     }
+}
+
+void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap)
+{
+    InitDoor(configKeymap);
+    InitPlayer(configKeymap);
+    InitEnemies(configKeymap);
+    InitSoulChunks(configKeymap);
 }
 
 void Map::InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap) 

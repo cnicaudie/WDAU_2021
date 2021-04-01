@@ -31,7 +31,7 @@ void LevelManager::LoadLevel(const int levelNumber = 0)
 	m_LevelHeight = levelData.second.y;
 
 	// Load the tile map
-	m_Map.Load(levelData.first, sf::Vector2u(m_LevelWidth, m_LevelHeight));
+	m_Map.LoadTileMap(levelData.first, sf::Vector2u(m_LevelWidth, m_LevelHeight));
 
 	// Initialize other elements
 	m_Map.InitObjectsAndEntities(configKeymap);
