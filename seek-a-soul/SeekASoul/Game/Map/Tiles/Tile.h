@@ -15,9 +15,8 @@ public:
 
 	inline void RemoveCollideable(const BoxCollideable& collideable)
 	{
-		// TODO : See if there's a better way to compare 2 BoxCollideables
-		auto it = std::find_if(m_CollideablesOnTile.begin(), m_CollideablesOnTile.end(), [collideable](BoxCollideable* ptr) {
-			return ptr->GetBoundingBox() == collideable.GetBoundingBox(); });
+		const auto& it = std::find_if(m_CollideablesOnTile.begin(), m_CollideablesOnTile.end(), [&](BoxCollideable* ptr) {
+			return (*ptr) == collideable; });
 
 		if (it != m_CollideablesOnTile.end()) 
 		{
