@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Enemy.h"
 #include "Player.h"
+#include <Engine/Time/Time.h>
 #include <Game/Objects/Bullet.h>
 
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
@@ -20,8 +21,7 @@ Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
 
 void Enemy::Update(float deltaTime) 
 {
-	auto time = std::chrono::system_clock::now().time_since_epoch();
-	uint64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+	uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 	
 	if (m_HealthState == HealthState::DEAD)
 	{
@@ -34,7 +34,7 @@ void Enemy::Update(float deltaTime)
 	}
 }
 
-void Enemy::OnCollision(BoxCollideable* other)
+void Enemy::OnCollision(BoxCollideable* other, CollisionDirection direction)
 {
 	Player* player = dynamic_cast<Player*>(other);
 
@@ -72,15 +72,14 @@ void Enemy::Damage()
 		m_HealthState = HealthState::DEAD;
 		LOG_INFO("Enemy died !");
 	}
-
-	auto time = std::chrono::system_clock::now().time_since_epoch();
-	m_LastDamageTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 }
 
 void Enemy::UpdateVisualDamage(uint64_t now)
 {
+	LOG_DEBUG("Enemy damage cooldown update : " << (now - m_LastDamageTime));
 	if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) {
 		m_HealthState = HealthState::OK;
 		m_Sprite.setColor(sf::Color::White);
+		m_LastDamageTime = now;
 	}
 }

@@ -1,21 +1,16 @@
 #pragma once
 
 #include "IEventListener.h"
-#include <Engine/Event/EventTypes/Event.h>
 #include <functional>
-#include <Engine/Log/Log.h> // Temporary
-#include <iostream> // Temporary
 
-template<typename T>
+class Event;
+
+template<typename T, typename EventT>
 class EventListener : public IEventListener
 {
 public:
-	EventListener(T* instance, std::function<void(T*)> callbackFunction) : m_Instance(instance), m_CallbackFunction(callbackFunction) {};
-
-	~EventListener()
-	{
-		LOG_INFO("Deleted listener"); // Temporary
-	};
+	EventListener(T* instance, std::function<void(T*, EventT*)> callbackFunction) : m_Instance(instance), m_CallbackFunction(callbackFunction) {};
+	~EventListener() {};
 
 	bool operator==(IEventListener* other) const override
 	{
@@ -32,12 +27,13 @@ public:
 		}
 	}
 
-	void Fire() const override
+	void Fire(Event* evnt) const override
 	{
-		m_CallbackFunction(m_Instance);
+		EventT* evntType = static_cast<EventT*>(evnt); // Safety cast
+		m_CallbackFunction(m_Instance, evntType);
 	};
 
 private:
 	T* m_Instance;
-	std::function<void(T*)> m_CallbackFunction;
+	std::function<void(T*, EventT*)> m_CallbackFunction;
 };

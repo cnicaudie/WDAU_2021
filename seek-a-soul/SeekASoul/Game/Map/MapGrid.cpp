@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "MapGrid.h"
+#include <Game/Map/Tiles/Tile.h>
 
 MapGrid::MapGrid(const sf::Vector2u& tileSize)
 	: m_TileSize(tileSize)

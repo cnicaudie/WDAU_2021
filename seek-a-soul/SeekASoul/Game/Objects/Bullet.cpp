@@ -1,4 +1,5 @@
 #include <stdafx.h>
+#include "Bullet.h"
 
 Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos)
 	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f), m_HadImpact(false)
@@ -12,12 +13,9 @@ Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::
 	
 	SetBoundingBox(pos, textureSize * 0.25f);
 	SetTrigger(false);
-	std::cout << "Bullet created !" << std::endl;
 }
 
-Bullet::~Bullet() {
-	std::cout << "Bullet destroyed !" << std::endl;
-}
+Bullet::~Bullet() {}
 
 void Bullet::Update(float deltaTime) 
 {
@@ -40,7 +38,7 @@ void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_Sprite);
 }
 
-void Bullet::OnCollision(BoxCollideable* other)
+void Bullet::OnCollision(BoxCollideable* other, CollisionDirection direction)
 {
 	if (!m_HadImpact) 
 	{

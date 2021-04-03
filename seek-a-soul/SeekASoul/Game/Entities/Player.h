@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.h"
+#include <Engine/Animation/Animated.h>
 #include <Game/Objects/Bullet.h>
 
 class Player : public Entity, public Animated
@@ -9,7 +10,7 @@ public:
 	Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
 	
 	void Update(float deltaTime) override;
-	void OnCollision(BoxCollideable* other) override;
+	void OnCollision(BoxCollideable* other, CollisionDirection direction) override;
 	void OnTrigger(BoxCollideable* other) override;
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -22,12 +23,17 @@ protected:
 	void UpdateVisualDamage(uint64_t now) override;
 
 private:
+	void OnEvent(const Event* evnt);
 	void ComputeNextPlayerState();
 	void Move(float deltaTime);
 	void MoveUp();
+	void MoveDown();
+	void MoveRight(const float scale);
+	void MoveLeft(const float scale);
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
 	
 	void UpdateBoundingBox();
+	void UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint);
 	void Shoot();
 	void SkullRoll();
 	void UpdateSkullRollCooldown(uint64_t now);
@@ -55,10 +61,11 @@ private:
 	uint64_t m_LastSkullRollTime;
 	uint64_t m_LastShootTime;
 
+	sf::Vector2f m_ShootDirection;
 	std::vector<Bullet> m_Bullets;
 	int m_AmmunitionsNumber;
 
-	// Checks when gettin out of skull roll
+	// Checks when gettin out of skull roll (change of bounding box)
 	bool m_InGroundCollision;
 	bool m_InCeilingCollision;
 };

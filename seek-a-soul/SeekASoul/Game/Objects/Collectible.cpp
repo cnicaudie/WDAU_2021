@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "Collectible.h"
+#include <Game/Entities/Player.h>
 
 Collectible::Collectible() 
 	: m_WasCollected(false)

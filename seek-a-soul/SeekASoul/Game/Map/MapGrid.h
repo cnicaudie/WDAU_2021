@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Game/Map/Tiles/Tile.h>
+class Tile;
 
 class MapGrid 
 {
@@ -8,6 +8,7 @@ friend class Map;
 
 public:
 	MapGrid(const sf::Vector2u& tileSize);
+	~MapGrid() = default;
 
 	inline const std::shared_ptr<Tile>& GetTileAt(int x, int y) const { return m_TileGrid[x][y]; };
 

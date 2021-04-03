@@ -1,10 +1,9 @@
 #pragma once
 
-#include <Engine/Collision/CollisionManager.h>
-#include <UI/UIManager.h>
-#include <Game/Entities/Player.h>
-#include "LevelManager.h"
-#include <Game/Camera/CameraManager.h>
+class UIManager;
+class LevelManager;
+class CameraManager;
+class CollisionManager;
 
 class GameManager : public Game
 {
@@ -14,30 +13,30 @@ public:
     void operator=(const GameManager& gameManager) = delete;
 
     void Update(float deltaTime) override;
+    void UpdateGUI(float deltaTime) override;
     void Render(sf::RenderTarget& target) override;
+    void RenderGUI(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
-    void StartEndGame();
 
-    inline sf::Vector2u GetLevelBounds() { return m_LevelManager.GetLevelBounds(); };
-    
-    inline bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset)
-    {
-        return m_CollisionManager.CheckCollision(collideable, positionOffset, m_LevelManager.GetMap().GetMapGrid());
-    }
+    const bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset) const;
+    const sf::Vector2u GetLevelBounds() const;
 
 private:
     GameManager();
     ~GameManager();
+
+    void OnEvent(const Event* evnt);
+    void StartEndGame();
 
     //====================//
 
     static GameManager* m_GameManager; // Singleton instance
 
     std::shared_ptr<TextureManager> m_TextureManager;
-    UIManager m_UiManager;
-    LevelManager m_LevelManager;
-    CameraManager m_CameraManager;
-    CollisionManager m_CollisionManager;
+    std::unique_ptr<UIManager> m_UIManager;
+    std::unique_ptr<LevelManager> m_LevelManager;
+    std::unique_ptr<CameraManager> m_CameraManager;
+    std::unique_ptr<CollisionManager> m_CollisionManager;
     
     bool m_IsGameOver;
 

@@ -16,10 +16,6 @@ public:
 	inline const Player& GetPlayerOnMap() { return m_Map.GetPlayer(); };
 
 private:
-	const std::vector<int> GetLevel(const int levelNumber);
-
-	//====================//
-
 	std::shared_ptr<TextureManager> m_TextureManager;
 	Map m_Map;
 

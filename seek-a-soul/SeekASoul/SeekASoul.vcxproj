@@ -222,6 +222,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Animation\Animated.cpp" />
     <ClCompile Include="Engine\Collision\BoxCollideable.cpp" />
     <ClCompile Include="Engine\Collision\CollisionManager.cpp" />
+    <ClCompile Include="Engine\Event\EventTypes\ActionEvent.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\Event.cpp" />
     <ClCompile Include="Engine\Event\Listener\EventListener.cpp" />
     <ClCompile Include="Engine\Event\EventManager.cpp" />
@@ -252,6 +253,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Game\Map\Map.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UI\UIManager.cpp" />
+    <ClCompile Include="UI\UIViewModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\external\imgui-master\imgui.h" />
@@ -261,6 +263,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Collision\BoxCollideable.h" />
     <ClInclude Include="Engine\Collision\CollisionDirection.h" />
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
+    <ClInclude Include="Engine\Event\EventTypes\ActionEvent.h" />
     <ClInclude Include="Engine\Event\EventTypes\Event.h" />
     <ClInclude Include="Engine\Event\Listener\EventListener.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />
@@ -274,7 +277,9 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Input\Bindings\KeyboardBinding.h" />
     <ClInclude Include="Engine\Input\Bindings\MouseBinding.h" />
     <ClInclude Include="Engine\Log\Log.h" />
+    <ClInclude Include="Engine\Resources\FileReader.h" />
     <ClInclude Include="Engine\Resources\TextureManager.h" />
+    <ClInclude Include="Engine\Time\Time.h" />
     <ClInclude Include="Game\Action.h" />
     <ClInclude Include="Game\Camera\CameraManager.h" />
     <ClInclude Include="Game\Entities\Entity.h" />
@@ -292,8 +297,10 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Objects\SoulChunk.h" />
     <ClInclude Include="Game\Entities\Player.h" />
     <ClInclude Include="Game\Map\Map.h" />
+    <ClInclude Include="Engine\Maths\Maths.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UI\UIManager.h" />
+    <ClInclude Include="UI\UIViewModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

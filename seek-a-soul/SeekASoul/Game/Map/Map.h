@@ -1,10 +1,12 @@
 #pragma once
 
-#include <Game/Map/Tiles/Tile.h>
 #include <Game/Map/MapGrid.h>
 #include <Game/Objects/SoulChunk.h>
 #include <Game/Objects/Door.h>
 #include <Game/Entities/Enemy.h>
+#include <Game/Entities/Player.h>
+
+class Tile;
 
 class Map : public sf::Drawable, public sf::Transformable
 {
@@ -12,6 +14,7 @@ public:
     static const sf::Vector2u TILE_SIZE;
 
     Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
+    ~Map() = default;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void Update(float deltaTime);

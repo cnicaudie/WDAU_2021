@@ -116,6 +116,12 @@
     <ClCompile Include="Engine\Event\EventTypes\Event.cpp">
       <Filter>Engine\Event\EventTypes</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Event\EventTypes\ActionEvent.cpp">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIViewModel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -236,6 +242,21 @@
     <ClInclude Include="Engine\Collision\CollisionDirection.h">
       <Filter>Engine\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Event\EventTypes\ActionEvent.h">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIViewModel.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Maths\Maths.h">
+      <Filter>Engine\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Time\Time.h">
+      <Filter>Engine\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Resources\FileReader.h">
+      <Filter>Engine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -294,6 +315,12 @@
     </Filter>
     <Filter Include="Engine\Event\EventTypes">
       <UniqueIdentifier>{edba8386-2c35-4d04-99d6-064b8253421a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Maths">
+      <UniqueIdentifier>{57e2942f-a6e4-4eae-8f70-f9dfe95a6086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Time">
+      <UniqueIdentifier>{e5da6b97-e228-45b4-9bcf-6b149e73ee06}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

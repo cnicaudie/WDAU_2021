@@ -20,7 +20,7 @@ void Animated::PlayAnimation(int animationState)
 		m_SpriteFrame.top = animationState * m_SpriteSize.y;
 		m_SpriteFrame.left += m_SpriteSize.x;
 
-		if (m_SpriteFrame.left >= (static_cast<int>(m_TextureSheet.getSize().x) - m_SpriteSize.x)) 
+		if (m_SpriteFrame.left >= static_cast<int>(m_TextureSheet.getSize().x))
 		{
 			m_SpriteFrame.left = 0;
 		}
