@@ -83,7 +83,6 @@ void CameraManager::FollowBox(float deltaTime, const sf::FloatRect& hardZone, co
     }
     else 
     {
-        //followSpeedRate = 0.4f;
         SetFixedPoint(boxToFollowPosition);
     }
 
@@ -109,7 +108,9 @@ void CameraManager::RecenterCamera(float deltaTime)
 
 void CameraManager::MoveCameraView(const sf::Vector2f& offset) 
 {
-    m_CameraView.move(offset);
+    // Note : the offset needs to be rounded because of a render bug causing black
+    // lines to appear randomly on the screen (0.5 approximation)
+    m_CameraView.move(Maths::RoundVector(offset));
     m_HardMoveZone.setPosition(m_CameraView.getCenter() - (m_HardMoveZone.getSize() / 2.f));
     m_SoftMoveZone.setPosition(m_CameraView.getCenter() - (m_SoftMoveZone.getSize() / 2.f));
 }
