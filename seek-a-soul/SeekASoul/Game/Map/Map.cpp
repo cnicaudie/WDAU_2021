@@ -3,20 +3,21 @@
 #include <Game/Map/Tiles/Tile.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
+#include <Game/Objects/SoulChunk.h>
 
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 
 Map::Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
-    : m_TileSet(textureManager->GetTextureFromName("TILESET"))
+    : m_TextureManager(textureManager)
+    , m_TileSet(textureManager->GetTextureFromName("TILESET"))
     , m_MapGrid(TILE_SIZE)
-    , m_Door{ 1200, 120, 50, 100 }
+    , m_Door{{ 0, 0 }, { 0, 0 }}
     , m_Player{ inputManager, textureManager }
 {
-    // TODO : Use a config file to get soul chuncks positions
-    m_SoulChunks.emplace_back(textureManager, sf::Vector2f(336.f, 208.f));
-    m_Enemies.emplace_back(textureManager);
-    std::cout << "Map created !" << std::endl;
+    LOG_INFO("Map created !");
 }
+
+Map::~Map() {}
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
@@ -26,11 +27,11 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(m_BackgroundTileMap, states); // Draw the vertex array
 
     // === Draw other objects
-    for (const SoulChunk& s : m_SoulChunks)
+    for (const std::unique_ptr<SoulChunk>& s : m_SoulChunks)
     {
-        if (!s.WasCollected()) 
+        if (!s->WasCollected()) 
         {
-            target.draw(s);
+            target.draw(*s);
         }
     }
 
@@ -47,48 +48,58 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Map::Update(float deltaTime) 
 {
-    // Update Soul Chunks
-    int soulIndex = 0;
-    for (SoulChunk& s : m_SoulChunks)
-    {
-        s.Update(deltaTime);
-        if (s.WasCollected())
-        {
-            m_MapGrid.RemoveCollideableOnTiles(s);
-            m_SoulChunks.erase(m_SoulChunks.begin() + soulIndex);
-
-            if (m_SoulChunks.size() == 0) 
-            {
-                m_Door.OpenDoor();
-            }
-        }
-        soulIndex++;
-    }
-
     // Update Door
     m_Door.Update(deltaTime);
-
-    // Update Enemies
-    for (Enemy& enemy : m_Enemies)
-    {
-        if (!enemy.IsDead()) 
-        {
-            enemy.Update(deltaTime);
-        } 
-        else 
-        {
-            m_MapGrid.RemoveCollideableOnTiles(enemy);
-        }
-    }
 
     // Update Player
     if (!m_Player.IsDead())
     {
         m_Player.Update(deltaTime);
     }
+
+    UpdateSoulChunks(deltaTime);
+    UpdateEnemies(deltaTime);
 }
 
-bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
+void Map::UpdateSoulChunks(float deltaTime)
+{
+    for (auto it = m_SoulChunks.begin(); it < m_SoulChunks.end(); it++)
+    {
+        (*it)->Update(deltaTime);
+
+        if ((*it)->WasCollected())
+        {
+            m_MapGrid.RemoveCollideableOnTiles(*(*it));
+            it = m_SoulChunks.erase(it);
+
+            if (m_SoulChunks.size() == 0)
+            {
+                m_Door.OpenDoor();
+            }
+
+            if (it == m_SoulChunks.end()) { break; }
+        }
+    }
+}
+
+void Map::UpdateEnemies(float deltaTime)
+{
+    for (Enemy& enemy : m_Enemies)
+    {
+        if (!enemy.IsDead())
+        {
+            // TODO : Uncomment next line when enemies are moving
+            //m_MapGrid.SetCollideableOnTiles(enemy);
+            enemy.Update(deltaTime);
+        }
+        else
+        {
+            m_MapGrid.RemoveCollideableOnTiles(enemy);
+        }
+    }
+}
+
+bool Map::LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
 {
     // Resize the vertex array to fit the level size
     m_BackgroundTileMap.setPrimitiveType(sf::Quads);
@@ -104,6 +115,7 @@ bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
     for (unsigned int i = 0; i < levelSize.x; ++i) 
     {
         std::vector<std::shared_ptr<Tile>> tileLine;
+
         for (unsigned int j = 0; j < levelSize.y; ++j)
         {
             // Get the current tile number
@@ -116,27 +128,11 @@ bool Map::Load(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
             CreateVertexQuad(i, j, levelSize, tu, tv);
             CreateTile(tileNumber, tileLine, i, j, levelSize);
         }
+
         m_MapGrid.m_TileGrid.push_back(tileLine);
     }
 
-    LoadObjectsAndEntities();
-
     return true;
-}
-
-void Map::LoadObjectsAndEntities()
-{
-    for (SoulChunk& soulChunk : m_SoulChunks)
-    {
-        m_MapGrid.SetCollideableOnTiles(soulChunk);
-    }
-
-    m_MapGrid.SetCollideableOnTiles(m_Door);
-
-    for (Enemy& enemy : m_Enemies)
-    {
-        m_MapGrid.SetCollideableOnTiles(enemy);
-    }
 }
 
 void Map::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)
@@ -197,5 +193,88 @@ void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLin
                 ));
         break;
     }
+    }
+}
+
+void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap)
+{
+    InitDoor(configKeymap);
+    InitPlayer(configKeymap);
+    InitEnemies(configKeymap);
+    InitSoulChunks(configKeymap);
+}
+
+void Map::InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap) 
+{
+    const std::vector<std::string> doorInfo = configKeymap.at("DOOR");
+
+    sf::Vector2f doorPosition
+    {
+        std::stof(doorInfo.at(0)) * TILE_SIZE.x + (TILE_SIZE.x / 2),
+        std::stof(doorInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
+    };
+
+    sf::Vector2f doorSize
+    {
+        std::stof(doorInfo.at(2)),
+        std::stof(doorInfo.at(3))
+    };
+
+    m_Door = Door(doorPosition, doorSize);
+    m_MapGrid.SetCollideableOnTiles(m_Door);
+}
+
+void Map::InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap) 
+{
+    const std::vector<std::string> playerInfo = configKeymap.at("PLAYER_POSITION");
+
+    sf::Vector2f playerPosition
+    {
+        std::stof(playerInfo.at(0)) * TILE_SIZE.x + (TILE_SIZE.x / 2),
+        std::stof(playerInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
+    };
+
+    m_Player.SetPosition(playerPosition);
+}
+
+void Map::InitEnemies(const std::map<std::string, std::vector<std::string>>& configKeymap) 
+{
+    m_Enemies.clear();
+
+    const int nbEnemies = std::stoi(configKeymap.at("NUMBER_ENEMIES").at(0));
+
+    for (int i = 0; i < nbEnemies; i++)
+    {
+        const std::vector<std::string> enemyInfo = configKeymap.at("ENEMY_" + std::to_string(i));
+
+        sf::Vector2f enemyPosition
+        {
+            std::stof(enemyInfo.at(0)) * TILE_SIZE.x + (TILE_SIZE.x / 2),
+            std::stof(enemyInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
+        };
+
+        Enemy& enemy = m_Enemies.emplace_back(m_TextureManager, enemyPosition);
+        m_MapGrid.SetCollideableOnTiles(enemy);
+    }
+}
+
+void Map::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& configKeymap) 
+{
+    m_SoulChunks.clear();
+
+    const int nbSoulChunks = std::stoi(configKeymap.at("NUMBER_SOULCHUNKS").at(0));
+
+    for (int i = 0; i < nbSoulChunks; i++)
+    {
+        const std::vector<std::string> soulChunkInfo = configKeymap.at("SOULCHUNK_" + std::to_string(i));
+
+        sf::Vector2f soulChunkPosition
+        {
+            std::stof(soulChunkInfo.at(0)) * TILE_SIZE.x + (TILE_SIZE.x / 2),
+            std::stof(soulChunkInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
+        };
+
+        const std::unique_ptr<SoulChunk>& soulChunk = m_SoulChunks.emplace_back(std::make_unique<SoulChunk>(m_TextureManager, soulChunkPosition));
+        m_MapGrid.SetCollideableOnTiles(*soulChunk);
     }
 }

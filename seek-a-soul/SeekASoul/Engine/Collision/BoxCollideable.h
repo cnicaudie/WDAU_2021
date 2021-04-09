@@ -38,6 +38,11 @@ public:
 
     inline const bool IsTrigger() const { return m_IsTrigger; };
 
+    virtual bool operator==(const BoxCollideable& other) const
+    {
+        return m_BoundingBox == other.m_BoundingBox;
+    }
+
 protected:
     inline void SetBoundingBox(float left, float top, float width, float height)
     {

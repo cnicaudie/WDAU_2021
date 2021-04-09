@@ -2,21 +2,19 @@
 #include "Door.h"
 #include <Game/Entities/Player.h>
 
-Door::Door(float xCenterPos, float yCenterPos, float width, float height)
+Door::Door(const sf::Vector2f& centerPosition, const sf::Vector2f& size)
 	: m_rColor{ 1.f }
 	, m_gColor{ 0.f }
 	, m_bColor{ 0.f }
 	, m_IsDoorOpen(false)
 	, m_IsPlayingEndGame(false)
 {
-	const auto center = sf::Vector2f(xCenterPos, yCenterPos);
-	const auto size = sf::Vector2f(width, height);
 	SetTrigger(true);
-	SetBoundingBox(center, size);
+	SetBoundingBox(centerPosition, size);
 
 	m_Rectangle.setSize(size);
 	m_Rectangle.setOrigin(size * 0.5f);
-	m_Rectangle.setPosition(center);
+	m_Rectangle.setPosition(centerPosition);
 
 	m_Rectangle.setFillColor(sf::Color::Transparent);
 	m_Rectangle.setOutlineThickness(5);

@@ -3,7 +3,7 @@
 class Door : public sf::Drawable, public BoxCollideable
 {
 public:
-	Door(float xCenterPos, float yCenterPos, float width, float height);
+	Door(const sf::Vector2f& centerPosition, const sf::Vector2f& size);
 	~Door();
 
 	void Update(float deltaTime);

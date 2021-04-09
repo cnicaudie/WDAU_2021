@@ -4,6 +4,7 @@ class Collectible : public BoxCollideable
 {
 public:
 	Collectible();
+	virtual ~Collectible();
 
 	void OnTrigger(BoxCollideable* other) override;
 

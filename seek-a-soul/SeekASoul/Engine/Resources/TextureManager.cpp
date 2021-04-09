@@ -21,5 +21,5 @@ TextureManager::TextureManager()
 	tileset.loadFromFile(".\\Assets\\Sprites\\Tileset_Basic.png");
 	m_Textures.emplace("TILESET", tileset);
 
-	std::cout << "Texture manager created !" << std::endl;
+	LOG_INFO("Texture manager created !");
 }

@@ -4,7 +4,8 @@ class Entity : public sf::Drawable, public BoxCollideable
 {
 public:
 	Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position, int healthPoints);
-	
+	virtual ~Entity() = default;
+
 	virtual void Update(float deltaTime) = 0;
 	virtual void OnCollision(BoxCollideable* other, CollisionDirection direction) = 0;
 

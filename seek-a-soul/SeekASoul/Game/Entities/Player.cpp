@@ -36,7 +36,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_LastShootTime(0)
     , m_ShootDirection{ 0.f, 0.f }
     , m_Bullets{}
-    , m_AmmunitionsNumber(10) // TODO : Display this number with UI
+    , m_AmmunitionsNumber(10)
     , m_InGroundCollision(false)
     , m_InCeilingCollision(false)
 {
@@ -65,7 +65,7 @@ void Player::Update(float deltaTime)
     if (m_InGroundCollision && m_InCeilingCollision)
     {
         // If in ground and ceiling after collision check, player stays skull rolling
-        LOG_DEBUG("SKULL ROLL STAY");
+        //LOG_DEBUG("SKULL ROLL STAY");
         m_IsSkullRolling = true;
         m_LastSkullRollTime = now;
     }
@@ -156,7 +156,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
             if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_BOTTOM))
             {
                 m_InGroundCollision = true;
-                LOG_DEBUG("IN BOTTOM COLLISION");
+                //LOG_DEBUG("IN BOTTOM COLLISION");
             }
             
             if (!m_InCeilingCollision) 
@@ -173,7 +173,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
             if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP))
             {
                 m_InCeilingCollision = true;
-                LOG_DEBUG("IN TOP COLLISION");
+                //LOG_DEBUG("IN TOP COLLISION");
             }
 
             if (!m_InGroundCollision) 
@@ -459,13 +459,13 @@ void Player::SkullRoll()
     
     if (m_IsSkullRolling && (now - m_LastSkullRollTime) >= (SKULL_ROLL_COOLDOWN * 0.25f))
     {
-        LOG_DEBUG("SKULL ROLL OUT BY INPUT");
+        //LOG_DEBUG("SKULL ROLL OUT BY INPUT");
         m_IsSkullRolling = false;
         m_LastSkullRollTime = now;
     }
     else if ((now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
     {
-        LOG_DEBUG("SKULL ROLL IN");
+        //LOG_DEBUG("SKULL ROLL IN");
         m_IsSkullRolling = true;
         m_LastSkullRollTime = now;
     }
@@ -475,7 +475,7 @@ void Player::UpdateSkullRollCooldown(uint64_t now)
 {
     if ((now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
     {
-        LOG_DEBUG("SKULL ROLL OUT");
+        //LOG_DEBUG("SKULL ROLL OUT");
         m_IsSkullRolling = false;
         m_LastSkullRollTime = now;
     }

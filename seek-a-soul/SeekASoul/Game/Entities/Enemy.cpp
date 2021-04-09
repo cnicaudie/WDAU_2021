@@ -6,8 +6,8 @@
 
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 
-Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager)
-	: Entity(textureManager, { 320.0f, 65.0f }, 50)
+Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position)
+	: Entity(textureManager, position, 50)
 {
 	sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("ENEMY");
 
@@ -76,7 +76,6 @@ void Enemy::Damage()
 
 void Enemy::UpdateVisualDamage(uint64_t now)
 {
-	LOG_DEBUG("Enemy damage cooldown update : " << (now - m_LastDamageTime));
 	if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) {
 		m_HealthState = HealthState::OK;
 		m_Sprite.setColor(sf::Color::White);
