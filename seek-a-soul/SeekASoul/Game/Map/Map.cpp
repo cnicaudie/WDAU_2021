@@ -19,6 +19,21 @@ Map::Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_pt
 
 Map::~Map() {}
 
+void Map::Update(float deltaTime) 
+{
+    // Update Door
+    m_Door.Update(deltaTime);
+
+    // Update Player
+    if (!m_Player.IsDead())
+    {
+        m_Player.Update(deltaTime);
+    }
+
+    UpdateSoulChunks(deltaTime);
+    UpdateEnemies(deltaTime);
+}
+
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     // === Draw the background map
@@ -29,7 +44,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     // === Draw other objects
     for (const std::unique_ptr<SoulChunk>& s : m_SoulChunks)
     {
-        if (!s->WasCollected()) 
+        if (!s->WasCollected())
         {
             target.draw(*s);
         }
@@ -44,21 +59,6 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 
     target.draw(m_Player);
-}
-
-void Map::Update(float deltaTime) 
-{
-    // Update Door
-    m_Door.Update(deltaTime);
-
-    // Update Player
-    if (!m_Player.IsDead())
-    {
-        m_Player.Update(deltaTime);
-    }
-
-    UpdateSoulChunks(deltaTime);
-    UpdateEnemies(deltaTime);
 }
 
 void Map::UpdateSoulChunks(float deltaTime)

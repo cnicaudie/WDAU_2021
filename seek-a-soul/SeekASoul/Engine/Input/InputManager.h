@@ -12,6 +12,15 @@ public:
 	~InputManager();
 
 	void Update();
+	inline void RenderDebugMenu(sf::RenderTarget& target) 
+	{
+		if (ImGui::CollapsingHeader("Mouse position"))
+		{
+			ImGui::Text("X: %f", m_GameMousePosition.x);
+			ImGui::Text("Y: %f", m_GameMousePosition.y);
+		}
+	};
+
 	void ManageInputEvents(const sf::Event& event);
 
 	void AddAction(Binding* key);
@@ -40,8 +49,6 @@ public:
 			m_GUIMousePosition = mousePosition;
 		}
 	};
-
-	inline const sf::Vector2f GetGameMousePosition() const { return m_GameMousePosition; };
 
 private:
 	std::vector<std::shared_ptr<ActionEvent>> m_CurrentActions;

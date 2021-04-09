@@ -10,6 +10,11 @@ public:
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	
+	inline void RenderDebugMenu(sf::RenderTarget& target)
+	{
+		ImGui::Checkbox("Show Camera Zones", &m_DisplayCameraZones);
+	};
+	
 	inline void SetFixedPoint(const sf::Vector2f& fixedPoint) 
 	{
 		m_FixedPoint = fixedPoint;
@@ -21,10 +26,6 @@ public:
 		m_BoxToFollow = boxToFollow;
 		m_CameraMode = CameraMode::FOLLOW;
 	};
-
-	//====================//
-	
-	bool DisplayCameraZones;
 
 private:
 	void MoveCameraView(const sf::Vector2f& offset);
@@ -49,4 +50,6 @@ private:
 	sf::RectangleShape m_HardMoveZone;
 	sf::RectangleShape m_SoftMoveZone;
 	bool m_ExitedHardZone;
+
+	bool m_DisplayCameraZones;
 };

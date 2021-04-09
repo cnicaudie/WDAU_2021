@@ -14,6 +14,7 @@ public:
 	void OnTrigger(BoxCollideable* other) override;
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void RenderDebugMenu(sf::RenderTarget& target);
 
 	inline const int GetNumberOfCollectedSoulChunks() const { return m_SoulChunksCollected; };
 	inline const bool IsSkullRolling() const { return m_IsSkullRolling; };

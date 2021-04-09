@@ -16,9 +16,10 @@ public:
     Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
     ~Map();
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void Update(float deltaTime);
-    
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void RenderDebugMenu(sf::RenderTarget& target) { m_Player.RenderDebugMenu(target); };
+
     bool LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize);
     void InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap);
 

@@ -8,7 +8,7 @@ CameraManager::CameraManager(sf::RenderWindow* window)
     , m_CameraView(sf::FloatRect(0.f, 0.f, static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)))
     , m_BoxToFollow(nullptr)
     , m_ExitedHardZone(false)
-    , DisplayCameraZones(false)
+    , m_DisplayCameraZones(false)
 {
     const sf::Vector2f WINDOW_CENTER{ m_CameraView.getCenter() };
     const sf::Vector2f HARD_ZONE_SIZE{ m_Window->getSize().x / 1.6f, m_Window->getSize().y / 2.4f };
@@ -117,7 +117,7 @@ void CameraManager::MoveCameraView(const sf::Vector2f& offset)
 
 void CameraManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
-    if (DisplayCameraZones) 
+    if (m_DisplayCameraZones)
     {
         target.draw(m_HardMoveZone);
         target.draw(m_SoftMoveZone);

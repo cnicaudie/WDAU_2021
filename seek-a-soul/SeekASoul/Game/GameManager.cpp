@@ -81,47 +81,17 @@ void GameManager::RenderGUI(sf::RenderTarget& target)
 
 void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 {
-    ImGui::Begin("Debug Menu");
-    ImGui::Text("Press F1 to close this debug menu");
-    ImGui::NewLine();
+    ImGui::Begin("Debug Menu (Press F1 to close)");
     ImGui::Text("FPS : %d", m_FramesPerSecond);
-    ImGui::Checkbox("Show Camera Zones", &m_CameraManager->DisplayCameraZones);
+    ImGui::Text("Game Status : ");
+    ImGui::SameLine();
+    m_IsGameOver 
+        ? ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "GAME ENDED") 
+        : ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "GAME IN PROGRESS");
 
-    if (ImGui::CollapsingHeader("Main character infos"))
-    {
-        const Player& player = m_LevelManager->GetPlayerOnMap();
-        const sf::Vector2f& mainCharCenterPos = player.GetCenter();
-        const sf::Vector2f& mainCharVelocity = player.GetVelocity();
-
-        ImGui::Text("Position infos :");
-        ImGui::Text("X: %f", mainCharCenterPos.x);
-        ImGui::Text("Y: %f", mainCharCenterPos.y);
-
-        ImGui::Text("Velocity infos :");
-        ImGui::Text("X: %f", mainCharVelocity.x);
-        ImGui::Text("Y: %f", mainCharVelocity.y);
-    }
-
-    if (ImGui::CollapsingHeader("Mouse position"))
-    {
-        const sf::Vector2f& mouseWorldPosition = m_InputManager->GetGameMousePosition();
-
-        ImGui::Text("X: %f", mouseWorldPosition.x);
-        ImGui::Text("Y: %f", mouseWorldPosition.y);
-    }
-
-    if (ImGui::CollapsingHeader("Game status"))
-    {
-        if (m_IsGameOver)
-        {
-            ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "GAME ENDED");
-        }
-        else
-        {
-            ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "GAME IN PROGRESS");
-        }
-    }
-
+    m_CameraManager->RenderDebugMenu(target);
+    m_LevelManager->RenderDebugMenu(target);
+    m_InputManager->RenderDebugMenu(target);
     ImGui::End();
 }
 

@@ -230,6 +230,20 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 }
 
+void Player::RenderDebugMenu(sf::RenderTarget& target)
+{
+    if (ImGui::CollapsingHeader("Main character infos"))
+    {
+        ImGui::Text("Position infos :");
+        ImGui::Text("X: %f", m_Position.x);
+        ImGui::Text("Y: %f", m_Position.y);
+
+        ImGui::Text("Velocity infos :");
+        ImGui::Text("X: %f", m_Velocity.x);
+        ImGui::Text("Y: %f", m_Velocity.y);
+    }
+}
+
 void Player::ComputeNextPlayerState()
 {
     const float MOVE_ANIMATION_THRESHOLD = 50.f;

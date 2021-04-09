@@ -7,8 +7,10 @@ class LevelManager : public sf::Drawable
 public:
 	LevelManager(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
 
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void Update(float deltaTime);
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void RenderDebugMenu(sf::RenderTarget& target) { m_Map.RenderDebugMenu(target); };
+	
 	void LoadLevel(const int levelNumber);
 
 	inline const Map& GetMap() const { return m_Map; };
