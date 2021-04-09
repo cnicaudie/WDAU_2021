@@ -412,13 +412,14 @@ void Player::UpdateVisualDamage(uint64_t now)
 
 void Player::UpdateBoundingBox()
 {
+    sf::Vector2i spriteSize = GetSpriteSize();
     if (m_IsSkullRolling)
     {
-        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()) * 0.5f);
+        SetBoundingBox(m_Position, sf::Vector2f(static_cast<float>(spriteSize.x), spriteSize.y * 0.5f));
     }
     else
     {
-        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(GetSpriteSize()));
+        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(spriteSize));
     }
 }
 
