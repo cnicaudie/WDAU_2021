@@ -211,7 +211,7 @@ void Player::OnTrigger(BoxCollideable* other)
         }
     }
 
-    if (typeid(*other).name() == typeid(class ClimbableTile).name())
+    if (typeid(*other).name() == typeid(class ClimbableTile).name() && !m_IsSkullRolling)
     {
         m_CanClimb = true;
     }
