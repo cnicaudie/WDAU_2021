@@ -8,6 +8,11 @@ public:
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void RenderDebugMenu(sf::RenderTarget& target) 
+	{
+		ImGui::Checkbox("Open Door", &m_IsDoorOpen);
+	};
+	
 	void OnTrigger(BoxCollideable* other) override;
 
 	inline void OpenDoor() { m_IsDoorOpen = true; };

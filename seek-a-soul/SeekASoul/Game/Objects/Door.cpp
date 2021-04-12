@@ -5,8 +5,8 @@
 
 Door::Door(const sf::Vector2f& centerPosition, const sf::Vector2f& size)
 	: m_rColor{ 1.f }
-	, m_gColor{ 0.f }
-	, m_bColor{ 0.f }
+	, m_gColor{ 0.3f }
+	, m_bColor{ 0.2f }
 	, m_IsDoorOpen(false)
 	, m_IsPlayingEndGame(false)
 {
@@ -29,17 +29,7 @@ Door::~Door()
 
 void Door::Update(float deltaTime)
 {
-	if (!m_IsPlayingEndGame)
-	{
-		if (m_IsDoorOpen) 
-		{
-			m_rColor = 0.25f;
-			m_gColor = 0.5f;
-			m_bColor = 0.75f;
-			m_Rectangle.setOutlineColor(sf::Color{ static_cast<uint8_t>(m_rColor * 255.0f), static_cast<uint8_t>(m_gColor * 255.0f), static_cast<uint8_t>(m_bColor * 255.0f) });
-		}
-	} 
-	else 
+	if (m_IsDoorOpen || m_IsPlayingEndGame)
 	{
 		// Multicolor door
 		m_rColor = fmodf(m_rColor + deltaTime, 1.f);

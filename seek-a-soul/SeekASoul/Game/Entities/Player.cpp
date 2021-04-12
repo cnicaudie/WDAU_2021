@@ -37,6 +37,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_LastShootTime(0)
     , m_ShootDirection{ 0.f, 0.f }
     , m_Bullets{}
+    , m_InfiniteAmmos(false)
     , m_AmmunitionsNumber(10)
     , m_InGroundCollision(false)
     , m_InCeilingCollision(false)
@@ -233,14 +234,19 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Player::RenderDebugMenu(sf::RenderTarget& target)
 {
-    if (ImGui::CollapsingHeader("Main character infos"))
+    if (ImGui::CollapsingHeader("Player Menu"))
     {
-        ImGui::Text("Position infos :");
+        ImGui::Checkbox("Infinite Ammos", &m_InfiniteAmmos);
+        ImGui::Text("Pos :");
+        ImGui::SameLine();
         ImGui::Text("X: %f", m_Position.x);
+        ImGui::SameLine();
         ImGui::Text("Y: %f", m_Position.y);
 
-        ImGui::Text("Velocity infos :");
+        ImGui::Text("Vel :");
+        ImGui::SameLine();
         ImGui::Text("X: %f", m_Velocity.x);
+        ImGui::SameLine();
         ImGui::Text("Y: %f", m_Velocity.y);
     }
 }
@@ -458,14 +464,17 @@ void Player::Shoot()
     uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 
     if ((now - m_LastShootTime) >= SHOOT_COOLDOWN
-        && m_AmmunitionsNumber > 0
+        && (m_InfiniteAmmos || m_AmmunitionsNumber > 0)
         && !m_IsSkullRolling) 
     {
         m_Bullets.emplace_back(m_TextureManager, m_ShootDirection, m_Position);
-
-        m_AmmunitionsNumber--;
-        UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
         
+        if (!m_InfiniteAmmos) 
+        {
+            m_AmmunitionsNumber--;
+            UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
+        }
+
         m_LastShootTime = now;
     }
 }

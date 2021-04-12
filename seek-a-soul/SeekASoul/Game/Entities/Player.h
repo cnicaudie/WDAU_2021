@@ -65,6 +65,7 @@ private:
 
 	sf::Vector2f m_ShootDirection;
 	std::vector<Bullet> m_Bullets;
+	bool m_InfiniteAmmos;
 	int m_AmmunitionsNumber;
 
 	// Checks when gettin out of skull roll (change of bounding box)
