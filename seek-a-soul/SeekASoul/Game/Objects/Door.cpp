@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "Door.h"
 #include <Game/Entities/Player.h>
+#include <Engine/Event/EventTypes/LevelEvent.h>
 
 Door::Door(const sf::Vector2f& centerPosition, const sf::Vector2f& size)
 	: m_rColor{ 1.f }
@@ -60,7 +61,7 @@ void Door::OnTrigger(BoxCollideable* other)
 	if (player != nullptr && m_IsDoorOpen && !m_IsPlayingEndGame)
 	{	
 		StartEndGame();
-		std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
+		std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(EndLevelType::SUCCESS);
 		EventManager::GetInstance()->Fire(eventType);
 	}
 }

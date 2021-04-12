@@ -7,6 +7,7 @@
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Objects/SoulChunk.h>
+#include <Engine/Event/EventTypes/LevelEvent.h>
 
 static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
 
@@ -408,9 +409,10 @@ void Player::Damage()
 
     if (m_HealthPoints == 0)
     {
-        m_HealthState = HealthState::DEAD;
         LOG_INFO("Player died !");
-        // TODO : Fire event player died ?
+        m_HealthState = HealthState::DEAD;
+        std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(EndLevelType::FAILURE);
+        EventManager::GetInstance()->Fire(eventType);
     }
 }
 

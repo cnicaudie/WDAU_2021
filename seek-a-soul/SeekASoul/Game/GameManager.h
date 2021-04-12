@@ -20,6 +20,8 @@ public:
 
     const bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset) const;
     const sf::Vector2u GetLevelBounds() const;
+    
+    inline const bool IsGameOver() const { return m_IsGameOver; }
 
 private:
     GameManager();

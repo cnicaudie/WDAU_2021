@@ -17,6 +17,7 @@
 
 #include <Game/GameManager.h>
 #include <Game/Action.h>
+#include <Game/Level/EndLevelType.h>
 
 #include <UI/UIViewModel.h>
 

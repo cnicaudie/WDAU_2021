@@ -224,6 +224,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\ActionEvent.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\Event.cpp" />
+    <ClCompile Include="Engine\Event\EventTypes\LevelEvent.cpp" />
     <ClCompile Include="Engine\Event\Listener\EventListener.cpp" />
     <ClCompile Include="Engine\Event\EventManager.cpp" />
     <ClCompile Include="Engine\Event\Listener\IEventListener.cpp" />
@@ -245,7 +246,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Game\Objects\Door.cpp" />
     <ClCompile Include="Game\Entities\Enemy.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
-    <ClCompile Include="Game\LevelManager.cpp" />
+    <ClCompile Include="Game\Level\LevelManager.cpp" />
     <ClCompile Include="Game\Map\Tiles\CollideableTile.cpp" />
     <ClCompile Include="Game\Map\Tiles\Tile.cpp" />
     <ClCompile Include="Game\Objects\SoulChunk.cpp" />
@@ -265,6 +266,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Engine\Event\EventTypes\ActionEvent.h" />
     <ClInclude Include="Engine\Event\EventTypes\Event.h" />
+    <ClInclude Include="Engine\Event\EventTypes\LevelEvent.h" />
     <ClInclude Include="Engine\Event\Listener\EventListener.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />
     <ClInclude Include="Engine\Event\EventTypes\EventType.h" />
@@ -283,6 +285,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Action.h" />
     <ClInclude Include="Game\Camera\CameraManager.h" />
     <ClInclude Include="Game\Entities\Entity.h" />
+    <ClInclude Include="Game\Level\EndLevelType.h" />
     <ClInclude Include="Game\Map\Tiles\ClimbableTile.h" />
     <ClInclude Include="Game\Map\MapGrid.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
@@ -290,7 +293,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Objects\Door.h" />
     <ClInclude Include="Game\Entities\Enemy.h" />
     <ClInclude Include="Game\GameManager.h" />
-    <ClInclude Include="Game\LevelManager.h" />
+    <ClInclude Include="Game\Level\LevelManager.h" />
     <ClInclude Include="Game\Map\Tiles\CollideableTile.h" />
     <ClInclude Include="Game\Map\Tiles\Tile.h" />
     <ClInclude Include="Game\Map\Tiles\TileType.h" />
