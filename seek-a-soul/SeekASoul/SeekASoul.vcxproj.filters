@@ -32,9 +32,6 @@
     <ClCompile Include="Engine\Input\InputManager.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Game\LevelManager.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Collision\CollisionManager.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
@@ -122,6 +119,12 @@
     <ClCompile Include="UI\UIViewModel.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Event\EventTypes\LevelEvent.cpp">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Level\LevelManager.cpp">
+      <Filter>Game\Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -148,9 +151,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Input\InputManager.h">
       <Filter>Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\LevelManager.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collision\CollisionManager.h">
       <Filter>Engine\Collision</Filter>
@@ -257,6 +257,15 @@
     <ClInclude Include="Engine\Resources\FileReader.h">
       <Filter>Engine\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Event\EventTypes\LevelEvent.h">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Level\LevelManager.h">
+      <Filter>Game\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Level\EndLevelType.h">
+      <Filter>Game\Level</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -321,6 +330,9 @@
     </Filter>
     <Filter Include="Engine\Time">
       <UniqueIdentifier>{e5da6b97-e228-45b4-9bcf-6b149e73ee06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Level">
+      <UniqueIdentifier>{b36fda0c-de06-4d23-be68-66a5b6980780}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
