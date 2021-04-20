@@ -10,7 +10,15 @@ public:
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	void RenderDebugMenu(sf::RenderTarget& target) { m_Map.RenderDebugMenu(target); };
+	void RenderDebugMenu(sf::RenderTarget& target) 
+	{
+		m_Map.RenderDebugMenu(target);
+
+		if (ImGui::Button("Restart Level"))
+		{
+			LoadLevel();
+		}
+	};
 	
 	void LoadLevel();
 
