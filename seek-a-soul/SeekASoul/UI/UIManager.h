@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Button.h"
+
 class UIManager : public sf::Drawable
 {
 public:
@@ -20,6 +22,7 @@ private:
 
     sf::Font m_MainFont;
 
+    Button m_Button;
     sf::Text m_AmmunitionsText;
     sf::Text m_EndgameText;
 

@@ -89,6 +89,12 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
         ? ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "GAME ENDED") 
         : ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "GAME IN PROGRESS");
 
+    if (ImGui::Button("End Game")) 
+    {
+        std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
+        EventManager::GetInstance()->Fire(eventType);
+    }
+
     m_CameraManager->RenderDebugMenu(target);
     m_LevelManager->RenderDebugMenu(target);
     m_InputManager->RenderDebugMenu(target);

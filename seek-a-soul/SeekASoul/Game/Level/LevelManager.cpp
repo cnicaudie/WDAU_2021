@@ -27,7 +27,12 @@ void LevelManager::Update(float deltaTime)
 {
 	m_Map.Update(deltaTime);
 
-	if (!GameManager::GetInstance()->IsGameOver() && m_CurrentState == LevelState::LOADING)
+	if (!GameManager::GetInstance()->IsGameOver() && m_CurrentState == LevelState::OVER)
+	{
+		std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
+		EventManager::GetInstance()->Fire(eventType);
+	}
+	else if (!GameManager::GetInstance()->IsGameOver() && m_CurrentState == LevelState::LOADING)
 	{
 		if (m_CurrentLevel > MAX_LEVEL)
 		{
@@ -59,6 +64,7 @@ void LevelManager::OnEvent(const Event* evnt)
 			case EndLevelType::FAILURE:
 			{
 				// Reload level ? Display UI ?
+				m_CurrentState = LevelState::OVER;
 				break;
 			}
 

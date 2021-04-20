@@ -125,6 +125,9 @@
     <ClCompile Include="Game\Level\LevelManager.cpp">
       <Filter>Game\Level</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Button.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="Game\Level\EndLevelType.h">
       <Filter>Game\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Button.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -37,7 +37,8 @@ private:
 	enum class LevelState 
 	{
 		LOADING		= 0,
-		PLAYING		= 1
+		PLAYING		= 1,
+		OVER		= 2
 	} m_CurrentState;
 
 	unsigned int m_CurrentLevel;
