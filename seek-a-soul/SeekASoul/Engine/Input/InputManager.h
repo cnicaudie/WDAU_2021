@@ -16,8 +16,16 @@ public:
 	{
 		if (ImGui::CollapsingHeader("Mouse position"))
 		{
+			ImGui::Text("Game :");
+			ImGui::SameLine();
 			ImGui::Text("X: %f", m_GameMousePosition.x);
+			ImGui::SameLine();
 			ImGui::Text("Y: %f", m_GameMousePosition.y);
+			ImGui::Text("GUI :");
+			ImGui::SameLine(); 
+			ImGui::Text("X: %f", m_GUIMousePosition.x);
+			ImGui::SameLine();
+			ImGui::Text("Y: %f", m_GUIMousePosition.y);
 		}
 	};
 
