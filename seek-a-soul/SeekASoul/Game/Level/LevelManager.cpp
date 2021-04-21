@@ -11,7 +11,7 @@ LevelManager::LevelManager(const std::shared_ptr<InputManager>& inputManager, co
 	, m_CurrentState(LevelState::LOADING)
 	, m_CurrentLevel(0)
 {
-	LoadLevel();
+	LoadLevel(false);
 
 	EventListener<LevelManager, LevelEvent> listener(this, &LevelManager::OnEvent);
 	EventManager::GetInstance()->AddListener(listener);
@@ -38,7 +38,7 @@ void LevelManager::Update(float deltaTime)
 		else if (m_CurrentState == LevelState::LOADING) 
 		{
 			LOG_INFO("Loading next level...");
-			LoadLevel();
+			LoadLevel(false);
 			LOG_INFO("Done!");
 		}
 	}
@@ -46,7 +46,7 @@ void LevelManager::Update(float deltaTime)
 	{
 		LOG_INFO("Reloading current level...");
 		GameManager::GetInstance()->Restart();
-		LoadLevel();
+		LoadLevel(true);
 		LOG_INFO("Done!");
 	}
 }
@@ -84,19 +84,14 @@ void LevelManager::OnEvent(const Event* evnt)
 	}
 }
 
-void LevelManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	target.draw(m_Map);
-}
-
-void LevelManager::LoadLevel()
+void LevelManager::LoadLevel(bool restart)
 {
 	std::string levelFileName(".\\Assets\\Levels\\level" + std::to_string(m_CurrentLevel) + ".txt");
 	std::string levelConfigFileName(".\\Assets\\Levels\\level" + std::to_string(m_CurrentLevel) + "_config.txt");
-	
+
 	std::pair<std::vector<int>, sf::Vector2u> levelData = FileReader::ReadLevelFromFile(levelFileName);
 	std::map<std::string, std::vector<std::string>> configKeymap = FileReader::ReadConfigFile(levelConfigFileName);
-	
+
 	m_LevelWidth = levelData.second.x;
 	m_LevelHeight = levelData.second.y;
 
@@ -104,7 +99,7 @@ void LevelManager::LoadLevel()
 	m_Map.LoadTileMap(levelData.first, sf::Vector2u(m_LevelWidth, m_LevelHeight));
 
 	// Initialize other elements
-	m_Map.InitObjectsAndEntities(configKeymap);
+	m_Map.InitObjectsAndEntities(configKeymap, restart);
 
 	m_CurrentState = LevelState::PLAYING;
 }

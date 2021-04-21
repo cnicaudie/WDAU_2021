@@ -8,7 +8,7 @@ class Player : public Entity, public Animated
 {
 public:	
 	Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
-	void Reset(const sf::Vector2f& position);
+	void Reset(const sf::Vector2f& position, bool restart);
 	
 	void Update(float deltaTime) override;
 	void OnCollision(BoxCollideable* other, CollisionDirection direction) override;

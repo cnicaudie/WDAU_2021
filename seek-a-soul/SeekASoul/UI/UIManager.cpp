@@ -89,15 +89,13 @@ void UIManager::Update(float deltaTime)
 
 void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
+    target.draw(m_AmmunitionsText);
+    target.draw(m_SoulChunksText);
+
     if (m_IsPlayingEndGame) 
     {
         target.draw(m_Button);
         target.draw(m_EndgameText);
-    } 
-    else 
-    {
-        target.draw(m_AmmunitionsText);
-        target.draw(m_SoulChunksText);
     }
 }
 

@@ -28,6 +28,7 @@ public:
 	inline const Player& GetPlayerOnMap() { return m_Map.GetPlayer(); };
 
 private:
+	void LoadLevel(bool restart);
 	void OnEvent(const Event* evnt);
 
 	//====================//
