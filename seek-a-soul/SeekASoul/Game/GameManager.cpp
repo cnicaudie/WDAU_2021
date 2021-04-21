@@ -89,8 +89,14 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
         ? ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "GAME ENDED") 
         : ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "GAME IN PROGRESS");
 
-    m_CameraManager->RenderDebugMenu(target);
+    if (ImGui::Button("End Game")) 
+    {
+        std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
+        EventManager::GetInstance()->Fire(eventType);
+    }
+
     m_LevelManager->RenderDebugMenu(target);
+    m_CameraManager->RenderDebugMenu(target);
     m_InputManager->RenderDebugMenu(target);
     ImGui::End();
 }
@@ -107,8 +113,6 @@ const bool GameManager::CheckCollision(BoxCollideable* collideable, const sf::Ve
 
 void GameManager::OnEvent(const Event* evnt)
 {
-    // dynamic_cast if necessary
-    
     if (evnt->GetEventType() == EventType::END_GAME) 
     {
         StartEndGame();

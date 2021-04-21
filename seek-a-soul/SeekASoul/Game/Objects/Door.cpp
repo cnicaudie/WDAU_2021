@@ -51,7 +51,7 @@ void Door::OnTrigger(BoxCollideable* other)
 	if (player != nullptr && m_IsDoorOpen && !m_IsPlayingEndGame)
 	{	
 		StartEndGame();
-		std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(EndLevelType::SUCCESS);
+		std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(LevelStatus::SUCCESS);
 		EventManager::GetInstance()->Fire(eventType);
 	}
 }

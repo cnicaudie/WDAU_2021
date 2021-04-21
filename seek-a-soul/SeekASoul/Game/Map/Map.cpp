@@ -44,10 +44,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     // === Draw other objects
     for (const std::unique_ptr<SoulChunk>& s : m_SoulChunks)
     {
-        if (!s->WasCollected())
-        {
-            target.draw(*s);
-        }
+        target.draw(*s);
     }
 
     target.draw(m_Door);
@@ -196,35 +193,15 @@ void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLin
     }
 }
 
-void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap)
+void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart)
 {
-    InitDoor(configKeymap);
-    InitPlayer(configKeymap);
+    InitPlayer(configKeymap, restart);
     InitEnemies(configKeymap);
     InitSoulChunks(configKeymap);
+    InitDoor(configKeymap);
 }
 
-void Map::InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap) 
-{
-    const std::vector<std::string> doorInfo = configKeymap.at("DOOR");
-
-    sf::Vector2f doorPosition
-    {
-        std::stof(doorInfo.at(0)) * TILE_SIZE.x + (TILE_SIZE.x / 2),
-        std::stof(doorInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
-    };
-
-    sf::Vector2f doorSize
-    {
-        std::stof(doorInfo.at(2)),
-        std::stof(doorInfo.at(3))
-    };
-
-    m_Door = Door(doorPosition, doorSize);
-    m_MapGrid.SetCollideableOnTiles(m_Door);
-}
-
-void Map::InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap) 
+void Map::InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart)
 {
     const std::vector<std::string> playerInfo = configKeymap.at("PLAYER_POSITION");
 
@@ -234,7 +211,7 @@ void Map::InitPlayer(const std::map<std::string, std::vector<std::string>>& conf
         std::stof(playerInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
     };
 
-    m_Player.SetPosition(playerPosition);
+    m_Player.Reset(playerPosition, restart);
 }
 
 void Map::InitEnemies(const std::map<std::string, std::vector<std::string>>& configKeymap) 
@@ -277,4 +254,24 @@ void Map::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& 
         const std::unique_ptr<SoulChunk>& soulChunk = m_SoulChunks.emplace_back(std::make_unique<SoulChunk>(m_TextureManager, soulChunkPosition));
         m_MapGrid.SetCollideableOnTiles(*soulChunk);
     }
+}
+
+void Map::InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap)
+{
+    const std::vector<std::string> doorInfo = configKeymap.at("DOOR");
+
+    sf::Vector2f doorPosition
+    {
+        std::stof(doorInfo.at(0)) * TILE_SIZE.x + (TILE_SIZE.x / 2),
+        std::stof(doorInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
+    };
+
+    sf::Vector2f doorSize
+    {
+        std::stof(doorInfo.at(2)),
+        std::stof(doorInfo.at(3))
+    };
+
+    m_Door = Door(doorPosition, doorSize);
+    m_MapGrid.SetCollideableOnTiles(m_Door);
 }

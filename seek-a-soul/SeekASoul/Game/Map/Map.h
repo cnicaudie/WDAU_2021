@@ -25,7 +25,7 @@ public:
     };
 
     bool LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize);
-    void InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap);
+    void InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart);
 
     inline const MapGrid& GetMapGrid() const { return m_MapGrid; };
     inline const Player& GetPlayer() const { return m_Player; };
@@ -37,10 +37,10 @@ private:
     void CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv);
     void CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize);
     
-    void InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap);
-    void InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap);
+    void InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart);
     void InitEnemies(const std::map<std::string, std::vector<std::string>>& configKeymap);
     void InitSoulChunks(const std::map<std::string, std::vector<std::string>>& configKeymap);
+    void InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap);
     
     //====================//
     
@@ -52,9 +52,8 @@ private:
 
     // ==== Other objects / entities on the map
     
+    Player m_Player;
+    std::vector<Enemy> m_Enemies;
     std::vector<std::unique_ptr<SoulChunk>> m_SoulChunks;
     Door m_Door;
-
-    std::vector<Enemy> m_Enemies;
-    Player m_Player;
 };

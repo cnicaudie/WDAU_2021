@@ -11,7 +11,6 @@ public:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
 
-	inline const sf::Vector2f& GetVelocity() const { return m_Velocity; }; // For debug in GameManager
 	inline bool IsDead() const { return m_HealthState == HealthState::DEAD; };
 
 protected:

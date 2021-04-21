@@ -8,6 +8,7 @@ class Player : public Entity, public Animated
 {
 public:	
 	Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
+	void Reset(const sf::Vector2f& position, bool restart);
 	
 	void Update(float deltaTime) override;
 	void OnCollision(BoxCollideable* other, CollisionDirection direction) override;
@@ -15,10 +16,9 @@ public:
 	
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void RenderDebugMenu(sf::RenderTarget& target);
-
+	
 	inline const int GetNumberOfCollectedSoulChunks() const { return m_SoulChunksCollected; };
 	inline const bool IsSkullRolling() const { return m_IsSkullRolling; };
-	inline void SetPosition(const sf::Vector2f& position) { m_Position = position; };
 
 protected:
 	void Damage() override;
@@ -54,8 +54,8 @@ private:
 		SHOOTING		= 4
 	} m_CurrentState;
 	
-	int m_SoulChunksCollected;
-	int m_JumpCount;
+	unsigned int m_SoulChunksCollected;
+	unsigned int m_JumpCount;
 	bool m_IsGrounded;
 	bool m_IsClimbing; // TODO : Use player state instead
 	bool m_CanClimb;
@@ -66,7 +66,7 @@ private:
 	sf::Vector2f m_ShootDirection;
 	std::vector<Bullet> m_Bullets;
 	bool m_InfiniteAmmos;
-	int m_AmmunitionsNumber;
+	unsigned int m_AmmunitionsNumber;
 
 	// Checks when gettin out of skull roll (change of bounding box)
 	bool m_InGroundCollision;

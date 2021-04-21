@@ -13,10 +13,7 @@ UIViewModel* UIViewModel::GetInstance()
     return m_UIViewModel;
 }
 
-UIViewModel::UIViewModel()
-{
-    // TODO
-}
+UIViewModel::UIViewModel() {}
 
 UIViewModel::~UIViewModel()
 {
