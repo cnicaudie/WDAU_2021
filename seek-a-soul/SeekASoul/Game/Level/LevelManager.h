@@ -10,19 +10,8 @@ public:
 
 	void Update(float deltaTime);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	void RenderDebugMenu(sf::RenderTarget& target) 
-	{
-		m_Map.RenderDebugMenu(target);
-
-		if (ImGui::Button("Restart Level"))
-		{
-			GameManager::GetInstance()->Restart();
-			LoadLevel();
-		}
-	};
+	void RenderDebugMenu(sf::RenderTarget& target);
 	
-	void LoadLevel();
-
 	inline const Map& GetMap() const { return m_Map; };
 	inline const sf::Vector2u GetLevelBounds() { return { m_LevelWidth * Map::TILE_SIZE.x, m_LevelHeight * Map::TILE_SIZE.y }; };
 	inline const Player& GetPlayerOnMap() { return m_Map.GetPlayer(); };
@@ -43,7 +32,7 @@ private:
 		OVER		= 2
 	} m_CurrentState;
 
-	unsigned int m_CurrentLevel;
+	int m_CurrentLevel;
 	unsigned int m_LevelWidth;
 	unsigned int m_LevelHeight;
 };

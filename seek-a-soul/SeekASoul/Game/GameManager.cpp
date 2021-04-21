@@ -95,8 +95,8 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
         EventManager::GetInstance()->Fire(eventType);
     }
 
-    m_CameraManager->RenderDebugMenu(target);
     m_LevelManager->RenderDebugMenu(target);
+    m_CameraManager->RenderDebugMenu(target);
     m_InputManager->RenderDebugMenu(target);
     ImGui::End();
 }

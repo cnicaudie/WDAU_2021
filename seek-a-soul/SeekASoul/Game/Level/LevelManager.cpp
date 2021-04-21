@@ -103,3 +103,23 @@ void LevelManager::LoadLevel(bool restart)
 
 	m_CurrentState = LevelState::PLAYING;
 }
+
+void LevelManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	target.draw(m_Map);
+}
+
+void LevelManager::RenderDebugMenu(sf::RenderTarget& target)
+{
+	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
+	ImGui::SliderInt("Level", &m_CurrentLevel, 0, MAX_LEVEL);
+	ImGui::SameLine();
+	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
+	if (ImGui::Button("Restart"))
+	{
+		GameManager::GetInstance()->Restart();
+		LoadLevel(true);
+	}
+
+	m_Map.RenderDebugMenu(target);
+};
