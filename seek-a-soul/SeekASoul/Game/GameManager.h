@@ -22,6 +22,7 @@ public:
     const sf::Vector2u GetLevelBounds() const;
     
     inline const bool IsGameOver() const { return m_IsGameOver; }
+    inline void Restart() { m_IsGameOver = false; };
 
 private:
     GameManager();

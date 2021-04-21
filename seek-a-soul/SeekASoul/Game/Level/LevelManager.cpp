@@ -27,23 +27,27 @@ void LevelManager::Update(float deltaTime)
 {
 	m_Map.Update(deltaTime);
 
-	if (!GameManager::GetInstance()->IsGameOver() && m_CurrentState == LevelState::OVER)
+	if (!GameManager::GetInstance()->IsGameOver()) 
 	{
-		std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
-		EventManager::GetInstance()->Fire(eventType);
-	}
-	else if (!GameManager::GetInstance()->IsGameOver() && m_CurrentState == LevelState::LOADING)
-	{
-		if (m_CurrentLevel > MAX_LEVEL)
+		if (m_CurrentState == LevelState::OVER 
+			|| (m_CurrentState == LevelState::LOADING && m_CurrentLevel > MAX_LEVEL)) 
 		{
 			std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
 			EventManager::GetInstance()->Fire(eventType);
-		} 
-		else 
-		{
-			LOG_INFO("Load next level...");
-			LoadLevel();
 		}
+		else if (m_CurrentState == LevelState::LOADING) 
+		{
+			LOG_INFO("Loading next level...");
+			LoadLevel();
+			LOG_INFO("Done!");
+		}
+	}
+	else if (m_CurrentState == LevelState::LOADING)
+	{
+		LOG_INFO("Reloading current level...");
+		GameManager::GetInstance()->Restart();
+		LoadLevel();
+		LOG_INFO("Done!");
 	}
 }
 
@@ -51,9 +55,9 @@ void LevelManager::OnEvent(const Event* evnt)
 {
 	if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
 	{
-		switch(actionEvent->GetEndLevelType()) 
+		switch(actionEvent->GetLevelStatus()) 
 		{
-			case EndLevelType::SUCCESS:
+			case LevelStatus::SUCCESS:
 			{
 				LOG_INFO("Successfully ended level " << m_CurrentLevel << " !");
 				m_CurrentLevel += 1;
@@ -61,11 +65,17 @@ void LevelManager::OnEvent(const Event* evnt)
 				break;
 			}
 
-			case EndLevelType::FAILURE:
+			case LevelStatus::FAILURE:
 			{
 				// Reload level ? Display UI ?
 				m_CurrentState = LevelState::OVER;
 				break;
+			}
+
+			case LevelStatus::RESTART: 
+			{
+				LOG_DEBUG("Restart level");
+				m_CurrentState = LevelState::LOADING;
 			}
 
 			default:

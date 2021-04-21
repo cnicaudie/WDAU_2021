@@ -44,10 +44,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     // === Draw other objects
     for (const std::unique_ptr<SoulChunk>& s : m_SoulChunks)
     {
-        if (!s->WasCollected())
-        {
-            target.draw(*s);
-        }
+        target.draw(*s);
     }
 
     target.draw(m_Door);
@@ -234,7 +231,7 @@ void Map::InitPlayer(const std::map<std::string, std::vector<std::string>>& conf
         std::stof(playerInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
     };
 
-    m_Player.SetPosition(playerPosition);
+    m_Player.Reset(playerPosition);
 }
 
 void Map::InitEnemies(const std::map<std::string, std::vector<std::string>>& configKeymap) 

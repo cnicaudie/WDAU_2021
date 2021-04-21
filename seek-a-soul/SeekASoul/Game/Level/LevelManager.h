@@ -16,6 +16,7 @@ public:
 
 		if (ImGui::Button("Restart Level"))
 		{
+			GameManager::GetInstance()->Restart();
 			LoadLevel();
 		}
 	};

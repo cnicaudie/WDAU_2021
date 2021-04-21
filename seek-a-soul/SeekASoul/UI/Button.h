@@ -4,6 +4,7 @@ class Button : public sf::Drawable
 {
 public:
 	Button(const sf::Vector2f& centerPosition, const sf::Vector2f& size);
+	~Button();
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	
@@ -21,7 +22,8 @@ public:
 		});
 	}
 
-	inline const bool WasButtonClicked() const { return m_WasClicked; };
+	inline const bool WasClicked() const { return m_WasClicked; };
+	inline void ResetClickStatus() { m_WasClicked = false; };
 
 private:
 	void OnEvent(const Event* evnt);

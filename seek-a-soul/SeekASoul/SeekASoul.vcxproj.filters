@@ -128,6 +128,9 @@
     <ClCompile Include="UI\Button.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Event\EventTypes\ClickEvent.cpp">
+      <Filter>Engine\Event\EventTypes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -266,11 +269,14 @@
     <ClInclude Include="Game\Level\LevelManager.h">
       <Filter>Game\Level</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Level\EndLevelType.h">
+    <ClInclude Include="Game\Level\LevelStatus.h">
       <Filter>Game\Level</Filter>
     </ClInclude>
     <ClInclude Include="UI\Button.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Event\EventTypes\ClickEvent.h">
+      <Filter>Engine\Event\EventTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -113,8 +113,6 @@ const bool GameManager::CheckCollision(BoxCollideable* collideable, const sf::Ve
 
 void GameManager::OnEvent(const Event* evnt)
 {
-    // dynamic_cast if necessary
-    
     if (evnt->GetEventType() == EventType::END_GAME) 
     {
         StartEndGame();

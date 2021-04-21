@@ -15,6 +15,8 @@ static constexpr uint64_t SHOOT_COOLDOWN = 500;
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
 
+static constexpr unsigned int MAX_HEALTH_POINTS = 200;
+
 static constexpr float MOVE_SPEED_MAX = 200.0f;
 static constexpr float MOVE_SPEED_INC = 10.0f;
 static constexpr float CLIMB_SPEED = 100.0f;
@@ -23,7 +25,7 @@ static constexpr float SLOWDOWN_RATE = 0.9f;
 static constexpr float GRAVITY = 9.8f;
 
 Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
-    : Entity(textureManager, { 50.f, 50.f }, 200)
+    : Entity(textureManager, { 50.f, 50.f }, MAX_HEALTH_POINTS)
     , Animated(PLAYER_SPRITE_SIZE, textureManager->GetTextureFromName("PLAYER_SHEET"))
     , m_InputManager{ inputManager }
     , m_CurrentState(PlayerState::IDLE)
@@ -48,6 +50,21 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
 
     EventListener<Player, ActionEvent> listener(this, &Player::OnEvent);
     EventManager::GetInstance()->AddListener(listener);
+}
+
+void Player::Reset(const sf::Vector2f& position)
+{
+    m_HealthPoints = MAX_HEALTH_POINTS;
+    m_HealthState = HealthState::OK;
+    m_CurrentState = PlayerState::IDLE;
+    m_Position = position;
+    m_AnimationSprite.setColor(sf::Color::White);
+    // Reset of number of soul chunks collected ? Or loose 3/4/5 soul chunks ?
+    m_JumpCount = 1;
+    m_LastSkullRollTime = 0;
+    m_LastShootTime = 0;
+    m_AmmunitionsNumber = 10;
+    UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
 }
 
 void Player::Update(float deltaTime)
@@ -417,7 +434,8 @@ void Player::Damage()
     {
         LOG_INFO("Player died !");
         m_HealthState = HealthState::DEAD;
-        std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(EndLevelType::FAILURE);
+
+        std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(LevelStatus::FAILURE);
         EventManager::GetInstance()->Fire(eventType);
     }
 }

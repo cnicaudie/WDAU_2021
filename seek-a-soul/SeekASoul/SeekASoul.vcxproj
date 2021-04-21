@@ -223,6 +223,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Collision\BoxCollideable.cpp" />
     <ClCompile Include="Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\ActionEvent.cpp" />
+    <ClCompile Include="Engine\Event\EventTypes\ClickEvent.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\Event.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\LevelEvent.cpp" />
     <ClCompile Include="Engine\Event\Listener\EventListener.cpp" />
@@ -266,6 +267,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Collision\CollisionDirection.h" />
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Engine\Event\EventTypes\ActionEvent.h" />
+    <ClInclude Include="Engine\Event\EventTypes\ClickEvent.h" />
     <ClInclude Include="Engine\Event\EventTypes\Event.h" />
     <ClInclude Include="Engine\Event\EventTypes\LevelEvent.h" />
     <ClInclude Include="Engine\Event\Listener\EventListener.h" />
@@ -286,7 +288,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Action.h" />
     <ClInclude Include="Game\Camera\CameraManager.h" />
     <ClInclude Include="Game\Entities\Entity.h" />
-    <ClInclude Include="Game\Level\EndLevelType.h" />
+    <ClInclude Include="Game\Level\LevelStatus.h" />
     <ClInclude Include="Game\Map\Tiles\ClimbableTile.h" />
     <ClInclude Include="Game\Map\MapGrid.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />

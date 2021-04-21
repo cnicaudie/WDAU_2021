@@ -5,20 +5,20 @@
 class LevelEvent : public Event
 {
 public:
-	LevelEvent(EndLevelType endLevelType) : Event(EventType::END_LEVEL), m_EndLevelType(endLevelType) {};
+	LevelEvent(LevelStatus levelStatus) : Event(EventType::LEVEL), m_LevelStatus(levelStatus) {};
 
 	virtual bool operator==(const Event& other) const override
 	{
 		if (const LevelEvent* otherLevelEvent = dynamic_cast<const LevelEvent*>(&other))
 		{
-			return m_EndLevelType == otherLevelEvent->m_EndLevelType;
+			return m_LevelStatus == otherLevelEvent->m_LevelStatus;
 		}
 
 		return false;
 	};
 
-	inline const EndLevelType GetEndLevelType() const { return m_EndLevelType; };
+	inline const LevelStatus GetLevelStatus() const { return m_LevelStatus; };
 	
 private:
-	EndLevelType m_EndLevelType;
+	LevelStatus m_LevelStatus;
 };

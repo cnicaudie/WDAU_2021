@@ -19,7 +19,7 @@ UIManager::UIManager(sf::RenderWindow* window)
     
     // Configure Buttons
     m_Button.SetButtonTextFont(m_MainFont);
-    m_Button.SetButtonTextString("TestButton");
+    m_Button.SetButtonTextString("Restart");
     m_Button.SetButtonTextPosition(WINDOW_CENTER * 1.5f);
 
     // Configure Texts
@@ -62,6 +62,16 @@ void UIManager::Update(float deltaTime)
     m_AmmunitionsText.setString(stream.str());
 
     m_Window->setView(m_GUIView);
+
+    if (m_IsPlayingEndGame && m_Button.WasClicked())
+    {
+        LOG_DEBUG("Button was clicked !");
+        m_Button.ResetClickStatus();
+        m_IsPlayingEndGame = false;
+
+        std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::RESTART);
+        EventManager::GetInstance()->Fire(levelEvent);
+    }
 }
 
 void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
@@ -86,7 +96,7 @@ void UIManager::OnEvent(const Event* evnt)
 
     if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
     {
-        if (actionEvent->GetEndLevelType() == EndLevelType::FAILURE)
+        if (actionEvent->GetLevelStatus() == LevelStatus::FAILURE)
         {
             m_EndgameText.setFillColor(sf::Color::Red);
             m_EndgameText.setString("YOU LOST...");

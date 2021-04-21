@@ -5,6 +5,7 @@
 #include <Engine/Input/Bindings/JoystickButtonBinding.h>
 #include <Engine/Input/Bindings/JoystickAxisBinding.h>
 #include <Engine/Event/EventTypes/ActionEvent.h>
+#include <Engine/Event/EventTypes/ClickEvent.h>
 
 static constexpr float JOYSTICK_DEAD_ZONE = 20.f;
 
@@ -97,6 +98,10 @@ void InputManager::ManageInputEvents(const sf::Event& event)
 		{
 			MouseBinding mouseBinding(event.mouseButton.button);
 			AddAction(&mouseBinding);
+
+			// Fire event click (for GUI)
+			std::shared_ptr<ClickEvent> clickEvent = std::make_shared<ClickEvent>(m_GUIMousePosition);
+			EventManager::GetInstance()->Fire(clickEvent);
 			break;
 		}
 
