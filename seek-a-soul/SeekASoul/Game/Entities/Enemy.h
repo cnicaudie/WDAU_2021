@@ -17,6 +17,10 @@ protected:
 	void UpdateVisualDamage(uint64_t now) override;
 
 private:
+	void Move(float deltaTime);
+
+	//====================//
+
 	sf::Sprite m_Sprite;
 
 };

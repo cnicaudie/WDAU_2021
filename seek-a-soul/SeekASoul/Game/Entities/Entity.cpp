@@ -5,6 +5,7 @@ Entity::Entity(const std::shared_ptr<TextureManager>& textureManager, const sf::
     : m_HealthState(HealthState::OK)
     , m_TextureManager(textureManager)
     , m_Position(position)
+    , m_IsGrounded(false)
     , m_HealthPoints(healthPoints)
     , m_LastDamageTime(0)
 {

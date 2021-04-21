@@ -85,9 +85,9 @@ void Map::UpdateEnemies(float deltaTime)
     {
         if (!enemy.IsDead())
         {
-            // TODO : Uncomment next line when enemies are moving
-            //m_MapGrid.SetCollideableOnTiles(enemy);
+            m_MapGrid.RemoveCollideableOnTiles(enemy);
             enemy.Update(deltaTime);
+            m_MapGrid.SetCollideableOnTiles(enemy);
         }
         else
         {

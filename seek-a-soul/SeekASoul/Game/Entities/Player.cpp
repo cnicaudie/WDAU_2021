@@ -21,6 +21,7 @@ static constexpr float MOVE_SPEED_MAX = 200.0f;
 static constexpr float MOVE_SPEED_INC = 10.0f;
 static constexpr float CLIMB_SPEED = 100.0f;
 static constexpr float JUMP_FORCE = 400.0f;
+static constexpr float COLLISION_FORCE = 150.0f;
 static constexpr float SLOWDOWN_RATE = 0.9f;
 static constexpr float GRAVITY = 9.8f;
 
@@ -31,7 +32,6 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_CurrentState(PlayerState::IDLE)
     , m_JumpCount(1)
     , m_SoulChunksCollected(0)
-    , m_IsGrounded(false)
     , m_IsClimbing(false)
     , m_CanClimb(false)
     , m_IsSkullRolling(false)
@@ -177,6 +177,24 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
         && (m_HealthState == HealthState::OK)
         && !m_IsSkullRolling)
     {
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
+        {
+            m_Velocity.x = COLLISION_FORCE;
+        }
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
+        {
+            m_Velocity.x = -COLLISION_FORCE;
+        }
+        
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
+        {
+            m_Velocity.y = -COLLISION_FORCE;
+        }
+        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
+        {
+            m_Velocity.y = -COLLISION_FORCE;
+        }
+
         Damage();
     }
 
@@ -192,7 +210,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
             
             if (!m_InCeilingCollision) 
             {
-                m_Velocity.y = GRAVITY;
+                m_Velocity.y = 0.f;
                 m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
                 m_IsGrounded = true;
                 m_JumpCount = 1;
@@ -209,7 +227,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
 
             if (!m_InGroundCollision) 
             {
-                m_Velocity.y = 0.f;
+                m_Velocity.y = GRAVITY;
                 m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
                 //LOG_DEBUG("TOP COLLISION");
             }

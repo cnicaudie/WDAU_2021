@@ -56,7 +56,6 @@ private:
 	
 	unsigned int m_SoulChunksCollected;
 	unsigned int m_JumpCount;
-	bool m_IsGrounded;
 	bool m_IsClimbing; // TODO : Use player state instead
 	bool m_CanClimb;
 	bool m_IsSkullRolling; // TODO : Use player state instead
