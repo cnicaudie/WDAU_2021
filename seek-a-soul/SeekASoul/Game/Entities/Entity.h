@@ -30,6 +30,7 @@ protected:
 	
 	sf::Vector2f m_Position;
 	sf::Vector2f m_Velocity;
+	bool m_IsGrounded;
 	
 	int m_HealthPoints;
 

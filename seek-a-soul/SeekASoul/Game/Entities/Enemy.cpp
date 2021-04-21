@@ -64,6 +64,7 @@ void Enemy::OnCollision(BoxCollideable* other, CollisionDirection direction)
 	{
 		if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
 		{
+			m_IsGrounded = true;
 			m_Velocity.y = 0.f;
 			m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
 		}
@@ -112,6 +113,13 @@ void Enemy::Move(float deltaTime)
 	tempVelocity.y = m_Velocity.y;
 	if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
 	{
+		if (m_IsGrounded) 
+		{
+			m_Velocity.x = -m_Velocity.x;
+			m_Velocity.y = -10.f; // little force to help the enemy stay on its platform
+			tempVelocity = m_Velocity;
+			m_IsGrounded = false;
+		}
 		m_Position += tempVelocity * deltaTime;
 	}
 

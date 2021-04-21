@@ -32,7 +32,6 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_CurrentState(PlayerState::IDLE)
     , m_JumpCount(1)
     , m_SoulChunksCollected(0)
-    , m_IsGrounded(false)
     , m_IsClimbing(false)
     , m_CanClimb(false)
     , m_IsSkullRolling(false)
