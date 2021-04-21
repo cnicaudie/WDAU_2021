@@ -24,6 +24,7 @@ private:
 
     Button m_Button;
     sf::Text m_AmmunitionsText;
+    sf::Text m_SoulChunksText;
     sf::Text m_EndgameText;
 
     // TODO : Make a sound manager

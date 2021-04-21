@@ -54,8 +54,8 @@ private:
 		SHOOTING		= 4
 	} m_CurrentState;
 	
-	int m_SoulChunksCollected;
-	int m_JumpCount;
+	unsigned int m_SoulChunksCollected;
+	unsigned int m_JumpCount;
 	bool m_IsGrounded;
 	bool m_IsClimbing; // TODO : Use player state instead
 	bool m_CanClimb;
@@ -66,7 +66,7 @@ private:
 	sf::Vector2f m_ShootDirection;
 	std::vector<Bullet> m_Bullets;
 	bool m_InfiniteAmmos;
-	int m_AmmunitionsNumber;
+	unsigned int m_AmmunitionsNumber;
 
 	// Checks when gettin out of skull roll (change of bounding box)
 	bool m_InGroundCollision;

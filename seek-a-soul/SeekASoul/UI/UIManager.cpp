@@ -28,16 +28,19 @@ UIManager::UIManager(sf::RenderWindow* window)
     m_EndgameText.setFillColor(sf::Color::Green);
     m_EndgameText.setString("!!! WIN !!!");
     m_EndgameText.setStyle(sf::Text::Bold);
+    float textWidth = m_EndgameText.getGlobalBounds().width;
+    float textHeight = m_EndgameText.getGlobalBounds().height;
+    m_EndgameText.setPosition(WINDOW_CENTER.x - (textWidth / 2), WINDOW_CENTER.y - (textHeight / 2));
     
     m_AmmunitionsText.setFont(m_MainFont);
     m_AmmunitionsText.setCharacterSize(25);
     m_AmmunitionsText.setFillColor(sf::Color::Red);
-
-    float textWidth = m_EndgameText.getGlobalBounds().width;
-    float textHeight = m_EndgameText.getGlobalBounds().height;
-    
-    m_EndgameText.setPosition(WINDOW_CENTER.x - (textWidth / 2), WINDOW_CENTER.y - (textHeight / 2));
     m_AmmunitionsText.setPosition(WINDOW_CENTER.x * 1.6f, WINDOW_CENTER.y * 0.05f);
+    
+    m_SoulChunksText.setFont(m_MainFont);
+    m_SoulChunksText.setCharacterSize(25);
+    m_SoulChunksText.setFillColor(sf::Color::Cyan);
+    m_SoulChunksText.setPosition(WINDOW_CENTER.x * 1.6f, WINDOW_CENTER.y * 0.15f);
 
     // Configure EventListeners
     EventListener<UIManager, Event> listenerGameOver(this, &UIManager::OnEvent);
@@ -57,12 +60,22 @@ UIManager::~UIManager()
 
 void UIManager::Update(float deltaTime)
 {
+    // Update texts
     std::stringstream stream;
     stream << "Bullets left : " << UIViewModel::GetInstance()->GetAmmunitionsNumber();
     m_AmmunitionsText.setString(stream.str());
+    
+    // Clear the stream content
+    stream.str(std::string()); // resets the string content
+    stream.clear(); // clears fails and eof flags
 
+    stream << "Soul chunks : " << UIViewModel::GetInstance()->GetSoulChunksNumber();
+    m_SoulChunksText.setString(stream.str());
+
+    // Update the view
     m_Window->setView(m_GUIView);
 
+    // Manage buttons
     if (m_IsPlayingEndGame && m_Button.WasClicked())
     {
         LOG_DEBUG("Button was clicked !");
@@ -84,6 +97,7 @@ void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
     else 
     {
         target.draw(m_AmmunitionsText);
+        target.draw(m_SoulChunksText);
     }
 }
 

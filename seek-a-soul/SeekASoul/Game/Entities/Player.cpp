@@ -28,26 +28,20 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     : Entity(textureManager, { 50.f, 50.f }, MAX_HEALTH_POINTS)
     , Animated(PLAYER_SPRITE_SIZE, textureManager->GetTextureFromName("PLAYER_SHEET"))
     , m_InputManager{ inputManager }
-    , m_CurrentState(PlayerState::IDLE)
-    , m_SoulChunksCollected(0)
-    , m_JumpCount(1)
     , m_IsGrounded(false)
     , m_IsClimbing(false)
     , m_CanClimb(false)
     , m_IsSkullRolling(false)
-    , m_LastSkullRollTime(0)
-    , m_LastShootTime(0)
     , m_ShootDirection{ 0.f, 0.f }
     , m_Bullets{}
     , m_InfiniteAmmos(false)
-    , m_AmmunitionsNumber(10)
     , m_InGroundCollision(false)
     , m_InCeilingCollision(false)
 {
+    // Define the bounding box according to the sprite
     m_BoundingBox = GetAnimatedSpriteBoundingBox();
-
-    UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
-
+    
+    // Configure an EventListener for action events
     EventListener<Player, ActionEvent> listener(this, &Player::OnEvent);
     EventManager::GetInstance()->AddListener(listener);
 }
@@ -56,15 +50,27 @@ void Player::Reset(const sf::Vector2f& position)
 {
     m_HealthPoints = MAX_HEALTH_POINTS;
     m_HealthState = HealthState::OK;
+
     m_CurrentState = PlayerState::IDLE;
+    
     m_Position = position;
+    SetCenter(m_Position);
+    SetAnimatedSpritePosition(m_Position);
     m_AnimationSprite.setColor(sf::Color::White);
-    // Reset of number of soul chunks collected ? Or loose 3/4/5 soul chunks ?
+    
+    // Reset of number of soul chunks collected ? Or loose 3/4/5 soul chunks ? Random between 2 and 5 ?
+    m_SoulChunksCollected > 0 ? m_SoulChunksCollected -= 2 : m_SoulChunksCollected = 0;
+    LOG_DEBUG(m_SoulChunksCollected);
+    m_AmmunitionsNumber = 10;
+    
     m_JumpCount = 1;
+    
     m_LastSkullRollTime = 0;
     m_LastShootTime = 0;
-    m_AmmunitionsNumber = 10;
+
+    // Update UIViewModel values
     UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
+    UIViewModel::GetInstance()->SetSoulChunksNumber(m_SoulChunksCollected);
 }
 
 void Player::Update(float deltaTime)
@@ -227,6 +233,7 @@ void Player::OnTrigger(BoxCollideable* other)
         {
             LOG_INFO("Player collected SoulChunk !");
             m_SoulChunksCollected += 1;
+            UIViewModel::GetInstance()->SetSoulChunksNumber(m_SoulChunksCollected);
         }
     }
 
