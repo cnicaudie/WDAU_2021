@@ -16,14 +16,6 @@ public:
 	void AddListener(const EventListener<T, EventT>& eventListener)
 	{
 		std::vector<std::unique_ptr<IEventListener>>& listenerList = m_EventListeners[typeid(EventT)];
-
-		auto const& pos = std::find_if(listenerList.begin(), listenerList.end(), [&](std::unique_ptr<IEventListener>& ptr) 
-			{ 
-				return eventListener == ptr.get(); 
-			});
-
-		if (pos != listenerList.end()) { return; }
-
 		listenerList.push_back(std::make_unique<EventListener<T, EventT>>(eventListener));
 	};
 
