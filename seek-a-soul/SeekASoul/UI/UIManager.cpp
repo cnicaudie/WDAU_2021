@@ -8,13 +8,15 @@ static const sf::Vector2f BUTTON_SIZE{ 180.f, 50.f };
 UIManager::UIManager(sf::RenderWindow* window)
     : m_Window(window)
     , m_GUIView(sf::FloatRect(0.f, 0.f, static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)))
-    , m_IsPlayingEndGame(false)
     , m_ToggleMainMenu(true)
     , m_ToggleLevelChoice(false)
-    , m_RestartButton(BUTTON_SIZE)
+    , m_IsPlayingEndGame(false)
+    , m_WentBackToMenu(false)
     , m_StartButton(BUTTON_SIZE)
     , m_ChooseLevelButton(BUTTON_SIZE)
     , m_CloseButton(BUTTON_SIZE)
+    , m_RestartButton(BUTTON_SIZE)
+    , m_BackToMenuButton(BUTTON_SIZE)
 {
     const sf::Vector2f WINDOW_CENTER{ m_GUIView.getCenter() };
     
@@ -36,14 +38,7 @@ UIManager::UIManager(sf::RenderWindow* window)
 
 void UIManager::InitTexts(const sf::Vector2f& WINDOW_CENTER)
 {
-    m_EndgameText.setFont(m_MainFont);
-    m_EndgameText.setCharacterSize(50);
-    m_EndgameText.setFillColor(sf::Color::Green);
-    m_EndgameText.setString("!!! WIN !!!");
-    m_EndgameText.setStyle(sf::Text::Bold);
-    float textWidth = m_EndgameText.getGlobalBounds().width;
-    float textHeight = m_EndgameText.getGlobalBounds().height;
-    m_EndgameText.setPosition(WINDOW_CENTER.x - (textWidth / 2), WINDOW_CENTER.y - (textHeight / 2));
+    // === In Game UI
 
     m_AmmunitionsText.setFont(m_MainFont);
     m_AmmunitionsText.setCharacterSize(25);
@@ -54,6 +49,17 @@ void UIManager::InitTexts(const sf::Vector2f& WINDOW_CENTER)
     m_SoulChunksText.setCharacterSize(25);
     m_SoulChunksText.setFillColor(sf::Color::Cyan);
     m_SoulChunksText.setPosition(WINDOW_CENTER.x * 1.6f, WINDOW_CENTER.y * 0.15f);
+
+    // === End Level/Game Menu
+
+    m_EndGameText.setFont(m_MainFont);
+    m_EndGameText.setCharacterSize(50);
+    m_EndGameText.setFillColor(sf::Color::Green);
+    m_EndGameText.setString("YOU WON !!!");
+    m_EndGameText.setStyle(sf::Text::Bold);
+    float textWidth = m_EndGameText.getGlobalBounds().width;
+    float textHeight = m_EndGameText.getGlobalBounds().height;
+    m_EndGameText.setPosition(WINDOW_CENTER.x - (textWidth / 2), WINDOW_CENTER.y - (textHeight / 2));
 }
 
 void UIManager::InitButtons(const sf::Vector2f& WINDOW_CENTER)
@@ -79,13 +85,19 @@ void UIManager::InitButtons(const sf::Vector2f& WINDOW_CENTER)
     m_CloseButton.SetButtonTextString("Quit");
     m_CloseButton.SetButtonTextPosition(closeButtonPosition);
 
-    // === End Level Menu
+    // === End Level/Game Menu
 
-    const sf::Vector2f restartButtonPosition{ WINDOW_CENTER.x + BUTTONS_OFFSET, WINDOW_CENTER.y + BUTTONS_OFFSET };
+    const sf::Vector2f restartButtonPosition{ WINDOW_CENTER.x - BUTTONS_OFFSET, WINDOW_CENTER.y + BUTTONS_OFFSET };
     m_RestartButton.SetButtonPosition(restartButtonPosition);
     m_RestartButton.SetButtonTextFont(m_MainFont);
     m_RestartButton.SetButtonTextString("Restart");
     m_RestartButton.SetButtonTextPosition(restartButtonPosition);
+
+    const sf::Vector2f backButtonPosition{ WINDOW_CENTER.x + BUTTONS_OFFSET, WINDOW_CENTER.y + BUTTONS_OFFSET };
+    m_BackToMenuButton.SetButtonPosition(backButtonPosition);
+    m_BackToMenuButton.SetButtonTextFont(m_MainFont);
+    m_BackToMenuButton.SetButtonTextString("Back to menu");
+    m_BackToMenuButton.SetButtonTextPosition(backButtonPosition);
 }
 
 UIManager::~UIManager() 
@@ -127,16 +139,25 @@ void UIManager::Update(float deltaTime)
 
 void UIManager::ManageButtons()
 {
-    if (m_ToggleMainMenu) 
+    if (m_ToggleMainMenu)
     {
-        if (m_StartButton.WasClicked()) 
+        if (m_StartButton.WasClicked())
         {
             LOG_INFO("Starting game...");
             m_StartButton.ResetClickStatus();
             m_ToggleMainMenu = false;
-
-            std::shared_ptr<Event> evnt = std::make_shared<Event>(EventType::START_GAME);
-            EventManager::GetInstance()->Fire(evnt);
+            
+            if (m_WentBackToMenu)
+            {
+                std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::RESTART);
+                EventManager::GetInstance()->Fire(levelEvent);
+                m_WentBackToMenu = false;
+            }
+            else
+            {
+                std::shared_ptr<Event> evnt = std::make_shared<Event>(EventType::START_GAME);
+                EventManager::GetInstance()->Fire(evnt);
+            }
         }
         else if (m_ChooseLevelButton.WasClicked())
         {
@@ -144,20 +165,31 @@ void UIManager::ManageButtons()
             m_ChooseLevelButton.ResetClickStatus();
             m_ToggleLevelChoice = true;
         }
-        else if (m_CloseButton.WasClicked()) 
+        else if (m_CloseButton.WasClicked())
         {
             LOG_INFO("Bye !");
             m_Window->close();
         }
     }
-    else if (m_IsPlayingEndGame && m_RestartButton.WasClicked())
+    else if (m_IsPlayingEndGame)
     {
-        LOG_INFO("Restarting level...");
-        m_RestartButton.ResetClickStatus();
-        m_IsPlayingEndGame = false;
+        if (m_RestartButton.WasClicked())
+        {
+            LOG_INFO("Restarting level...");
+            m_RestartButton.ResetClickStatus();
+            m_IsPlayingEndGame = false;
 
-        std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::RESTART);
-        EventManager::GetInstance()->Fire(levelEvent);
+            std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::RESTART);
+            EventManager::GetInstance()->Fire(levelEvent);
+        }
+        else if (m_BackToMenuButton.WasClicked())
+        {
+            LOG_INFO("Going back to the main menu...");
+            m_ToggleMainMenu = true;
+            m_WentBackToMenu = true;
+            m_IsPlayingEndGame = false;
+            GameManager::GetInstance()->ResetGameState();
+        }
     }
 }
 
@@ -177,7 +209,8 @@ void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
         if (m_IsPlayingEndGame) 
         {
             target.draw(m_RestartButton);
-            target.draw(m_EndgameText);
+            target.draw(m_BackToMenuButton);
+            target.draw(m_EndGameText);
         }
     }   
 }
@@ -188,13 +221,23 @@ void UIManager::OnEvent(const Event* evnt)
     {
         StartEndGame();
     }
-
-    if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
+    else if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
     {
-        if (actionEvent->GetLevelStatus() == LevelStatus::FAILURE)
+        switch (actionEvent->GetLevelStatus()) 
         {
-            m_EndgameText.setFillColor(sf::Color::Red);
-            m_EndgameText.setString("YOU LOST...");
+            case LevelStatus::SUCCESS:
+            {
+                m_EndGameText.setFillColor(sf::Color::Green);
+                m_EndGameText.setString("YOU WON !!!");
+                break;
+            }
+
+            case LevelStatus::FAILURE:
+            {
+                m_EndGameText.setFillColor(sf::Color::Red);
+                m_EndGameText.setString("YOU LOST...");
+                break;
+            }
         }
     }
 }

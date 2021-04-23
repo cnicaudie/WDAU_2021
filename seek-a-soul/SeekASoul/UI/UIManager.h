@@ -31,20 +31,19 @@ private:
     sf::Text m_SoulChunksText;
     // TODO : Health bar
     
-    // === Main menu
+    // === Main Menu
     bool m_ToggleMainMenu;
     bool m_ToggleLevelChoice;
     Button m_StartButton;
     Button m_ChooseLevelButton;
     Button m_CloseButton;
 
-    // === End Level menu
-    //bool m_ToggleEndLeveMenu;
-    Button m_RestartButton;
-
-    // === End Game menu
+    // === End Level/Game Menu
     bool m_IsPlayingEndGame;
-    sf::Text m_EndgameText;
+    bool m_WentBackToMenu;
+    Button m_RestartButton;
+    Button m_BackToMenuButton;
+    sf::Text m_EndGameText;
 
     // TODO : Make a sound manager
     sf::SoundBuffer m_EndgameSoundBuffer;

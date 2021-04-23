@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "GameManager.h"
 #include <Engine/Event/Listener/EventListener.h>
+#include <Engine/Event/EventTypes/LevelEvent.h>
 #include <Engine/Collision/CollisionManager.h>
 #include <Game/Camera/CameraManager.h>
 #include <Game/Level/LevelManager.h>
@@ -29,14 +30,18 @@ GameManager::GameManager()
 {   
     m_CameraManager->SetBoxToFollow(&(m_LevelManager->GetPlayerOnMap()));
 
-    EventListener<GameManager, Event> listener(this, &GameManager::OnEvent);
-    EventManager::GetInstance()->AddListener(listener);
+    EventListener<GameManager, Event> listenerEvent(this, &GameManager::OnEvent);
+    EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
+    EventManager::GetInstance()->AddListener(listenerEvent);
+    EventManager::GetInstance()->AddListener(listenerLevelEvent);
 }
 
 GameManager::~GameManager()
 {
-    EventListener<GameManager, Event> listener(this, &GameManager::OnEvent);
-    EventManager::GetInstance()->RemoveListener(listener);
+    EventListener<GameManager, Event> listenerEvent(this, &GameManager::OnEvent);
+    EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
+    EventManager::GetInstance()->RemoveListener(listenerEvent);
+    EventManager::GetInstance()->RemoveListener(listenerLevelEvent);
 
     delete m_GameManager;
 }
@@ -142,22 +147,20 @@ const bool GameManager::CheckCollision(BoxCollideable* collideable, const sf::Ve
 
 void GameManager::OnEvent(const Event* evnt)
 {
-    switch(evnt->GetEventType()) 
+    if (evnt->GetEventType() == EventType::START_GAME)
     {
-        case EventType::START_GAME: 
+        m_CurrentState = GameState::PLAYING;
+    }
+    else if (evnt->GetEventType() == EventType::END_GAME)
+    {
+        LOG_INFO("GAME OVER !!!");
+        m_CurrentState = GameState::OVER;
+    }
+    else if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
+    {
+        if (actionEvent->GetLevelStatus() == LevelStatus::RESTART)
         {
             m_CurrentState = GameState::PLAYING;
-            break;
         }
-
-        case EventType::END_GAME: 
-        {
-            LOG_INFO("GAME OVER !!!");
-            m_CurrentState = GameState::OVER;
-            break;
-        }
-
-        default:
-            break;
     }
 }

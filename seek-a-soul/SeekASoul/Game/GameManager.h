@@ -23,7 +23,7 @@ public:
     
     inline const bool IsGameOver() const { return m_CurrentState == GameState::OVER; }
     inline const bool HasGameStarted() const { return m_CurrentState != GameState::NOT_STARTED; }
-    inline void Restart() { m_CurrentState = GameState::PLAYING; };
+    inline void ResetGameState() { m_CurrentState = GameState::NOT_STARTED; };
 
 private:
     GameManager();

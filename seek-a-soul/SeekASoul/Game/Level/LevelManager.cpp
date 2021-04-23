@@ -35,27 +35,26 @@ void LevelManager::Update(float deltaTime)
 	else
 	{
 		m_Map.Update(deltaTime);
+		
+		ManageLevelChange();
+	}
 
-		if (!GameManager::GetInstance()->IsGameOver()) 
+}
+
+void LevelManager::ManageLevelChange()
+{
+	if (!GameManager::GetInstance()->IsGameOver())
+	{
+		if (m_CurrentState == LevelState::OVER
+			|| (m_CurrentState == LevelState::LOADING && m_CurrentLevel > MAX_LEVEL))
 		{
-			if (m_CurrentState == LevelState::OVER 
-				|| (m_CurrentState == LevelState::LOADING && m_CurrentLevel > MAX_LEVEL)) 
-			{
-				std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
-				EventManager::GetInstance()->Fire(eventType);
-			}
-			else if (m_CurrentState == LevelState::LOADING) 
-			{
-				LOG_INFO("Loading next level...");
-				LoadLevel(false);
-				LOG_INFO("Done!");
-			}
+			std::shared_ptr<Event> eventType = std::make_shared<Event>(EventType::END_GAME);
+			EventManager::GetInstance()->Fire(eventType);
 		}
 		else if (m_CurrentState == LevelState::LOADING)
 		{
-			LOG_INFO("Reloading current level...");
-			GameManager::GetInstance()->Restart();
-			LoadLevel(true);
+			LOG_INFO("Loading next level...");
+			LoadLevel(false);
 			LOG_INFO("Done!");
 		}
 	}
@@ -63,7 +62,11 @@ void LevelManager::Update(float deltaTime)
 
 void LevelManager::OnEvent(const Event* evnt)
 {
-	if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
+	if (evnt->GetEventType() == EventType::START_GAME)
+	{
+		LoadLevel(false);
+	}
+	else if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
 	{
 		switch(actionEvent->GetLevelStatus()) 
 		{
@@ -89,17 +92,14 @@ void LevelManager::OnEvent(const Event* evnt)
 
 			case LevelStatus::RESTART: 
 			{
-				LOG_DEBUG("Restart level");
-				m_CurrentState = LevelState::LOADING;
+				LOG_INFO("Reloading current level...");
+				LoadLevel(true);
+				LOG_INFO("Done!");
 			}
 
 			default:
 				break;
 		}
-	} 
-	else if (evnt->GetEventType() == EventType::START_GAME) 
-	{
-		LoadLevel(false);
 	}
 }
 
@@ -134,10 +134,11 @@ void LevelManager::RenderDebugMenu(sf::RenderTarget& target)
 	ImGui::SliderInt("Level", &m_CurrentLevel, 0, MAX_LEVEL);
 	ImGui::SameLine();
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
+	
 	if (ImGui::Button("Restart"))
 	{
-		GameManager::GetInstance()->Restart();
-		LoadLevel(true);
+		std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::RESTART);
+		EventManager::GetInstance()->Fire(levelEvent);
 	}
 
 	m_Map.RenderDebugMenu(target);

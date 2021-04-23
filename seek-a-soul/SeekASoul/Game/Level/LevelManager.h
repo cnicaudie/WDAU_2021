@@ -19,6 +19,8 @@ public:
 private:
 	void ChooseLevel();
 	void LoadLevel(bool restart);
+	void ManageLevelChange();
+
 	void OnEvent(const Event* evnt);
 
 	//====================//
