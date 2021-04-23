@@ -33,6 +33,7 @@ private:
     
     // === Main menu
     bool m_ToggleMainMenu;
+    bool m_ToggleLevelChoice;
     Button m_StartButton;
     Button m_ChooseLevelButton;
     Button m_CloseButton;

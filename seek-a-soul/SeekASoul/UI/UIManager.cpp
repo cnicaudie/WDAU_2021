@@ -10,6 +10,7 @@ UIManager::UIManager(sf::RenderWindow* window)
     , m_GUIView(sf::FloatRect(0.f, 0.f, static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)))
     , m_IsPlayingEndGame(false)
     , m_ToggleMainMenu(true)
+    , m_ToggleLevelChoice(false)
     , m_RestartButton(BUTTON_SIZE)
     , m_StartButton(BUTTON_SIZE)
     , m_ChooseLevelButton(BUTTON_SIZE)
@@ -115,6 +116,13 @@ void UIManager::Update(float deltaTime)
 
     // Manage buttons
     ManageButtons();
+
+    if (m_ToggleLevelChoice)
+    {
+        std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::SELECT);
+        EventManager::GetInstance()->Fire(levelEvent);
+        m_ToggleLevelChoice = false;
+    }
 }
 
 void UIManager::ManageButtons()
@@ -130,9 +138,11 @@ void UIManager::ManageButtons()
             std::shared_ptr<Event> evnt = std::make_shared<Event>(EventType::START_GAME);
             EventManager::GetInstance()->Fire(evnt);
         }
-        else if (m_ChooseLevelButton.WasClicked()) 
+        else if (m_ChooseLevelButton.WasClicked())
         {
-            // Open ImGui panel to choose level to start from ?
+            LOG_INFO("Selecting start level...");
+            m_ChooseLevelButton.ResetClickStatus();
+            m_ToggleLevelChoice = true;
         }
         else if (m_CloseButton.WasClicked()) 
         {

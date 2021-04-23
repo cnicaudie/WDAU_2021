@@ -22,6 +22,7 @@ public:
     const sf::Vector2u GetLevelBounds() const;
     
     inline const bool IsGameOver() const { return m_CurrentState == GameState::OVER; }
+    inline const bool HasGameStarted() const { return m_CurrentState != GameState::NOT_STARTED; }
     inline void Restart() { m_CurrentState = GameState::PLAYING; };
 
 private:

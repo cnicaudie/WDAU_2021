@@ -2,7 +2,8 @@
 
 enum class LevelStatus 
 {
-	FAILURE = 0,
-	SUCCESS = 1,
-	RESTART = 2
+	SELECT	= 0,
+	FAILURE = 1,
+	SUCCESS = 2,
+	RESTART = 3
 };

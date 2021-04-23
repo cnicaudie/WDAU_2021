@@ -50,11 +50,11 @@ void GameManager::Update(float deltaTime)
     }
 
     EventManager::GetInstance()->Update();
+    m_LevelManager->Update(deltaTime);
     
     if (m_CurrentState != GameState::NOT_STARTED)
     {
         m_CameraManager->Update(deltaTime);
-        m_LevelManager->Update(deltaTime);
 
         if (m_CurrentState == GameState::PLAYING)
         {
@@ -88,6 +88,7 @@ void GameManager::RenderGUI(sf::RenderTarget& target)
 
 void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 {
+    ImGui::SetNextWindowSize(ImVec2(250.f, 250.f), ImGuiCond_FirstUseEver);
     ImGui::Begin("Debug Menu (Press F1 to close)");
     ImGui::Text("FPS : %d", m_FramesPerSecond);
     ImGui::Text("Game Status : ");
