@@ -9,9 +9,13 @@ public:
     ~UIManager();
 
     void Update(float deltaTime);
+    void ManageButtons();
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 private:
+    void InitTexts(const sf::Vector2f& WINDOW_CENTER);
+    void InitButtons(const sf::Vector2f& WINDOW_CENTER);
+
     void OnEvent(const Event* evnt);
     void StartEndGame();
 
@@ -21,15 +25,27 @@ private:
     sf::View m_GUIView;
 
     sf::Font m_MainFont;
-
-    Button m_Button;
+    
+    // === In Game UI
     sf::Text m_AmmunitionsText;
     sf::Text m_SoulChunksText;
+    // TODO : Health bar
+    
+    // === Main menu
+    bool m_ToggleMainMenu;
+    Button m_StartButton;
+    Button m_ChooseLevelButton;
+    Button m_CloseButton;
+
+    // === End Level menu
+    //bool m_ToggleEndLeveMenu;
+    Button m_RestartButton;
+
+    // === End Game menu
+    bool m_IsPlayingEndGame;
     sf::Text m_EndgameText;
 
     // TODO : Make a sound manager
     sf::SoundBuffer m_EndgameSoundBuffer;
     sf::Sound m_EndgameSound;
-
-    bool m_IsPlayingEndGame;
 };

@@ -2,8 +2,9 @@
 
 enum class EventType
 {
-	END_GAME	= 0,
-	LEVEL		= 1,
-	ACTION		= 2,
-	CLICK		= 3
+	START_GAME	= 0,
+	END_GAME	= 1,
+	LEVEL		= 2,
+	ACTION		= 3,
+	CLICK		= 4
 };
