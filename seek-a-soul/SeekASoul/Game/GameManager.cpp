@@ -24,7 +24,7 @@ GameManager::GameManager()
     , m_UIManager{ std::make_unique<UIManager>(&m_Window) }
     , m_LevelManager { std::make_unique<LevelManager>(m_InputManager, m_TextureManager) }
     , m_CameraManager{ std::make_unique<CameraManager>(&m_Window) }
-    , m_IsGameOver{ false }
+    , m_CurrentState(GameState::NOT_STARTED)
     , m_FramesPerSecond(60)
 {   
     m_CameraManager->SetBoxToFollow(&(m_LevelManager->GetPlayerOnMap()));
@@ -51,13 +51,16 @@ void GameManager::Update(float deltaTime)
 
     EventManager::GetInstance()->Update();
     
-    m_CameraManager->Update(deltaTime);
-    m_LevelManager->Update(deltaTime);
-
-    if (!m_IsGameOver)
+    if (m_CurrentState != GameState::NOT_STARTED)
     {
-        m_InputManager->UpdateMousePosition(m_Window, true);
-        m_InputManager->Update();
+        m_CameraManager->Update(deltaTime);
+        m_LevelManager->Update(deltaTime);
+
+        if (m_CurrentState == GameState::PLAYING)
+        {
+            m_InputManager->UpdateMousePosition(m_Window, true);
+            m_InputManager->Update();
+        }
     }
 }
 
@@ -70,8 +73,12 @@ void GameManager::UpdateGUI(float deltaTime)
 void GameManager::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
-    target.draw(*m_LevelManager);
-    target.draw(*m_CameraManager);
+
+    if (m_CurrentState != GameState::NOT_STARTED)
+    {
+        target.draw(*m_LevelManager);
+        target.draw(*m_CameraManager);
+    }
 }
 
 void GameManager::RenderGUI(sf::RenderTarget& target) 
@@ -85,9 +92,30 @@ void GameManager::RenderDebugMenu(sf::RenderTarget& target)
     ImGui::Text("FPS : %d", m_FramesPerSecond);
     ImGui::Text("Game Status : ");
     ImGui::SameLine();
-    m_IsGameOver 
-        ? ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "GAME ENDED") 
-        : ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "GAME IN PROGRESS");
+
+    switch(m_CurrentState) 
+    {
+        case GameState::NOT_STARTED: 
+        { 
+            ImGui::TextColored(ImVec4(0.f, 255.0f, 255.0f, 1.f), "NOT STARTED");
+            break;
+        }
+
+        case GameState::PLAYING:
+        {
+            ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "IN PROGRESS");
+            break;
+        }
+
+        case GameState::OVER:
+        {
+            ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "ENDED");
+            break;
+        }
+
+        default:
+            break;
+    }
 
     if (ImGui::Button("End Game")) 
     {
@@ -113,14 +141,22 @@ const bool GameManager::CheckCollision(BoxCollideable* collideable, const sf::Ve
 
 void GameManager::OnEvent(const Event* evnt)
 {
-    if (evnt->GetEventType() == EventType::END_GAME) 
+    switch(evnt->GetEventType()) 
     {
-        StartEndGame();
-    }
-}
+        case EventType::START_GAME: 
+        {
+            m_CurrentState = GameState::PLAYING;
+            break;
+        }
 
-void GameManager::StartEndGame()
-{
-    LOG_INFO("GAME OVER !!!");
-    m_IsGameOver = true;
+        case EventType::END_GAME: 
+        {
+            LOG_INFO("GAME OVER !!!");
+            m_CurrentState = GameState::OVER;
+            break;
+        }
+
+        default:
+            break;
+    }
 }
