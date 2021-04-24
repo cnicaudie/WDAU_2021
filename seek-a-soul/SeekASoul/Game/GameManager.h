@@ -21,15 +21,15 @@ public:
     const bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset) const;
     const sf::Vector2u GetLevelBounds() const;
     
-    inline const bool IsGameOver() const { return m_IsGameOver; }
-    inline void Restart() { m_IsGameOver = false; };
+    inline const bool IsGameOver() const { return m_CurrentState == GameState::OVER; }
+    inline const bool HasGameStarted() const { return m_CurrentState != GameState::NOT_STARTED; }
+    inline void ResetGameState() { m_CurrentState = GameState::NOT_STARTED; };
 
 private:
     GameManager();
     ~GameManager();
 
     void OnEvent(const Event* evnt);
-    void StartEndGame();
 
     //====================//
 
@@ -41,7 +41,12 @@ private:
     std::unique_ptr<CameraManager> m_CameraManager;
     std::unique_ptr<CollisionManager> m_CollisionManager;
     
-    bool m_IsGameOver;
+    enum class GameState
+    {
+        NOT_STARTED = 0,
+        PLAYING     = 1,
+        OVER        = 2
+    } m_CurrentState;
 
     sf::Clock m_FPSUpdateClock;
     int m_FramesPerSecond; // For Debug purposes

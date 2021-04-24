@@ -17,7 +17,10 @@ public:
 	inline const Player& GetPlayerOnMap() { return m_Map.GetPlayer(); };
 
 private:
+	void ChooseLevel();
 	void LoadLevel(bool restart);
+	void ManageLevelChange();
+
 	void OnEvent(const Event* evnt);
 
 	//====================//
@@ -27,12 +30,15 @@ private:
 
 	enum class LevelState 
 	{
-		LOADING		= 0,
-		PLAYING		= 1,
-		OVER		= 2
+		PENDING		= 0,
+		SELECTING	= 1,
+		LOADING		= 2,
+		PLAYING		= 3,
+		OVER		= 4
 	} m_CurrentState;
 
-	int m_CurrentLevel;
+	int m_LevelChoice;
+	unsigned int m_CurrentLevel;
 	unsigned int m_LevelWidth;
 	unsigned int m_LevelHeight;
 };

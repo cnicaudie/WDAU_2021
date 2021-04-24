@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "GameManager.h"
 #include <Engine/Event/Listener/EventListener.h>
+#include <Engine/Event/EventTypes/LevelEvent.h>
 #include <Engine/Collision/CollisionManager.h>
 #include <Game/Camera/CameraManager.h>
 #include <Game/Level/LevelManager.h>
@@ -24,40 +25,50 @@ GameManager::GameManager()
     , m_UIManager{ std::make_unique<UIManager>(&m_Window) }
     , m_LevelManager { std::make_unique<LevelManager>(m_InputManager, m_TextureManager) }
     , m_CameraManager{ std::make_unique<CameraManager>(&m_Window) }
-    , m_IsGameOver{ false }
+    , m_CurrentState(GameState::NOT_STARTED)
     , m_FramesPerSecond(60)
 {   
     m_CameraManager->SetBoxToFollow(&(m_LevelManager->GetPlayerOnMap()));
 
-    EventListener<GameManager, Event> listener(this, &GameManager::OnEvent);
-    EventManager::GetInstance()->AddListener(listener);
+    // Configure EventListeners
+    EventListener<GameManager, Event> listenerEvent(this, &GameManager::OnEvent);
+    EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
+    EventManager::GetInstance()->AddListener(listenerEvent);
+    EventManager::GetInstance()->AddListener(listenerLevelEvent);
 }
 
 GameManager::~GameManager()
 {
-    EventListener<GameManager, Event> listener(this, &GameManager::OnEvent);
-    EventManager::GetInstance()->RemoveListener(listener);
+    EventListener<GameManager, Event> listenerEvent(this, &GameManager::OnEvent);
+    EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
+    EventManager::GetInstance()->RemoveListener(listenerEvent);
+    EventManager::GetInstance()->RemoveListener(listenerLevelEvent);
 
     delete m_GameManager;
 }
 
 void GameManager::Update(float deltaTime)
 {
+    // Update FPS (every second)
     if (m_FPSUpdateClock.getElapsedTime().asSeconds() >= 1.f) 
     {
         m_FramesPerSecond = static_cast<int>(1.f / deltaTime);
         m_FPSUpdateClock.restart();
     }
 
+    // Update Game elements
     EventManager::GetInstance()->Update();
-    
-    m_CameraManager->Update(deltaTime);
     m_LevelManager->Update(deltaTime);
-
-    if (!m_IsGameOver)
+    
+    if (m_CurrentState != GameState::NOT_STARTED)
     {
-        m_InputManager->UpdateMousePosition(m_Window, true);
-        m_InputManager->Update();
+        m_CameraManager->Update(deltaTime);
+
+        if (m_CurrentState == GameState::PLAYING)
+        {
+            m_InputManager->UpdateMousePosition(m_Window, true);
+            m_InputManager->Update();
+        }
     }
 }
 
@@ -70,8 +81,12 @@ void GameManager::UpdateGUI(float deltaTime)
 void GameManager::Render(sf::RenderTarget& target)
 {
     target.clear(sf::Color(0, 0, 0));
-    target.draw(*m_LevelManager);
-    target.draw(*m_CameraManager);
+
+    if (m_CurrentState != GameState::NOT_STARTED)
+    {
+        target.draw(*m_LevelManager);
+        target.draw(*m_CameraManager);
+    }
 }
 
 void GameManager::RenderGUI(sf::RenderTarget& target) 
@@ -81,13 +96,35 @@ void GameManager::RenderGUI(sf::RenderTarget& target)
 
 void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 {
+    ImGui::SetNextWindowSize(ImVec2(250.f, 250.f), ImGuiCond_FirstUseEver);
     ImGui::Begin("Debug Menu (Press F1 to close)");
     ImGui::Text("FPS : %d", m_FramesPerSecond);
     ImGui::Text("Game Status : ");
     ImGui::SameLine();
-    m_IsGameOver 
-        ? ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "GAME ENDED") 
-        : ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "GAME IN PROGRESS");
+
+    switch(m_CurrentState) 
+    {
+        case GameState::NOT_STARTED: 
+        { 
+            ImGui::TextColored(ImVec4(0.f, 255.0f, 255.0f, 1.f), "NOT STARTED");
+            break;
+        }
+
+        case GameState::PLAYING:
+        {
+            ImGui::TextColored(ImVec4(0.f, 255.0f, 0.f, 1.f), "IN PROGRESS");
+            break;
+        }
+
+        case GameState::OVER:
+        {
+            ImGui::TextColored(ImVec4(255.f, 0.f, 0.f, 1.f), "ENDED");
+            break;
+        }
+
+        default:
+            break;
+    }
 
     if (ImGui::Button("End Game")) 
     {
@@ -113,14 +150,20 @@ const bool GameManager::CheckCollision(BoxCollideable* collideable, const sf::Ve
 
 void GameManager::OnEvent(const Event* evnt)
 {
-    if (evnt->GetEventType() == EventType::END_GAME) 
+    if (evnt->GetEventType() == EventType::START_GAME)
     {
-        StartEndGame();
+        m_CurrentState = GameState::PLAYING;
     }
-}
-
-void GameManager::StartEndGame()
-{
-    LOG_INFO("GAME OVER !!!");
-    m_IsGameOver = true;
+    else if (evnt->GetEventType() == EventType::END_GAME)
+    {
+        LOG_INFO("GAME OVER !!!");
+        m_CurrentState = GameState::OVER;
+    }
+    else if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
+    {
+        if (actionEvent->GetLevelStatus() == LevelStatus::RESTART)
+        {
+            m_CurrentState = GameState::PLAYING;
+        }
+    }
 }

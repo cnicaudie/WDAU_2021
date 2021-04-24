@@ -3,11 +3,12 @@
 class Button : public sf::Drawable
 {
 public:
-	Button(const sf::Vector2f& centerPosition, const sf::Vector2f& size);
+	Button(const sf::Vector2f& size);
 	~Button();
 
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	
+	inline const void SetButtonPosition(const sf::Vector2f& centerPosition) { m_ButtonRect.setPosition(centerPosition); };
 	inline const void SetButtonTextFont(const sf::Font& font) { m_ButtonText.setFont(font); };
 	inline const void SetButtonTextString(const std::string& text) { m_ButtonText.setString(text); };
 	inline const void SetButtonTextPosition(const sf::Vector2f& centerPosition)

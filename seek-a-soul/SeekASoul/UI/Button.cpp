@@ -2,13 +2,12 @@
 #include "Button.h"
 #include <Engine/Event/EventTypes/ClickEvent.h>
 
-Button::Button(const sf::Vector2f& centerPosition, const sf::Vector2f& size)
+Button::Button(const sf::Vector2f& size)
 	: m_WasClicked(false)
 {
 	m_ButtonRect.setSize(size);
 	m_ButtonRect.setOrigin(size * 0.5f);
-	m_ButtonRect.setPosition(centerPosition);
-	m_ButtonRect.setFillColor(sf::Color::Blue);
+	m_ButtonRect.setFillColor(sf::Color::Black);
 	m_ButtonRect.setOutlineThickness(5);
 	m_ButtonRect.setOutlineColor(sf::Color::White);
 
