@@ -6,7 +6,7 @@ CollisionManager::CollisionManager() {}
 
 const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const MapGrid& mapGrid) const
 {
-    bool hasCollided = false;
+    bool hasCollidedWithTile = false;
     
     // Get the bounding boxes for the previous and the next position
     sf::FloatRect startCollider = collideable->GetBoundingBox();
@@ -39,12 +39,13 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
             if (tile->Contains(collideable->GetCenter()))
             {
                 collideable->OnTrigger(static_cast<BoxCollideable*>(tile.get()));
+                // Uncomment next line when implementing portal tiles or whatever
                 //tile->OnTrigger(collideable);
             }
 
+            // Check collision with collideables on tile
             for (BoxCollideable* otherCollideable : tile->GetCollideablesOnTile()) 
             {
-                // Check collision with collideables on tile
                 if (otherCollideable->IsTrigger() && collideable->Contains(otherCollideable->GetCenter()))
                 {
                     collideable->OnTrigger(otherCollideable);
@@ -52,7 +53,6 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
                 } 
                 else if (collideable->IsColliding(*otherCollideable))
                 {
-                    //hasCollided = true;
                     collideable->OnCollision(otherCollideable, GetCollisionDirection(collideable, otherCollideable));
                     otherCollideable->OnCollision(collideable, GetCollisionDirection(otherCollideable, collideable));
                 }
@@ -61,13 +61,14 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
         // Check collision with tile itself
         else if (quadBoundingBox.intersects(tile->GetBoundingBox())) 
         {
-            hasCollided = true;
+            hasCollidedWithTile = true;
             collideable->OnCollision(static_cast<BoxCollideable*>(tile.get()), GetCollisionDirection(collideable, tile.get()));
+            // Uncomment next line when implementing breakable tiles or whatever
             //tile->OnCollision(collideable, GetCollisionDirection(tile.get(), collideable));
         }
     }
 
-    return hasCollided;
+    return hasCollidedWithTile;
 }
 
 const CollisionDirection CollisionManager::GetCollisionDirection(BoxCollideable* boxCollideable, BoxCollideable* boxCollider) const
