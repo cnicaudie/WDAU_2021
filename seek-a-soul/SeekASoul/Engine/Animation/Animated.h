@@ -18,11 +18,7 @@ public:
 		}
 	};
 
-
 	void SetAnimatedSpritePosition(const sf::Vector2f& position);
-
-	inline const sf::FloatRect GetAnimatedSpriteBoundingBox() const { return m_AnimationSprite.getGlobalBounds(); };
-	inline const sf::Vector2i GetSpriteSize() const { return m_SpriteSize; };
 
 protected:
 	sf::Sprite m_AnimationSprite;

@@ -244,14 +244,14 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Game\Map\MapGrid.cpp" />
     <ClCompile Include="Game\Map\Tiles\DeadlyTile.cpp" />
     <ClCompile Include="Game\Objects\Bullet.cpp" />
-    <ClCompile Include="Game\Objects\Collectible.cpp" />
+    <ClCompile Include="Game\Objects\Collectibles\Collectible.cpp" />
     <ClCompile Include="Game\Objects\Door.cpp" />
     <ClCompile Include="Game\Entities\Enemy.cpp" />
     <ClCompile Include="Game\GameManager.cpp" />
     <ClCompile Include="Game\Level\LevelManager.cpp" />
     <ClCompile Include="Game\Map\Tiles\CollideableTile.cpp" />
     <ClCompile Include="Game\Map\Tiles\Tile.cpp" />
-    <ClCompile Include="Game\Objects\SoulChunk.cpp" />
+    <ClCompile Include="Game\Objects\Collectibles\SoulChunk.cpp" />
     <ClCompile Include="Game\Entities\Player.cpp" />
     <ClCompile Include="Game\Map\Map.cpp" />
     <ClCompile Include="main.cpp" />
@@ -294,7 +294,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Map\MapGrid.h" />
     <ClInclude Include="Game\Map\Tiles\DeadlyTile.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
-    <ClInclude Include="Game\Objects\Collectible.h" />
+    <ClInclude Include="Game\Objects\Collectibles\Collectible.h" />
     <ClInclude Include="Game\Objects\Door.h" />
     <ClInclude Include="Game\Entities\Enemy.h" />
     <ClInclude Include="Game\GameManager.h" />
@@ -302,7 +302,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Map\Tiles\CollideableTile.h" />
     <ClInclude Include="Game\Map\Tiles\Tile.h" />
     <ClInclude Include="Game\Map\Tiles\TileType.h" />
-    <ClInclude Include="Game\Objects\SoulChunk.h" />
+    <ClInclude Include="Game\Objects\Collectibles\SoulChunk.h" />
     <ClInclude Include="Game\Entities\Player.h" />
     <ClInclude Include="Game\Map\Map.h" />
     <ClInclude Include="Engine\Maths\Maths.h" />

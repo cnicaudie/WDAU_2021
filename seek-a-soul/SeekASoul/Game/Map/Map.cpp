@@ -4,7 +4,7 @@
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Map/Tiles/DeadlyTile.h>
-#include <Game/Objects/SoulChunk.h>
+#include <Game/Objects/Collectibles/SoulChunk.h>
 
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
 

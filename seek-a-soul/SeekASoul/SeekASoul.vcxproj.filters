@@ -44,9 +44,6 @@
     <ClCompile Include="Game\Objects\Door.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\SoulChunk.cpp">
-      <Filter>Game\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Map\MapGrid.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
@@ -101,9 +98,6 @@
     <ClCompile Include="Game\Map\Tiles\Tile.cpp">
       <Filter>Game\Map\Tiles</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\Collectible.cpp">
-      <Filter>Game\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Event\Listener\IEventListener.cpp">
       <Filter>Engine\Event\Listener</Filter>
     </ClCompile>
@@ -133,6 +127,12 @@
     </ClCompile>
     <ClCompile Include="Game\Map\Tiles\DeadlyTile.cpp">
       <Filter>Game\Map\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\Collectibles\Collectible.cpp">
+      <Filter>Game\Objects\Collectibles</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\Collectibles\SoulChunk.cpp">
+      <Filter>Game\Objects\Collectibles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,9 +171,6 @@
       <Filter>Game\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Game\Objects\Door.h">
-      <Filter>Game\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Objects\SoulChunk.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Game\Map\MapGrid.h">
@@ -233,9 +230,6 @@
     <ClInclude Include="Game\Map\Tiles\TileType.h">
       <Filter>Game\Map\Tiles</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\Collectible.h">
-      <Filter>Game\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Event\Listener\IEventListener.h">
       <Filter>Engine\Event\Listener</Filter>
     </ClInclude>
@@ -283,6 +277,12 @@
     </ClInclude>
     <ClInclude Include="Game\Map\Tiles\DeadlyTile.h">
       <Filter>Game\Map\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Collectibles\Collectible.h">
+      <Filter>Game\Objects\Collectibles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Collectibles\SoulChunk.h">
+      <Filter>Game\Objects\Collectibles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -351,6 +351,9 @@
     </Filter>
     <Filter Include="Game\Level">
       <UniqueIdentifier>{b36fda0c-de06-4d23-be68-66a5b6980780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Objects\Collectibles">
+      <UniqueIdentifier>{8f329f8c-7685-48db-b416-9dea2ddef466}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

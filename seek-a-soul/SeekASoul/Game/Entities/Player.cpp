@@ -7,7 +7,7 @@
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Map/Tiles/DeadlyTile.h>
-#include <Game/Objects/SoulChunk.h>
+#include <Game/Objects/Collectibles/SoulChunk.h>
 #include <Engine/Event/EventTypes/LevelEvent.h>
 
 static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
@@ -47,8 +47,7 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_InGroundCollision(false)
     , m_InCeilingCollision(false)
 {
-    // Define the bounding box according to the sprite
-    m_BoundingBox = GetAnimatedSpriteBoundingBox();
+    SetBoundingBox(m_Position, static_cast<sf::Vector2f>(PLAYER_SPRITE_SIZE));
     
     // Configure an EventListener for action events
     EventListener<Player, ActionEvent> listener(this, &Player::OnEvent);
@@ -383,7 +382,6 @@ void Player::Move(float deltaTime)
     ClampPlayerPosition(0.f, static_cast<float>(levelBounds.x), 0.f, static_cast<float>(levelBounds.y));
 
     // Apply new position
-    SetCenter(m_Position);
     SetAnimatedSpritePosition(m_Position);
 
     UIViewModel::GetInstance()->SetPlayerPosition(m_Position);
@@ -488,14 +486,13 @@ void Player::UpdateVisualDamage(uint64_t now)
 
 void Player::UpdateBoundingBox()
 {
-    sf::Vector2i spriteSize = GetSpriteSize();
     if (m_IsSkullRolling)
     {
-        SetBoundingBox(m_Position, sf::Vector2f(static_cast<float>(spriteSize.x), spriteSize.y * 0.5f));
+        SetBoundingBox(m_Position, sf::Vector2f(static_cast<float>(PLAYER_SPRITE_SIZE.x), PLAYER_SPRITE_SIZE.y * 0.5f));
     }
     else
     {
-        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(spriteSize));
+        SetBoundingBox(m_Position, static_cast<sf::Vector2f>(PLAYER_SPRITE_SIZE));
     }
 }
 

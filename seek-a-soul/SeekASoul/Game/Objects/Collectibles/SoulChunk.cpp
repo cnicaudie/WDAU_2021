@@ -2,17 +2,13 @@
 #include "SoulChunk.h"
 #include <Game/Entities/Player.h>
 
+static const sf::Vector2i SOULCHUNK_SPRITE_SIZE{ 32, 32 };
+
 SoulChunk::SoulChunk(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f pos)
+	: Animated(SOULCHUNK_SPRITE_SIZE, textureManager->GetTextureFromName("SOULCHUNK_SHEET"))
 {
-	sf::Vector2f textureSize(32.f, 32.f);
-
-	m_Sprite.setTexture(textureManager->GetTextureFromName("SOUL_CHUNK"));
-	
-	m_Sprite.setOrigin(textureSize * 0.5f);
-	m_Sprite.setPosition(pos);
-	m_Sprite.setScale(0.25f, 0.25f);
-
-	SetBoundingBox(pos, textureSize * 0.25f);
+	SetAnimatedSpritePosition(pos);
+	SetBoundingBox(pos, static_cast<sf::Vector2f>(SOULCHUNK_SPRITE_SIZE));
 	SetTrigger(true);
 
 	LOG_INFO("SoulChunk created !");
@@ -20,11 +16,10 @@ SoulChunk::SoulChunk(const std::shared_ptr<TextureManager>& textureManager, cons
 
 void SoulChunk::Update(float deltaTime) 
 {
-	// Nothing here for now
-	return;
+	PlayAnimation(0);
 }
 
 void SoulChunk::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 { 
-	target.draw(m_Sprite);
+	target.draw(m_AnimationSprite);
 }
