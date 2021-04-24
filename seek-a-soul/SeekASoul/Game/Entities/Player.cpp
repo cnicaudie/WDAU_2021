@@ -16,6 +16,9 @@ static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
 
 static constexpr unsigned int MAX_HEALTH_POINTS = 200;
+static constexpr unsigned int MAX_AMMUNITIONS = 20;
+
+static constexpr float MAX_BULLET_RANGE = 400.f;
 
 static constexpr float MOVE_SPEED_MAX = 200.0f;
 static constexpr float MOVE_SPEED_INC = 10.0f;
@@ -57,7 +60,7 @@ void Player::Reset(const sf::Vector2f& position, bool restart)
     SetCenter(m_Position);
     SetAnimatedSpritePosition(m_Position);
     
-    m_AmmunitionsNumber = 10;
+    m_AmmunitionsNumber = MAX_AMMUNITIONS;
     
     if (restart) 
     {
@@ -560,7 +563,8 @@ void Player::UpdateSkullRollCooldown(uint64_t now)
 void Player::ManageBullets(float deltaTime)
 {
     // Update the bullets
-    for (Bullet& b : m_Bullets) {
+    for (Bullet& b : m_Bullets) 
+    {
         b.Update(deltaTime);
     }
 
@@ -568,9 +572,11 @@ void Player::ManageBullets(float deltaTime)
     int bulletIndex = 0;
     for (Bullet& b : m_Bullets) 
     {
-        if (b.GetDistance() > 400.f || b.HadImpact()) {
+        if (b.GetDistance() > MAX_BULLET_RANGE || b.HadImpact()) 
+        {
             m_Bullets.erase(m_Bullets.begin() + bulletIndex);
         }
+
         bulletIndex++;
     }
 }
