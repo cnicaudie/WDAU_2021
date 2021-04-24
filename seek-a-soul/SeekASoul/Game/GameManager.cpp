@@ -30,6 +30,7 @@ GameManager::GameManager()
 {   
     m_CameraManager->SetBoxToFollow(&(m_LevelManager->GetPlayerOnMap()));
 
+    // Configure EventListeners
     EventListener<GameManager, Event> listenerEvent(this, &GameManager::OnEvent);
     EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
     EventManager::GetInstance()->AddListener(listenerEvent);
@@ -48,12 +49,14 @@ GameManager::~GameManager()
 
 void GameManager::Update(float deltaTime)
 {
+    // Update FPS (every second)
     if (m_FPSUpdateClock.getElapsedTime().asSeconds() >= 1.f) 
     {
         m_FramesPerSecond = static_cast<int>(1.f / deltaTime);
         m_FPSUpdateClock.restart();
     }
 
+    // Update Game elements
     EventManager::GetInstance()->Update();
     m_LevelManager->Update(deltaTime);
     
