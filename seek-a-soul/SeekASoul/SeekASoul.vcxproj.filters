@@ -131,6 +131,9 @@
     <ClCompile Include="Engine\Event\EventTypes\ClickEvent.cpp">
       <Filter>Engine\Event\EventTypes</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Map\Tiles\DeadlyTile.cpp">
+      <Filter>Game\Map\Tiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Event\EventTypes\ClickEvent.h">
       <Filter>Engine\Event\EventTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Map\Tiles\DeadlyTile.h">
+      <Filter>Game\Map\Tiles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

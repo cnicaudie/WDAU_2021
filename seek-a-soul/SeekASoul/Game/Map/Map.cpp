@@ -3,6 +3,7 @@
 #include <Game/Map/Tiles/Tile.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
+#include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/SoulChunk.h>
 
 const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
@@ -158,38 +159,49 @@ void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLin
 
     switch (tileType)
     {
-    case TileType::CONCRETE:
-    {
-        tileLine.push_back(std::make_shared<CollideableTile>
-            (static_cast<float>(xCenter)
-                , static_cast<float>(yCenter)
-                , static_cast<float>(TILE_SIZE.x)
-                , static_cast<float>(TILE_SIZE.y)
-                ));
-        break;
-    }
+        case TileType::CONCRETE:
+        {
+            tileLine.push_back(std::make_shared<CollideableTile>
+                (static_cast<float>(xCenter)
+                    , static_cast<float>(yCenter)
+                    , static_cast<float>(TILE_SIZE.x)
+                    , static_cast<float>(TILE_SIZE.y)
+                    ));
+            break;
+        }
 
-    case TileType::LADDER:
-    {
-        tileLine.push_back(std::make_shared<ClimbableTile>
-            (static_cast<float>(xCenter)
-                , static_cast<float>(yCenter)
-                , static_cast<float>(TILE_SIZE.x)
-                , static_cast<float>(TILE_SIZE.y)
-                ));
-        break;
-    }
+        case TileType::LADDER:
+        {
+            tileLine.push_back(std::make_shared<ClimbableTile>
+                (static_cast<float>(xCenter)
+                    , static_cast<float>(yCenter)
+                    , static_cast<float>(TILE_SIZE.x)
+                    , static_cast<float>(TILE_SIZE.y)
+                    ));
+            break;
+        }
 
-    default:
-    {
-        tileLine.push_back(std::make_shared<Tile>
-            (static_cast<float>(xCenter)
-                , static_cast<float>(yCenter)
-                , static_cast<float>(TILE_SIZE.x)
-                , static_cast<float>(TILE_SIZE.y)
-                ));
-        break;
-    }
+        case TileType::LAVA:
+        {
+            tileLine.push_back(std::make_shared<DeadlyTile>
+                (static_cast<float>(xCenter)
+                    , static_cast<float>(yCenter)
+                    , static_cast<float>(TILE_SIZE.x)
+                    , static_cast<float>(TILE_SIZE.y)
+                    ));
+            break;
+        }
+
+        default:
+        {
+            tileLine.push_back(std::make_shared<Tile>
+                (static_cast<float>(xCenter)
+                    , static_cast<float>(yCenter)
+                    , static_cast<float>(TILE_SIZE.x)
+                    , static_cast<float>(TILE_SIZE.y)
+                    ));
+            break;
+        }
     }
 }
 

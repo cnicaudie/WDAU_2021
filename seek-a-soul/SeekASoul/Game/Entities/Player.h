@@ -40,6 +40,7 @@ private:
 	void SkullRoll();
 	void UpdateSkullRollCooldown(uint64_t now);
 	void ManageBullets(float deltaTime);
+	void Die();
 	
 	//====================//
 

@@ -6,6 +6,7 @@
 #include <Engine/Time/Time.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
+#include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/SoulChunk.h>
 #include <Engine/Event/EventTypes/LevelEvent.h>
 
@@ -175,7 +176,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
 {
     sf::FloatRect otherCollider = other->GetBoundingBox();
     int32_t collisionDirection = static_cast<int32_t>(direction);
-    
+
     if (typeid(*other) == typeid(class Enemy) 
         && (m_HealthState == HealthState::OK)
         && !m_IsSkullRolling)
@@ -201,7 +202,11 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
         Damage();
     }
 
-    if (typeid(*other) == typeid(class CollideableTile))
+    if (typeid(*other) == typeid(class DeadlyTile))
+    {
+        Die();
+    }
+    else if (typeid(*other) == typeid(class CollideableTile))
     {
         if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
         {
@@ -466,11 +471,7 @@ void Player::Damage()
 
     if (m_HealthPoints == 0)
     {
-        LOG_INFO("Player died !");
-        m_HealthState = HealthState::DEAD;
-
-        std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(LevelStatus::FAILURE);
-        EventManager::GetInstance()->Fire(eventType);
+        Die();
     }
 
     m_LastDamageTime = Time::GetCurrentTimeAsMilliseconds();
@@ -580,4 +581,14 @@ void Player::ManageBullets(float deltaTime)
 
         bulletIndex++;
     }
+}
+
+void Player::Die() 
+{
+    LOG_INFO("Player died !");
+    m_HealthState = HealthState::DEAD;
+    m_AnimationSprite.setColor(sf::Color::Red);
+
+    std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(LevelStatus::FAILURE);
+    EventManager::GetInstance()->Fire(eventType);
 }
