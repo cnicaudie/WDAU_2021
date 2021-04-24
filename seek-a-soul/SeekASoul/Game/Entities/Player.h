@@ -18,7 +18,7 @@ public:
 	void RenderDebugMenu(sf::RenderTarget& target);
 	
 	inline const int GetNumberOfCollectedSoulChunks() const { return m_SoulChunksCollected; };
-	inline const bool IsSkullRolling() const { return m_IsSkullRolling; };
+	inline const bool IsAttacking() const { return m_IsSkullRolling; };
 
 protected:
 	void Damage() override;

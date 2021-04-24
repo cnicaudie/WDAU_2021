@@ -2,6 +2,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <cmath>
+#include <random>
 
 namespace Maths 
 {
@@ -25,5 +26,13 @@ namespace Maths
 	{
 		uint64_t absoluteDifference = (first > second) ? (first - second) : (second - first);
 		return (absoluteDifference <= INT64_MAX) ? absoluteDifference : INT64_MAX;
+	}
+
+	static const float GetRandom(const float minValue, const float maxValue)
+	{
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::uniform_real_distribution<float> dist(minValue, maxValue);
+		return dist(mt);
 	}
 }

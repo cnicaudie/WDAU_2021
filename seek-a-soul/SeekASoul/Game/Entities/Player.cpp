@@ -462,7 +462,7 @@ void Player::Damage()
     
     m_AnimationSprite.setColor(sf::Color::Red);
     m_HealthState = HealthState::DAMAGED;
-    m_HealthPoints -= 10;
+    m_HealthPoints -= static_cast<unsigned int>(Maths::GetRandom(10.f, 15.f));
 
     if (m_HealthPoints == 0)
     {

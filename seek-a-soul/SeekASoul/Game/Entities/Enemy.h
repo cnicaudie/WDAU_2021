@@ -22,5 +22,4 @@ private:
 	//====================//
 
 	sf::Sprite m_Sprite;
-
 };
