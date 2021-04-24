@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include <Engine/Time/Time.h>
+#include <Engine/Maths/Maths.h>
 #include <Game/Objects/Bullet.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 
@@ -48,7 +49,8 @@ void Enemy::OnCollision(BoxCollideable* other, CollisionDirection direction)
 
 	Player* player = dynamic_cast<Player*>(other);
 
-	if (player != nullptr && player->IsSkullRolling() 
+	if (player != nullptr 
+		&& player->IsSkullRolling() 
 		&& (m_HealthState == HealthState::OK))
 	{
 		Damage();
@@ -141,13 +143,15 @@ void Enemy::Damage()
 		m_HealthState = HealthState::DEAD;
 		LOG_INFO("Enemy died !");
 	}
+
+	m_LastDamageTime = Time::GetCurrentTimeAsMilliseconds();
 }
 
 void Enemy::UpdateVisualDamage(uint64_t now)
 {
-	if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) {
+	if (Maths::GetDifference(now, m_LastDamageTime) >= DAMAGE_COOLDOWN)
+	{
 		m_HealthState = HealthState::OK;
 		m_Sprite.setColor(sf::Color::White);
-		m_LastDamageTime = now;
 	}
 }

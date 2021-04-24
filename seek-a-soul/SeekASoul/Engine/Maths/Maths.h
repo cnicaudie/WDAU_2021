@@ -20,4 +20,10 @@ namespace Maths
 	{
 		return std::sqrt(std::pow(vector1.x - vector2.x, 2.f) + std::pow(vector1.y - vector2.y, 2.f));
 	}
+
+	static const uint64_t GetDifference(const uint64_t first, const uint64_t second) 
+	{
+		uint64_t absoluteDifference = (first > second) ? (first - second) : (second - first);
+		return (absoluteDifference <= INT64_MAX) ? absoluteDifference : INT64_MAX;
+	}
 }

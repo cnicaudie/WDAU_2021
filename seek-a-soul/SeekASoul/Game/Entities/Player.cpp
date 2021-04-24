@@ -456,7 +456,7 @@ void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoun
 void Player::Damage()
 {
     LOG_INFO("Player was damaged !");
-
+    
     m_AnimationSprite.setColor(sf::Color::Red);
     m_HealthState = HealthState::DAMAGED;
     m_HealthPoints -= 10;
@@ -469,15 +469,16 @@ void Player::Damage()
         std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(LevelStatus::FAILURE);
         EventManager::GetInstance()->Fire(eventType);
     }
+
+    m_LastDamageTime = Time::GetCurrentTimeAsMilliseconds();
 }
 
 void Player::UpdateVisualDamage(uint64_t now)
 {
-    if ((now - m_LastDamageTime) >= DAMAGE_COOLDOWN) 
+    if (Maths::GetDifference(now, m_LastDamageTime) >= DAMAGE_COOLDOWN)
     {
         m_AnimationSprite.setColor(sf::Color::White);
         m_HealthState = HealthState::OK;
-        m_LastDamageTime = now;
     }
 }
 
