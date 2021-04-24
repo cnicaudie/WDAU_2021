@@ -11,7 +11,7 @@
 
 static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
 
-static constexpr uint64_t SHOOT_COOLDOWN = 500;
+static constexpr uint64_t SHOOT_COOLDOWN = 400;
 static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
 
@@ -516,7 +516,7 @@ void Player::Shoot()
 {
     uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 
-    if ((now - m_LastShootTime) >= SHOOT_COOLDOWN
+    if (Maths::GetDifference(now, m_LastShootTime) >= SHOOT_COOLDOWN
         && (m_InfiniteAmmos || m_AmmunitionsNumber > 0)
         && !m_IsSkullRolling) 
     {
@@ -536,13 +536,14 @@ void Player::SkullRoll()
 {
     uint64_t now = Time::GetCurrentTimeAsMilliseconds();
     
-    if (m_IsSkullRolling && (now - m_LastSkullRollTime) >= (SKULL_ROLL_COOLDOWN * 0.25f))
+    if (m_IsSkullRolling 
+        && Maths::GetDifference(now, m_LastSkullRollTime) >= (SKULL_ROLL_COOLDOWN * 0.1f)) // avoid immediate skull roll out
     {
         //LOG_DEBUG("SKULL ROLL OUT BY INPUT");
         m_IsSkullRolling = false;
         m_LastSkullRollTime = now;
     }
-    else if ((now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
+    else if (Maths::GetDifference(now, m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
     {
         //LOG_DEBUG("SKULL ROLL IN");
         m_IsSkullRolling = true;
@@ -552,7 +553,7 @@ void Player::SkullRoll()
 
 void Player::UpdateSkullRollCooldown(uint64_t now)
 {
-    if ((now - m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
+    if (Maths::GetDifference(now, m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
     {
         //LOG_DEBUG("SKULL ROLL OUT");
         m_IsSkullRolling = false;
