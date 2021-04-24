@@ -30,14 +30,15 @@ private:
 
 	enum class LevelState 
 	{
-		SELECTING	= 0,
-		LOADING		= 1,
-		PLAYING		= 2,
-		OVER		= 3
+		PENDING		= 0,
+		SELECTING	= 1,
+		LOADING		= 2,
+		PLAYING		= 3,
+		OVER		= 4
 	} m_CurrentState;
 
-	int m_CurrentLevel;
+	int m_LevelChoice;
+	unsigned int m_CurrentLevel;
 	unsigned int m_LevelWidth;
 	unsigned int m_LevelHeight;
-	bool m_SelectLevel;
 };
