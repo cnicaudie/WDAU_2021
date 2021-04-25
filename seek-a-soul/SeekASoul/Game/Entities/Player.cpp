@@ -183,58 +183,36 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
 
     if (platform != nullptr)
     {
-        if (m_IsOnMovingPlatform) // TODO : check if it's the same platform ?
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM)
+            && !(collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP)))
         {
-            if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
-            {
-                m_Velocity.y = GRAVITY;
-                m_Position.y = (otherCollider.top - (m_BoundingBox.height / 2));
-                m_JumpCount = 1;
-            }
-            else
-            {
-                if (m_BoundingBox.left + (m_BoundingBox.width / 2.f) < otherCollider.left
-                    || m_BoundingBox.left + (0.5f * m_BoundingBox.width) > otherCollider.left + otherCollider.width)
-                {
-                    LOG_DEBUG("LEFT PLATFORM");
-                    m_Platform = nullptr;
-                    m_IsOnMovingPlatform = false;
-                }
-            }
-        }
-        else
-        {
-            if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
-            {
-                m_Velocity.y = GRAVITY;
-                m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-            }
-            else if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
-            {
-                m_Velocity.x = 0.f;
-                m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
-            }
-            else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
-            {
-                m_Velocity.x = 0.f;
-                m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
-            }
-            else if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
-            {
-                LOG_DEBUG("ON PLATFORM");
-                m_Velocity.y = GRAVITY;
-                m_Position.y = (otherCollider.top - (m_BoundingBox.height / 2));
-                m_JumpCount = 1;
+            //LOG_DEBUG("ON PLATFORM");
+            m_Velocity.y = 0.f;
+            m_Position.y = (otherCollider.top - (m_BoundingBox.height / 2));
 
-                m_Platform = platform;
-                m_IsOnMovingPlatform = true;
+            if (!m_InputManager->HasAction(Action::MOVE_UP))
+            {
+                m_JumpCount = 1;
             }
+
+            m_Platform = platform;
+            m_IsOnMovingPlatform = true;
         }
+        else 
+        {
+            // Reset platform info
+            m_Platform = nullptr;
+            m_IsOnMovingPlatform = false;
+        }   
+    }
+    else
+    {
+        // Reset platform info
+        m_Platform = nullptr;
+        m_IsOnMovingPlatform = false;
     }
 
-    if (typeid(*other) == typeid(class Enemy) 
-        && (m_HealthState == HealthState::OK)
-        && !m_IsSkullRolling)
+    if (typeid(*other) == typeid(class Enemy) && (m_HealthState == HealthState::OK) && !m_IsSkullRolling)
     {
         if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
         {
@@ -312,6 +290,14 @@ void Player::RenderDebugMenu(sf::RenderTarget& target)
         ImGui::Text("X: %f", m_Velocity.x);
         ImGui::SameLine();
         ImGui::Text("Y: %f", m_Velocity.y);
+
+        ImGui::Text("Is on plaform ? : %d", m_IsOnMovingPlatform);
+        const sf::Vector2f platformOffset = m_Platform != nullptr ? m_Platform->GetPlatformOffset() : sf::Vector2f{ 0.f, 0.f };
+        ImGui::Text("Pof :");
+        ImGui::SameLine();
+        ImGui::Text("X: %f", platformOffset.x);
+        ImGui::SameLine();
+        ImGui::Text("Y: %f", platformOffset.y);
     }
 }
 
@@ -368,11 +354,6 @@ void Player::Move(float deltaTime)
         && !m_InputManager->HasAction(Action::MOVE_DOWN) 
         && m_IsClimbing)
     { 
-        m_Velocity.y = 0.f;
-    }
-    else if (!m_InputManager->HasAction(Action::MOVE_UP)
-        && m_IsOnMovingPlatform) 
-    {
         m_Velocity.y = 0.f;
     }
 
@@ -433,6 +414,8 @@ void Player::MoveUp()
         m_Velocity.y = -JUMP_FORCE;
     }
     
+    m_Platform = nullptr;
+    m_IsOnMovingPlatform = false;
     m_IsGrounded = false;
 }
 
