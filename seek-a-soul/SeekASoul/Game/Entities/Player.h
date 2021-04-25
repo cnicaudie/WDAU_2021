@@ -4,6 +4,8 @@
 #include <Engine/Animation/Animated.h>
 #include <Game/Objects/Bullet.h>
 
+class MovingPlatform;
+
 class Player : public Entity, public Animated
 {
 public:	
@@ -33,6 +35,7 @@ private:
 	void MoveRight(const float scale);
 	void MoveLeft(const float scale);
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
+	void CollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider);
 	
 	void UpdateBoundingBox();
 	void UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint);
@@ -71,4 +74,7 @@ private:
 	// Checks when gettin out of skull roll (change of bounding box)
 	bool m_InGroundCollision;
 	bool m_InCeilingCollision;
+
+	bool m_IsOnMovingPlatform;
+	const MovingPlatform* m_Platform;
 };

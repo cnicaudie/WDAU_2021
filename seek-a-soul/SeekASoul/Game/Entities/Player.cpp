@@ -9,6 +9,7 @@
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/Collectibles/SoulChunk.h>
 #include <Engine/Event/EventTypes/LevelEvent.h>
+#include <Game/Objects/MovingPlatform.h>
 
 static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
 
@@ -46,6 +47,8 @@ Player::Player(const std::shared_ptr<InputManager>& inputManager, const std::sha
     , m_InfiniteAmmos(false)
     , m_InGroundCollision(false)
     , m_InCeilingCollision(false)
+    , m_IsOnMovingPlatform(false)
+    , m_Platform(nullptr)
 {
     SetBoundingBox(m_Position, static_cast<sf::Vector2f>(PLAYER_SPRITE_SIZE));
     
@@ -176,6 +179,59 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
     sf::FloatRect otherCollider = other->GetBoundingBox();
     int32_t collisionDirection = static_cast<int32_t>(direction);
 
+    MovingPlatform* platform = dynamic_cast<MovingPlatform*>(other);
+
+    if (platform != nullptr)
+    {
+        if (m_IsOnMovingPlatform) // TODO : check if it's the same platform ?
+        {
+            if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
+            {
+                m_Velocity.y = GRAVITY;
+                m_Position.y = (otherCollider.top - (m_BoundingBox.height / 2));
+                m_JumpCount = 1;
+            }
+            else
+            {
+                if (m_BoundingBox.left + (m_BoundingBox.width / 2.f) < otherCollider.left
+                    || m_BoundingBox.left + (0.5f * m_BoundingBox.width) > otherCollider.left + otherCollider.width)
+                {
+                    LOG_DEBUG("LEFT PLATFORM");
+                    m_Platform = nullptr;
+                    m_IsOnMovingPlatform = false;
+                }
+            }
+        }
+        else
+        {
+            if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
+            {
+                m_Velocity.y = GRAVITY;
+                m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
+            }
+            else if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
+            {
+                m_Velocity.x = 0.f;
+                m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
+            }
+            else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
+            {
+                m_Velocity.x = 0.f;
+                m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
+            }
+            else if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
+            {
+                LOG_DEBUG("ON PLATFORM");
+                m_Velocity.y = GRAVITY;
+                m_Position.y = (otherCollider.top - (m_BoundingBox.height / 2));
+                m_JumpCount = 1;
+
+                m_Platform = platform;
+                m_IsOnMovingPlatform = true;
+            }
+        }
+    }
+
     if (typeid(*other) == typeid(class Enemy) 
         && (m_HealthState == HealthState::OK)
         && !m_IsSkullRolling)
@@ -193,10 +249,6 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
         {
             m_Velocity.y = -COLLISION_FORCE;
         }
-        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
-        {
-            m_Velocity.y = -COLLISION_FORCE;
-        }
 
         Damage();
     }
@@ -207,50 +259,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
     }
     else if (typeid(*other) == typeid(class CollideableTile))
     {
-        if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
-        {
-            if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_BOTTOM))
-            {
-                m_InGroundCollision = true;
-                //LOG_DEBUG("IN BOTTOM COLLISION");
-            }
-            
-            if (!m_InCeilingCollision) 
-            {
-                m_Velocity.y = 0.f;
-                m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
-                m_IsGrounded = true;
-                m_JumpCount = 1;
-                //LOG_DEBUG("BOTTOM COLLISION");
-            }
-        }
-        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
-        {
-            if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP))
-            {
-                m_InCeilingCollision = true;
-                //LOG_DEBUG("IN TOP COLLISION");
-            }
-
-            if (!m_InGroundCollision) 
-            {
-                m_Velocity.y = GRAVITY;
-                m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-                //LOG_DEBUG("TOP COLLISION");
-            }
-        }
-        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
-        {
-            m_Velocity.x = 0.f;
-            m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
-            //LOG_DEBUG("LEFT COLLISION");
-        }
-        else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
-        {
-            m_Velocity.x = 0.f;
-            m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
-            //LOG_DEBUG("RIGHT COLLISION");
-        }
+        CollisionCorrection(collisionDirection, otherCollider);
     }
 }
 
@@ -361,20 +370,36 @@ void Player::Move(float deltaTime)
     { 
         m_Velocity.y = 0.f;
     }
+    else if (!m_InputManager->HasAction(Action::MOVE_UP)
+        && m_IsOnMovingPlatform) 
+    {
+        m_Velocity.y = 0.f;
+    }
 
     // Check movement on X axis
-    tempVelocity.x = m_Velocity.x;
+    //tempVelocity.x = m_Velocity.x;
+    const sf::Vector2f platformOffset = m_Platform != nullptr ? m_Platform->GetPlatformOffset() : sf::Vector2f{ 0.f, 0.f };
+    tempVelocity.x = m_IsOnMovingPlatform ? platformOffset.x + m_Velocity.x : m_Velocity.x;
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
     }
+    else if (m_IsOnMovingPlatform)
+    {
+        m_Position += sf::Vector2f(platformOffset.x, 0.f) * deltaTime;
+    }
 
     // Check movement on Y axis
     tempVelocity.x = 0.0f;
-    tempVelocity.y = m_Velocity.y;
+    tempVelocity.y = m_IsOnMovingPlatform ? platformOffset.y + m_Velocity.y : m_Velocity.y;
+    //tempVelocity.y = m_Velocity.y;
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
+    }
+    else if (m_IsOnMovingPlatform)
+    {
+        m_Position += sf::Vector2f(0.f, platformOffset.y) * deltaTime;
     }
 
     // Clamp the player position between the bounds of the level
@@ -456,6 +481,54 @@ void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoun
         m_JumpCount = 1;
         m_Position.y = maxBoundY - (m_BoundingBox.height / 2);
         m_Velocity.y = 0.f;
+    }
+}
+
+void Player::CollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider)
+{
+    if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
+    {
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_BOTTOM))
+        {
+            m_InGroundCollision = true;
+            //LOG_DEBUG("IN BOTTOM COLLISION");
+        }
+
+        if (!m_InCeilingCollision)
+        {
+            m_Velocity.y = GRAVITY;
+            m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
+            m_IsGrounded = true;
+            m_JumpCount = 1;
+            //LOG_DEBUG("BOTTOM COLLISION");
+        }
+    }
+    else if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
+    {
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP))
+        {
+            m_InCeilingCollision = true;
+            //LOG_DEBUG("IN TOP COLLISION");
+        }
+
+        if (!m_InGroundCollision)
+        {
+            m_Velocity.y = GRAVITY;
+            m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
+            //LOG_DEBUG("TOP COLLISION");
+        }
+    }
+    else if (collisionDirection & static_cast<int32_t>(CollisionDirection::LEFT))
+    {
+        m_Velocity.x = 0.f;
+        m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
+        //LOG_DEBUG("LEFT COLLISION");
+    }
+    else if (collisionDirection & static_cast<int32_t>(CollisionDirection::RIGHT))
+    {
+        m_Velocity.x = 0.f;
+        m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
+        //LOG_DEBUG("RIGHT COLLISION");
     }
 }
 
