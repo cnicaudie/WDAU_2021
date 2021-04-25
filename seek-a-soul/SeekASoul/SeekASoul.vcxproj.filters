@@ -134,6 +134,9 @@
     <ClCompile Include="Game\Objects\Collectibles\SoulChunk.cpp">
       <Filter>Game\Objects\Collectibles</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Objects\MovingPlatform.cpp">
+      <Filter>Game\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -283,6 +286,9 @@
     </ClInclude>
     <ClInclude Include="Game\Objects\Collectibles\SoulChunk.h">
       <Filter>Game\Objects\Collectibles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\MovingPlatform.h">
+      <Filter>Game\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

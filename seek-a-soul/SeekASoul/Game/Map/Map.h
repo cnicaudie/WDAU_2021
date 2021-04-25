@@ -1,9 +1,10 @@
 #pragma once
 
 #include <Game/Map/MapGrid.h>
-#include <Game/Objects/Door.h>
 #include <Game/Entities/Enemy.h>
 #include <Game/Entities/Player.h>
+#include <Game/Objects/Door.h>
+#include <Game/Objects/MovingPlatform.h>
 
 class Tile;
 class SoulChunk;
@@ -56,4 +57,5 @@ private:
     std::vector<Enemy> m_Enemies;
     std::vector<std::unique_ptr<SoulChunk>> m_SoulChunks;
     Door m_Door;
+    MovingPlatform m_MovingPlatform;
 };

@@ -12,8 +12,9 @@ Map::Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_pt
     : m_TextureManager(textureManager)
     , m_TileSet(textureManager->GetTextureFromName("TILESET"))
     , m_MapGrid(TILE_SIZE)
-    , m_Door{{ 0, 0 }, { 0, 0 }}
     , m_Player{ inputManager, textureManager }
+    , m_Door{{ 0.f, 0.f }, { 0.f, 0.f }}
+    , m_MovingPlatform({ 0.f, 165.f }, { 200.f, 165.f }, { 100.f, 20.f })
 {
     LOG_INFO("Map created !");
 }
@@ -24,6 +25,11 @@ void Map::Update(float deltaTime)
 {
     // Update Door
     m_Door.Update(deltaTime);
+
+    // Update moving platform
+    m_MapGrid.RemoveCollideableOnTiles(m_MovingPlatform);
+    m_MovingPlatform.Update(deltaTime);
+    m_MapGrid.SetCollideableOnTiles(m_MovingPlatform);
 
     // Update Player
     if (!m_Player.IsDead())
@@ -49,6 +55,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 
     target.draw(m_Door);
+    target.draw(m_MovingPlatform);
 
     // === Draw entities
     for (const Enemy& enemy : m_Enemies)
