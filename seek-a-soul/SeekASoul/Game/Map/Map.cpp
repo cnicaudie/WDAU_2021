@@ -14,7 +14,6 @@ Map::Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_pt
     , m_MapGrid(TILE_SIZE)
     , m_Player{ inputManager, textureManager }
     , m_Door{{ 0.f, 0.f }, { 0.f, 0.f }}
-    , m_MovingPlatform({ 0.f, 165.f }, { 200.f, 165.f }, { 100.f, 20.f })
 {
     LOG_INFO("Map created !");
 }
@@ -26,19 +25,15 @@ void Map::Update(float deltaTime)
     // Update Door
     m_Door.Update(deltaTime);
 
-    // Update moving platform
-    m_MapGrid.RemoveCollideableOnTiles(m_MovingPlatform);
-    m_MovingPlatform.Update(deltaTime);
-    m_MapGrid.SetCollideableOnTiles(m_MovingPlatform);
-
     // Update Player
     if (!m_Player.IsDead())
     {
         m_Player.Update(deltaTime);
     }
 
-    UpdateSoulChunks(deltaTime);
     UpdateEnemies(deltaTime);
+    UpdateSoulChunks(deltaTime);
+    UpdateMovingPlatforms(deltaTime);
 }
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -54,8 +49,12 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(*s);
     }
 
+    for (const MovingPlatform& platform : m_MovingPlatforms)
+    {
+        target.draw(platform);
+    }
+
     target.draw(m_Door);
-    target.draw(m_MovingPlatform);
 
     // === Draw entities
     for (const Enemy& enemy : m_Enemies)
@@ -66,12 +65,30 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(m_Player);
 }
 
+void Map::UpdateEnemies(float deltaTime)
+{
+    for (auto it = m_Enemies.begin(); it < m_Enemies.end(); it++)
+    {   
+        if (!it->IsDead())
+        {
+            m_MapGrid.RemoveCollideableOnTiles(*it);
+            it->Update(deltaTime);
+            m_MapGrid.SetCollideableOnTiles(*it);
+            
+        }
+        else
+        {
+            m_MapGrid.RemoveCollideableOnTiles(*it);
+            it = m_Enemies.erase(it);
+            if (it == m_Enemies.end()) { break; }
+        }
+    }
+}
+
 void Map::UpdateSoulChunks(float deltaTime)
 {
     for (auto it = m_SoulChunks.begin(); it < m_SoulChunks.end(); it++)
     {
-        (*it)->Update(deltaTime);
-
         if ((*it)->WasCollected())
         {
             m_MapGrid.RemoveCollideableOnTiles(*(*it));
@@ -84,23 +101,20 @@ void Map::UpdateSoulChunks(float deltaTime)
 
             if (it == m_SoulChunks.end()) { break; }
         }
+        else 
+        {
+            (*it)->Update(deltaTime);
+        }
     }
 }
 
-void Map::UpdateEnemies(float deltaTime)
+void Map::UpdateMovingPlatforms(float deltaTime) 
 {
-    for (Enemy& enemy : m_Enemies)
+    for (MovingPlatform& platform : m_MovingPlatforms)
     {
-        if (!enemy.IsDead())
-        {
-            m_MapGrid.RemoveCollideableOnTiles(enemy);
-            enemy.Update(deltaTime);
-            m_MapGrid.SetCollideableOnTiles(enemy);
-        }
-        else
-        {
-            m_MapGrid.RemoveCollideableOnTiles(enemy);
-        }
+        m_MapGrid.RemoveCollideableOnTiles(platform);
+        platform.Update(deltaTime);
+        m_MapGrid.SetCollideableOnTiles(platform);
     }
 }
 
@@ -217,6 +231,7 @@ void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::st
     InitPlayer(configKeymap, restart);
     InitEnemies(configKeymap);
     InitSoulChunks(configKeymap);
+    InitMovingPlatforms(configKeymap);
     InitDoor(configKeymap);
 }
 
@@ -238,6 +253,7 @@ void Map::InitEnemies(const std::map<std::string, std::vector<std::string>>& con
     m_Enemies.clear();
 
     const int nbEnemies = std::stoi(configKeymap.at("NUMBER_ENEMIES").at(0));
+    m_Enemies.reserve(nbEnemies);
 
     for (int i = 0; i < nbEnemies; i++)
     {
@@ -259,6 +275,7 @@ void Map::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& 
     m_SoulChunks.clear();
 
     const int nbSoulChunks = std::stoi(configKeymap.at("NUMBER_SOULCHUNKS").at(0));
+    m_SoulChunks.reserve(nbSoulChunks);
 
     for (int i = 0; i < nbSoulChunks; i++)
     {
@@ -272,6 +289,40 @@ void Map::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& 
 
         const std::unique_ptr<SoulChunk>& soulChunk = m_SoulChunks.emplace_back(std::make_unique<SoulChunk>(m_TextureManager, soulChunkPosition));
         m_MapGrid.SetCollideableOnTiles(*soulChunk);
+    }
+}
+
+void Map::InitMovingPlatforms(const std::map<std::string, std::vector<std::string>>& configKeymap)
+{
+    m_MovingPlatforms.clear();
+
+    const int nbMovingPlatforms = std::stoi(configKeymap.at("NUMBER_MOVING_PLATFORMS").at(0));
+    m_MovingPlatforms.reserve(nbMovingPlatforms);
+
+    for (int i = 0; i < nbMovingPlatforms; i++)
+    {
+        const std::vector<std::string> platformInfo = configKeymap.at("MOVING_PLATFORM_" + std::to_string(i));
+        
+        sf::Vector2f platformStartPosition
+        {
+            std::stof(platformInfo.at(0)) * TILE_SIZE.x,
+            std::stof(platformInfo.at(1)) * TILE_SIZE.y
+        };
+
+        sf::Vector2f platformEndPosition
+        {
+            std::stof(platformInfo.at(2)) * TILE_SIZE.x,
+            std::stof(platformInfo.at(3)) * TILE_SIZE.y
+        };
+
+        sf::Vector2f platformSize
+        {
+            std::stof(platformInfo.at(4)),
+            std::stof(platformInfo.at(5))
+        };
+        
+        MovingPlatform& platform = m_MovingPlatforms.emplace_back(platformStartPosition, platformEndPosition, platformSize);
+        m_MapGrid.SetCollideableOnTiles(platform);
     }
 }
 

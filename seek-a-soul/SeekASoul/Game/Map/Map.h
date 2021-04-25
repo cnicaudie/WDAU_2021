@@ -34,6 +34,7 @@ public:
 private:
     void UpdateEnemies(float deltaTime);
     void UpdateSoulChunks(float deltaTime);
+    void UpdateMovingPlatforms(float deltaTime);
     
     void CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv);
     void CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize);
@@ -41,6 +42,7 @@ private:
     void InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart);
     void InitEnemies(const std::map<std::string, std::vector<std::string>>& configKeymap);
     void InitSoulChunks(const std::map<std::string, std::vector<std::string>>& configKeymap);
+    void InitMovingPlatforms(const std::map<std::string, std::vector<std::string>>& configKeymap);
     void InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap);
     
     //====================//
@@ -56,6 +58,7 @@ private:
     Player m_Player;
     std::vector<Enemy> m_Enemies;
     std::vector<std::unique_ptr<SoulChunk>> m_SoulChunks;
+
+    std::vector<MovingPlatform> m_MovingPlatforms;
     Door m_Door;
-    MovingPlatform m_MovingPlatform;
 };
