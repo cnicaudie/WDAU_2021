@@ -25,6 +25,11 @@ Enemy::Enemy(const std::shared_ptr<TextureManager>& textureManager, const sf::Ve
 	m_Velocity.x = MOVE_SPEED;
 }
 
+Enemy::~Enemy() 
+{
+	LOG_INFO("Destroyed enemy!");
+}
+
 void Enemy::Update(float deltaTime) 
 {
 	uint64_t now = Time::GetCurrentTimeAsMilliseconds();
@@ -131,8 +136,8 @@ void Enemy::Damage()
 	m_Sprite.setColor(sf::Color::Red);
 	m_HealthState = HealthState::DAMAGED;
 	m_HealthPoints -= static_cast<unsigned int>(Maths::GetRandom(5.f, 15.f));
-
-	if (m_HealthPoints == 0)
+	
+	if (m_HealthPoints <= 0)
 	{
 		m_HealthState = HealthState::DEAD;
 		LOG_INFO("Enemy died !");

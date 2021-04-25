@@ -540,7 +540,7 @@ void Player::Damage()
     m_HealthState = HealthState::DAMAGED;
     m_HealthPoints -= static_cast<unsigned int>(Maths::GetRandom(10.f, 15.f));
 
-    if (m_HealthPoints == 0)
+    if (m_HealthPoints <= 0)
     {
         Die();
     }
