@@ -571,7 +571,7 @@ void Player::ManageBullets(float deltaTime)
     int bulletIndex = 0;
     for (Bullet& b : m_Bullets) 
     {
-        if (b.GetDistance() > MAX_BULLET_RANGE || b.HadImpact()) 
+        if (b.GetDistanceTraveled() > MAX_BULLET_RANGE || b.HadImpact()) 
         {
             m_Bullets.erase(m_Bullets.begin() + bulletIndex);
         }

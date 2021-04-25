@@ -10,16 +10,16 @@ Door::Door(const sf::Vector2f& centerPosition, const sf::Vector2f& size)
 	, m_IsDoorOpen(false)
 	, m_IsPlayingEndGame(false)
 {
+	m_DoorRect.setSize(size);
+	m_DoorRect.setOrigin(size * 0.5f);
+	m_DoorRect.setPosition(centerPosition);
+
+	m_DoorRect.setFillColor(sf::Color::Transparent);
+	m_DoorRect.setOutlineThickness(5);
+	m_DoorRect.setOutlineColor(sf::Color{ static_cast<uint8_t>(m_rColor * 255.0f), static_cast<uint8_t>(m_gColor * 255.0f), static_cast<uint8_t>(m_bColor * 255.0f) });
+
 	SetTrigger(true);
 	SetBoundingBox(centerPosition, size);
-
-	m_Rectangle.setSize(size);
-	m_Rectangle.setOrigin(size * 0.5f);
-	m_Rectangle.setPosition(centerPosition);
-
-	m_Rectangle.setFillColor(sf::Color::Transparent);
-	m_Rectangle.setOutlineThickness(5);
-	m_Rectangle.setOutlineColor(sf::Color{ static_cast<uint8_t>(m_rColor * 255.0f), static_cast<uint8_t>(m_gColor * 255.0f), static_cast<uint8_t>(m_bColor * 255.0f) });
 }
 
 Door::~Door()
@@ -35,13 +35,13 @@ void Door::Update(float deltaTime)
 		m_rColor = fmodf(m_rColor + deltaTime, 1.f);
 		m_gColor = fmodf(m_gColor + deltaTime, 1.f);
 		m_bColor = fmodf(m_bColor + deltaTime, 1.f);
-		m_Rectangle.setOutlineColor(sf::Color{ static_cast<uint8_t>(m_rColor * 255.0f), static_cast<uint8_t>(m_gColor * 255.0f), static_cast<uint8_t>(m_bColor * 255.0f) });
+		m_DoorRect.setOutlineColor(sf::Color{ static_cast<uint8_t>(m_rColor * 255.0f), static_cast<uint8_t>(m_gColor * 255.0f), static_cast<uint8_t>(m_bColor * 255.0f) });
 	}
 }
 
 void Door::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(m_Rectangle);
+	target.draw(m_DoorRect);
 }
 
 void Door::OnTrigger(BoxCollideable* other)
