@@ -59,5 +59,5 @@ void MovingPlatform::Update(float deltaTime)
 void MovingPlatform::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_PlatformRect);
-	target.draw(m_MoveBox);
+	//target.draw(m_MoveBox);
 }
