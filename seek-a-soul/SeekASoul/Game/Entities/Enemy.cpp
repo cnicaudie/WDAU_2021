@@ -32,12 +32,12 @@ Enemy::~Enemy()
 
 void Enemy::Update(float deltaTime) 
 {
-	uint64_t now = Time::GetCurrentTimeAsMilliseconds();
-	
 	if (m_HealthState == HealthState::DEAD)
 	{
 		return;
 	}
+	
+	uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 	
 	if (m_HealthState == HealthState::DAMAGED)
 	{

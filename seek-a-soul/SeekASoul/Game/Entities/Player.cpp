@@ -87,6 +87,11 @@ void Player::Reset(const sf::Vector2f& position, bool restart)
 
 void Player::Update(float deltaTime)
 {
+    if (m_HealthState == HealthState::DEAD)
+    {
+        return;
+    }
+
     uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 
     if (m_IsSkullRolling) 

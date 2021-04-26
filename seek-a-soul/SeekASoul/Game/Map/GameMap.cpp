@@ -27,11 +27,8 @@ void GameMap::Update(float deltaTime)
     m_Door.Update(deltaTime);
 
     // Update Player
-    if (!m_Player.IsDead())
-    {
-        m_Player.Update(deltaTime);
-    }
-
+    m_Player.Update(deltaTime);
+    
     UpdateEnemies(deltaTime);
     UpdateSoulChunks(deltaTime);
     UpdateMovingPlatforms(deltaTime);
@@ -70,12 +67,9 @@ void GameMap::UpdateEnemies(float deltaTime)
 {
     for (auto it = m_Enemies.begin(); it < m_Enemies.end(); it++)
     {   
-        if (!it->IsDead())
-        {
-            it->Update(deltaTime);
-            
-        }
-        else
+        it->Update(deltaTime);
+        
+        if (it->IsDead())
         {
             it = m_Enemies.erase(it);
             if (it == m_Enemies.end()) { break; }
