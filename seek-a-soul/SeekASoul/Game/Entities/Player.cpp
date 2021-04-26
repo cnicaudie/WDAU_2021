@@ -180,33 +180,24 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
 
     MovingPlatform* platform = dynamic_cast<MovingPlatform*>(other);
 
-    if (platform != nullptr)
+    if (platform != nullptr && collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM)
+        && !(collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP)))
     {
-        if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM)
-            && !(collisionDirection & static_cast<int32_t>(CollisionDirection::IN_TOP)))
+        //LOG_DEBUG("ON PLATFORM");
+        if (!m_InputManager->HasAction(Action::MOVE_UP)) 
         {
-            //LOG_DEBUG("ON PLATFORM");
             m_Velocity.y = 0.f;
-            m_Position.y = (otherCollider.top - (m_BoundingBox.height / 2));
-
-            if (!m_InputManager->HasAction(Action::MOVE_UP))
-            {
-                m_JumpCount = 1;
-            }
-
-            m_Platform = platform;
-            m_IsOnMovingPlatform = true;
         }
-        else 
-        {
-            // Reset platform info
-            m_Platform = nullptr;
-            m_IsOnMovingPlatform = false;
-        }   
+        
+        m_Position.y = (otherCollider.top - (m_BoundingBox.height / 2));
+        m_JumpCount = 1;
+        m_Platform = platform;
+        m_IsOnMovingPlatform = true;
     }
+    // Reset platform info
     else
     {
-        // Reset platform info
+        //LOG_DEBUG("NOT ON PLATFORM");
         m_Platform = nullptr;
         m_IsOnMovingPlatform = false;
     }
