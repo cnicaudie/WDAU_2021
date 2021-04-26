@@ -104,7 +104,7 @@ void Enemy::Move(float deltaTime)
 	
 	// Check movement on X axis
 	tempVelocity.x = m_Velocity.x;
-	if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
+	if (!GameManager::GetInstance()->CheckCollisions(this, tempVelocity * deltaTime).first)
 	{
 		m_Position += tempVelocity * deltaTime;
 	}
@@ -112,7 +112,7 @@ void Enemy::Move(float deltaTime)
 	// Check movement on Y axis
 	tempVelocity.x = 0.0f;
 	tempVelocity.y = m_Velocity.y;
-	if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
+	if (!GameManager::GetInstance()->CheckCollisions(this, tempVelocity * deltaTime).first)
 	{
 		if (m_IsGrounded) 
 		{
@@ -121,6 +121,7 @@ void Enemy::Move(float deltaTime)
 			tempVelocity = m_Velocity;
 			m_IsGrounded = false;
 		}
+
 		m_Position += tempVelocity * deltaTime;
 	}
 

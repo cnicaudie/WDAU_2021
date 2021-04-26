@@ -28,7 +28,7 @@ const sf::Vector2i MapGrid::GetTileCoordinates(const sf::Vector2f& position) con
 	return result;
 }
 
-const std::vector<std::shared_ptr<Tile>> MapGrid::GetBoundingTiles(const sf::FloatRect& boundingBox) const
+const std::vector<std::shared_ptr<Tile>> MapGrid::GetNearbyTiles(const sf::FloatRect& boundingBox) const
 {
 	std::vector<std::shared_ptr<Tile>> result;
 
@@ -46,18 +46,57 @@ const std::vector<std::shared_ptr<Tile>> MapGrid::GetBoundingTiles(const sf::Flo
 	return result;
 }
 
-void MapGrid::SetCollideableOnTiles(BoxCollideable& collider)
+const std::vector<BoxCollideable*> MapGrid::GetNearbyObjects(const sf::FloatRect& boundingBox) const
 {
-	for (std::shared_ptr<Tile> tile : GetBoundingTiles(collider.GetBoundingBox())) 
-	{
-		tile->AddCollideable(collider);
-	}
-}
+	std::vector<BoxCollideable*> result;
 
-void MapGrid::RemoveCollideableOnTiles(BoxCollideable& collider)
-{
-	for (std::shared_ptr<Tile> tile : GetBoundingTiles(collider.GetBoundingBox()))
+	//
+	const float xMin = boundingBox.left;
+	const float xMax = boundingBox.left + boundingBox.width;
+	const float yMin = boundingBox.top;
+	const float yMax = boundingBox.top + boundingBox.height;
+
+	// Find closest box to xMin and yMin in both set
+	auto const& posX = std::find_if(m_ObjectsOnMapX.begin(), m_ObjectsOnMapX.end(), [&](BoxCollideable* boxPtr)
+		{
+			// If left side of the object is outside, we still take it into account
+			return boxPtr->GetBoundingBox().left + boxPtr->GetBoundingBox().width > xMin;
+		});
+
+	auto const& posY = std::find_if(m_ObjectsOnMapY.begin(), m_ObjectsOnMapY.end(), [&](BoxCollideable* boxPtr)
+		{
+			// If top side of the object is outside, we still take it into account
+			return boxPtr->GetBoundingBox().top + boxPtr->GetBoundingBox().height > yMin;
+		});
+
+	// Add objects between the bounds of the bounding box to the nearby objects vector
+	if (posX != m_ObjectsOnMapX.end()) 
 	{
-		tile->RemoveCollideable(collider);
+		for (auto it = posX; it != m_ObjectsOnMapX.end(); it++)
+		{
+			// If left side of the object is still inside, we still take it into account
+			if ((*it)->GetBoundingBox().left < xMax)
+			{
+				result.push_back(*it);
+			}
+		}
 	}
+
+	if (posY != m_ObjectsOnMapY.end())
+	{
+		for (auto it = posY; it != m_ObjectsOnMapY.end(); it++)
+		{
+			// If top side of the object is still inside, we still take it into account
+			if ((*it)->GetBoundingBox().top < yMax)
+			{
+				// If not already in the result vector, we push the object in
+				if (std::find(result.begin(), result.end(), *it) == result.end()) 
+				{ 
+					result.push_back(*it);
+				}
+			}
+		}
+	}
+
+	return result;
 }

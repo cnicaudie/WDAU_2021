@@ -18,7 +18,7 @@ public:
     void RenderGUI(sf::RenderTarget& target) override;
     void RenderDebugMenu(sf::RenderTarget& target) override;
 
-    const bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset) const;
+    const std::pair<bool, bool> CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset) const;
     const sf::Vector2u GetLevelBounds() const;
     
     inline const bool IsGameOver() const { return m_CurrentState == GameState::OVER; }

@@ -10,16 +10,43 @@ public:
 	MapGrid(const sf::Vector2u& tileSize);
 	~MapGrid() = default;
 
-	inline const std::shared_ptr<Tile>& GetTileAt(int x, int y) const { return m_TileGrid[x][y]; };
+	const std::vector<std::shared_ptr<Tile>> GetNearbyTiles(const sf::FloatRect& boundingBox) const;
+	const std::vector<BoxCollideable*> GetNearbyObjects(const sf::FloatRect& boundingBox) const;
 
-	const sf::Vector2i GetTileCoordinates(const sf::Vector2f& position) const;
-
-	const std::vector<std::shared_ptr<Tile>> GetBoundingTiles(const sf::FloatRect& boundingBox) const;
-
-	void SetCollideableOnTiles(BoxCollideable& collider);
-	void RemoveCollideableOnTiles(BoxCollideable& collider);
+	inline void AddObjectOnMap(BoxCollideable* object) 
+	{
+		m_ObjectsOnMapX.insert(object);
+		m_ObjectsOnMapY.insert(object);
+	}
 
 private:
-	std::vector<std::vector<std::shared_ptr<Tile>>> m_TileGrid;
+	const sf::Vector2i GetTileCoordinates(const sf::Vector2f& position) const;
+	
+	inline const std::shared_ptr<Tile> GetTileAt(int x, int y) const { return m_TileGrid[x][y]; };
+	
+	//====================//
+
 	sf::Vector2u m_TileSize;
+	std::vector<std::vector<std::shared_ptr<Tile>>> m_TileGrid;
+	
+	struct BoxComparatorX 
+	{
+		bool operator()(const BoxCollideable* a, const BoxCollideable* b) const 
+		{
+			return a->GetCenter().x < b->GetCenter().x;
+		}
+	};
+
+	struct BoxComparatorY
+	{
+		bool operator()(const BoxCollideable* a, const BoxCollideable* b) const
+		{
+			return a->GetCenter().y < b->GetCenter().y;
+		}
+	};
+
+	// Sorted objects by their position on X and Y axis
+	std::set<BoxCollideable*, BoxComparatorX> m_ObjectsOnMapX;
+	std::set<BoxCollideable*, BoxComparatorY> m_ObjectsOnMapY;
+
 };

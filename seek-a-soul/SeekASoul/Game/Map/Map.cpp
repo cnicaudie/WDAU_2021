@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "Map.h"
 #include <Game/Map/Tiles/Tile.h>
+#include <Game/Map/Tiles/TileType.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Map/Tiles/DeadlyTile.h>
@@ -71,14 +72,11 @@ void Map::UpdateEnemies(float deltaTime)
     {   
         if (!it->IsDead())
         {
-            m_MapGrid.RemoveCollideableOnTiles(*it);
             it->Update(deltaTime);
-            m_MapGrid.SetCollideableOnTiles(*it);
             
         }
         else
         {
-            m_MapGrid.RemoveCollideableOnTiles(*it);
             it = m_Enemies.erase(it);
             if (it == m_Enemies.end()) { break; }
         }
@@ -91,7 +89,6 @@ void Map::UpdateSoulChunks(float deltaTime)
     {
         if ((*it)->WasCollected())
         {
-            m_MapGrid.RemoveCollideableOnTiles(*(*it));
             it = m_SoulChunks.erase(it);
 
             if (m_SoulChunks.size() == 0)
@@ -112,9 +109,7 @@ void Map::UpdateMovingPlatforms(float deltaTime)
 {
     for (MovingPlatform& platform : m_MovingPlatforms)
     {
-        m_MapGrid.RemoveCollideableOnTiles(platform);
         platform.Update(deltaTime);
-        m_MapGrid.SetCollideableOnTiles(platform);
     }
 }
 
@@ -266,7 +261,7 @@ void Map::InitEnemies(const std::map<std::string, std::vector<std::string>>& con
         };
 
         Enemy& enemy = m_Enemies.emplace_back(m_TextureManager, enemyPosition);
-        m_MapGrid.SetCollideableOnTiles(enemy);
+        m_MapGrid.AddObjectOnMap(&enemy);
     }
 }
 
@@ -288,7 +283,7 @@ void Map::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& 
         };
 
         const std::unique_ptr<SoulChunk>& soulChunk = m_SoulChunks.emplace_back(std::make_unique<SoulChunk>(m_TextureManager, soulChunkPosition));
-        m_MapGrid.SetCollideableOnTiles(*soulChunk);
+        m_MapGrid.AddObjectOnMap(soulChunk.get());
     }
 }
 
@@ -322,7 +317,7 @@ void Map::InitMovingPlatforms(const std::map<std::string, std::vector<std::strin
         };
         
         MovingPlatform& platform = m_MovingPlatforms.emplace_back(platformStartPosition, platformEndPosition, platformSize);
-        m_MapGrid.SetCollideableOnTiles(platform);
+        m_MapGrid.AddObjectOnMap(&platform);
     }
 }
 
@@ -343,5 +338,5 @@ void Map::InitDoor(const std::map<std::string, std::vector<std::string>>& config
     };
 
     m_Door = Door(doorPosition, doorSize);
-    m_MapGrid.SetCollideableOnTiles(m_Door);
+    m_MapGrid.AddObjectOnMap(&m_Door);
 }
