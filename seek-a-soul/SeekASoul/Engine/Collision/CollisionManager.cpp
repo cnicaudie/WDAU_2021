@@ -1,12 +1,13 @@
 #include <stdafx.h>
 #include "CollisionManager.h"
-#include <Game/Map/Tiles/CollideableTile.h>
+#include <Game/Map/Tiles/Tile.h>
 
 CollisionManager::CollisionManager() {}
 
-const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const MapGrid& mapGrid) const
+const std::pair<bool, bool> CollisionManager::CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const GameGrid& mapGrid) const
 {
     bool hasCollidedWithTile = false;
+    bool hasCollidedWithObject = false;
     
     // Get the bounding boxes for the previous and the next position
     sf::FloatRect startCollider = collideable->GetBoundingBox();
@@ -30,35 +31,22 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
     // Get its bounding box
     sf::FloatRect quadBoundingBox = quad.getGlobalBounds();
     
-    std::vector<std::shared_ptr<Tile>> tiles = mapGrid.GetBoundingTiles(quadBoundingBox);
+    // Check collision with tiles
+    std::vector<std::shared_ptr<Tile>> nearbyTiles = mapGrid.GetNearbyTiles(quadBoundingBox);
     
-    for (std::shared_ptr<Tile>& tile : tiles)
+    for (const std::shared_ptr<Tile>& tile : nearbyTiles)
     {
-        if (tile->IsTrigger()) 
+        // Check if collideable triggered the tile 
+        if (tile->IsTrigger())
         {
-            if (tile->Contains(collideable->GetCenter()))
+            if (tile->Contains(collideable->GetCenter())) 
             {
                 collideable->OnTrigger(static_cast<BoxCollideable*>(tile.get()));
                 // Uncomment next line when implementing portal tiles or whatever
                 //tile->OnTrigger(collideable);
             }
-
-            // Check collision with collideables on tile
-            for (BoxCollideable* otherCollideable : tile->GetCollideablesOnTile()) 
-            {
-                if (otherCollideable->IsTrigger() && collideable->Contains(otherCollideable->GetCenter()))
-                {
-                    collideable->OnTrigger(otherCollideable);
-                    otherCollideable->OnTrigger(collideable);
-                } 
-                else if (collideable->IsColliding(*otherCollideable))
-                {
-                    collideable->OnCollision(otherCollideable, GetCollisionDirection(collideable, otherCollideable));
-                    otherCollideable->OnCollision(collideable, GetCollisionDirection(otherCollideable, collideable));
-                }
-            }
         }
-        // Check collision with tile itself
+        // Check if collideable collided with the tile
         else if (quadBoundingBox.intersects(tile->GetBoundingBox())) 
         {
             hasCollidedWithTile = true;
@@ -68,7 +56,25 @@ const bool CollisionManager::CheckCollision(BoxCollideable* collideable, const s
         }
     }
 
-    return hasCollidedWithTile;
+    // Check collision with other objects on the map (static/dynamic)
+    std::vector<BoxCollideable*> nearbyObjects = mapGrid.GetNearbyObjects(quadBoundingBox);
+    
+    for (BoxCollideable* object : nearbyObjects)
+    {
+        if (object->IsTrigger() && collideable->Contains(object->GetCenter()))
+        {
+            collideable->OnTrigger(object);
+            object->OnTrigger(collideable);
+        }
+        else if (collideable->IsColliding(*object))
+        {
+            hasCollidedWithObject = true;
+            collideable->OnCollision(object, GetCollisionDirection(collideable, object));
+            object->OnCollision(collideable, GetCollisionDirection(object, collideable));
+        }
+    }
+    
+    return std::make_pair(hasCollidedWithTile, hasCollidedWithObject);
 }
 
 const CollisionDirection CollisionManager::GetCollisionDirection(BoxCollideable* boxCollideable, BoxCollideable* boxCollider) const

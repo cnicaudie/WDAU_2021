@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Game/Map/MapGrid.h>
+#include <Game/Map/GameGrid.h>
 #include <Game/Entities/Enemy.h>
 #include <Game/Entities/Player.h>
 #include <Game/Objects/Door.h>
@@ -9,13 +9,13 @@
 class Tile;
 class SoulChunk;
 
-class Map : public sf::Drawable, public sf::Transformable
+class GameMap : public sf::Drawable, public sf::Transformable
 {
 public:
     static const sf::Vector2u TILE_SIZE;
 
-    Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
-    ~Map();
+    GameMap(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
+    ~GameMap();
 
     void Update(float deltaTime);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -28,7 +28,7 @@ public:
     bool LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize);
     void InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart);
 
-    inline const MapGrid& GetMapGrid() const { return m_MapGrid; };
+    inline const GameGrid& GetGameGrid() const { return m_MapGrid; };
     inline const Player& GetPlayer() const { return m_Player; };
 
 private:
@@ -49,7 +49,7 @@ private:
     
     std::shared_ptr<TextureManager> m_TextureManager;
 
-    MapGrid m_MapGrid;
+    GameGrid m_MapGrid;
     sf::Texture m_TileSet;
     sf::VertexArray m_BackgroundTileMap;
 

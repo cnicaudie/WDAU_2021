@@ -21,7 +21,7 @@ void Bullet::Update(float deltaTime)
 {
 	// Compute offset to next position and check for any collision
 	sf::Vector2f positionOffset(m_Direction * m_Velocity * deltaTime);
-	GameManager::GetInstance()->CheckCollision(this, positionOffset);
+	GameManager::GetInstance()->CheckCollisions(this, positionOffset);
 	
 	m_Sprite.move(positionOffset);
 
@@ -42,7 +42,7 @@ void Bullet::OnCollision(BoxCollideable* other, CollisionDirection direction)
 {
 	if (!m_HadImpact) 
 	{
-		std::cout << "Bullet collided with : " << typeid(*other).name() << std::endl;
+		LOG_INFO("Bullet collided with : " << typeid(*other).name());
 		m_HadImpact = true;
 	}
 }

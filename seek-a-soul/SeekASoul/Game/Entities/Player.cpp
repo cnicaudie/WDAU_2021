@@ -87,6 +87,11 @@ void Player::Reset(const sf::Vector2f& position, bool restart)
 
 void Player::Update(float deltaTime)
 {
+    if (m_HealthState == HealthState::DEAD)
+    {
+        return;
+    }
+
     uint64_t now = Time::GetCurrentTimeAsMilliseconds();
 
     if (m_IsSkullRolling) 
@@ -351,7 +356,7 @@ void Player::Move(float deltaTime)
 
     // Check movement on X axis
     tempVelocity.x = m_IsOnMovingPlatform ? platformOffset.x + m_Velocity.x : m_Velocity.x;
-    if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
+    if (!GameManager::GetInstance()->CheckCollisions(this, tempVelocity * deltaTime).first)
     {
         m_Position += tempVelocity * deltaTime;
     }
@@ -363,7 +368,7 @@ void Player::Move(float deltaTime)
     // Check movement on Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_IsOnMovingPlatform ? platformOffset.y + m_Velocity.y : m_Velocity.y;
-    if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
+    if (!GameManager::GetInstance()->CheckCollisions(this, tempVelocity * deltaTime).first)
     {
         m_Position += tempVelocity * deltaTime;
     }
