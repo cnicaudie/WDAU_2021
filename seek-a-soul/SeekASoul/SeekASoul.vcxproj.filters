@@ -47,7 +47,7 @@
     <ClCompile Include="Game\Map\MapGrid.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Map\Map.cpp">
+    <ClCompile Include="Game\Map\GameMap.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
     <ClCompile Include="Game\Entities\Enemy.cpp">
@@ -179,7 +179,7 @@
     <ClInclude Include="Game\Map\MapGrid.h">
       <Filter>Game\Map</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Map\Map.h">
+    <ClInclude Include="Game\Map\GameMap.h">
       <Filter>Game\Map</Filter>
     </ClInclude>
     <ClInclude Include="Game\Entities\Enemy.h">

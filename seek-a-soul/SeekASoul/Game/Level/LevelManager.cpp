@@ -7,7 +7,7 @@ static constexpr unsigned int MAX_LEVEL = 1;
 
 LevelManager::LevelManager(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
 	: m_TextureManager{ textureManager }
-	, m_Map { inputManager, textureManager }
+	, m_GameMap { inputManager, textureManager }
 	, m_CurrentState(LevelState::PENDING)
 	, m_CurrentLevel(0)
 {
@@ -37,7 +37,7 @@ void LevelManager::Update(float deltaTime)
 	} 
 	else
 	{
-		m_Map.Update(deltaTime);
+		m_GameMap.Update(deltaTime);
 		
 		ManageLevelChange();
 	}
@@ -129,17 +129,17 @@ void LevelManager::LoadLevel(bool restart)
 	m_LevelHeight = levelData.second.y;
 
 	// Load the tile map
-	m_Map.LoadTileMap(levelData.first, sf::Vector2u(m_LevelWidth, m_LevelHeight));
+	m_GameMap.LoadTileMap(levelData.first, sf::Vector2u(m_LevelWidth, m_LevelHeight));
 
 	// Initialize other elements
-	m_Map.InitObjectsAndEntities(configKeymap, restart);
+	m_GameMap.InitObjectsAndEntities(configKeymap, restart);
 
 	m_CurrentState = LevelState::PLAYING;
 }
 
 void LevelManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(m_Map);
+	target.draw(m_GameMap);
 }
 
 void LevelManager::RenderDebugMenu(sf::RenderTarget& target)
@@ -156,7 +156,7 @@ void LevelManager::RenderDebugMenu(sf::RenderTarget& target)
 		EventManager::GetInstance()->Fire(levelEvent);
 	}
 
-	m_Map.RenderDebugMenu(target);
+	m_GameMap.RenderDebugMenu(target);
 };
 
 void LevelManager::ChooseLevel()

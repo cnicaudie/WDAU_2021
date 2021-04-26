@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Game/Map/Map.h>
+#include <Game/Map/GameMap.h>
 
 class LevelManager : public sf::Drawable
 {
@@ -12,9 +12,9 @@ public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void RenderDebugMenu(sf::RenderTarget& target);
 	
-	inline const Map& GetMap() const { return m_Map; };
-	inline const sf::Vector2u GetLevelBounds() { return { m_LevelWidth * Map::TILE_SIZE.x, m_LevelHeight * Map::TILE_SIZE.y }; };
-	inline const Player& GetPlayerOnMap() { return m_Map.GetPlayer(); };
+	inline const GameMap& GetGameMap() const { return m_GameMap; };
+	inline const sf::Vector2u GetLevelBounds() { return { m_LevelWidth * GameMap::TILE_SIZE.x, m_LevelHeight * GameMap::TILE_SIZE.y }; };
+	inline const Player& GetPlayerOnMap() { return m_GameMap.GetPlayer(); };
 
 private:
 	void ChooseLevel();
@@ -26,7 +26,7 @@ private:
 	//====================//
 
 	std::shared_ptr<TextureManager> m_TextureManager;
-	Map m_Map;
+	GameMap m_GameMap;
 
 	enum class LevelState 
 	{

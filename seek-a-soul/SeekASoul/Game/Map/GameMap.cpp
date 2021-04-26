@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include "Map.h"
+#include "GameMap.h"
 #include <Game/Map/Tiles/Tile.h>
 #include <Game/Map/Tiles/TileType.h>
 #include <Game/Map/Tiles/CollideableTile.h>
@@ -7,21 +7,21 @@
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/Collectibles/SoulChunk.h>
 
-const sf::Vector2u Map::TILE_SIZE{ 32, 32 };
+const sf::Vector2u GameMap::TILE_SIZE{ 32, 32 };
 
-Map::Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
+GameMap::GameMap(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager)
     : m_TextureManager(textureManager)
     , m_TileSet(textureManager->GetTextureFromName("TILESET"))
     , m_MapGrid(TILE_SIZE)
     , m_Player{ inputManager, textureManager }
     , m_Door{{ 0.f, 0.f }, { 0.f, 0.f }}
 {
-    LOG_INFO("Map created !");
+    LOG_INFO("GameMap created !");
 }
 
-Map::~Map() {}
+GameMap::~GameMap() {}
 
-void Map::Update(float deltaTime) 
+void GameMap::Update(float deltaTime) 
 {
     // Update Door
     m_Door.Update(deltaTime);
@@ -37,7 +37,7 @@ void Map::Update(float deltaTime)
     UpdateMovingPlatforms(deltaTime);
 }
 
-void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void GameMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     // === Draw the background map
     states.transform *= getTransform(); // Apply the transform
@@ -66,7 +66,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(m_Player);
 }
 
-void Map::UpdateEnemies(float deltaTime)
+void GameMap::UpdateEnemies(float deltaTime)
 {
     for (auto it = m_Enemies.begin(); it < m_Enemies.end(); it++)
     {   
@@ -83,7 +83,7 @@ void Map::UpdateEnemies(float deltaTime)
     }
 }
 
-void Map::UpdateSoulChunks(float deltaTime)
+void GameMap::UpdateSoulChunks(float deltaTime)
 {
     for (auto it = m_SoulChunks.begin(); it < m_SoulChunks.end(); it++)
     {
@@ -105,7 +105,7 @@ void Map::UpdateSoulChunks(float deltaTime)
     }
 }
 
-void Map::UpdateMovingPlatforms(float deltaTime) 
+void GameMap::UpdateMovingPlatforms(float deltaTime) 
 {
     for (MovingPlatform& platform : m_MovingPlatforms)
     {
@@ -113,7 +113,7 @@ void Map::UpdateMovingPlatforms(float deltaTime)
     }
 }
 
-bool Map::LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
+bool GameMap::LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
 {
     // Resize the vertex array to fit the level size
     m_BackgroundTileMap.setPrimitiveType(sf::Quads);
@@ -149,7 +149,7 @@ bool Map::LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSi
     return true;
 }
 
-void Map::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)
+void GameMap::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& levelSize, int tu, int tv)
 {
     // Get a pointer to the current tile's quad (of the vertex array)
     sf::Vertex* quad = &m_BackgroundTileMap[(static_cast<size_t>(i) + static_cast<size_t>(j) * static_cast<size_t>(levelSize.x)) * 4];
@@ -167,7 +167,7 @@ void Map::CreateVertexQuad(unsigned int i, unsigned int j, const sf::Vector2u& l
     quad[3].texCoords = sf::Vector2f(static_cast<float>(tu * TILE_SIZE.x), static_cast<float>((tv + 1) * TILE_SIZE.y));
 }
 
-void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize)
+void GameMap::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize)
 {
     TileType tileType = static_cast<TileType>(tileNumber);
     unsigned int xCenter = (TILE_SIZE.x / 2) + i * TILE_SIZE.x;
@@ -221,7 +221,7 @@ void Map::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLin
     }
 }
 
-void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart)
+void GameMap::InitObjectsAndEntities(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart)
 {
     InitPlayer(configKeymap, restart);
     InitEnemies(configKeymap);
@@ -230,7 +230,7 @@ void Map::InitObjectsAndEntities(const std::map<std::string, std::vector<std::st
     InitDoor(configKeymap);
 }
 
-void Map::InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart)
+void GameMap::InitPlayer(const std::map<std::string, std::vector<std::string>>& configKeymap, bool restart)
 {
     const std::vector<std::string> playerInfo = configKeymap.at("PLAYER_POSITION");
 
@@ -243,7 +243,7 @@ void Map::InitPlayer(const std::map<std::string, std::vector<std::string>>& conf
     m_Player.Reset(playerPosition, restart);
 }
 
-void Map::InitEnemies(const std::map<std::string, std::vector<std::string>>& configKeymap) 
+void GameMap::InitEnemies(const std::map<std::string, std::vector<std::string>>& configKeymap) 
 {
     m_Enemies.clear();
 
@@ -265,7 +265,7 @@ void Map::InitEnemies(const std::map<std::string, std::vector<std::string>>& con
     }
 }
 
-void Map::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& configKeymap) 
+void GameMap::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& configKeymap) 
 {
     m_SoulChunks.clear();
 
@@ -287,7 +287,7 @@ void Map::InitSoulChunks(const std::map<std::string, std::vector<std::string>>& 
     }
 }
 
-void Map::InitMovingPlatforms(const std::map<std::string, std::vector<std::string>>& configKeymap)
+void GameMap::InitMovingPlatforms(const std::map<std::string, std::vector<std::string>>& configKeymap)
 {
     m_MovingPlatforms.clear();
 
@@ -321,7 +321,7 @@ void Map::InitMovingPlatforms(const std::map<std::string, std::vector<std::strin
     }
 }
 
-void Map::InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap)
+void GameMap::InitDoor(const std::map<std::string, std::vector<std::string>>& configKeymap)
 {
     const std::vector<std::string> doorInfo = configKeymap.at("DOOR");
 

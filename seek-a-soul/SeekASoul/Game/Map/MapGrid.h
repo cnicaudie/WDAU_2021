@@ -4,7 +4,7 @@ class Tile;
 
 class MapGrid 
 {
-friend class Map;
+friend class GameMap;
 
 public:
 	MapGrid(const sf::Vector2u& tileSize);

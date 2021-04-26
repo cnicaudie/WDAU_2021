@@ -9,13 +9,13 @@
 class Tile;
 class SoulChunk;
 
-class Map : public sf::Drawable, public sf::Transformable
+class GameMap : public sf::Drawable, public sf::Transformable
 {
 public:
     static const sf::Vector2u TILE_SIZE;
 
-    Map(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
-    ~Map();
+    GameMap(const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<TextureManager>& textureManager);
+    ~GameMap();
 
     void Update(float deltaTime);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
