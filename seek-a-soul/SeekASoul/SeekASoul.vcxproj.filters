@@ -44,7 +44,7 @@
     <ClCompile Include="Game\Objects\Door.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Map\MapGrid.cpp">
+    <ClCompile Include="Game\Map\GameGrid.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
     <ClCompile Include="Game\Map\GameMap.cpp">
@@ -176,7 +176,7 @@
     <ClInclude Include="Game\Objects\Door.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Map\MapGrid.h">
+    <ClInclude Include="Game\Map\GameGrid.h">
       <Filter>Game\Map</Filter>
     </ClInclude>
     <ClInclude Include="Game\Map\GameMap.h">

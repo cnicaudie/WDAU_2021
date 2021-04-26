@@ -1,10 +1,10 @@
 #include <stdafx.h>
 #include "CollisionManager.h"
-#include <Game/Map/Tiles/CollideableTile.h>
+#include <Game/Map/Tiles/Tile.h>
 
 CollisionManager::CollisionManager() {}
 
-const std::pair<bool, bool> CollisionManager::CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const MapGrid& mapGrid) const
+const std::pair<bool, bool> CollisionManager::CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const GameGrid& mapGrid) const
 {
     bool hasCollidedWithTile = false;
     bool hasCollidedWithObject = false;

@@ -1,12 +1,12 @@
 #include <stdafx.h>
-#include "MapGrid.h"
+#include "GameGrid.h"
 #include <Game/Map/Tiles/Tile.h>
 
-MapGrid::MapGrid(const sf::Vector2u& tileSize)
+GameGrid::GameGrid(const sf::Vector2u& tileSize)
 	: m_TileSize(tileSize)
 {}
 
-const sf::Vector2i MapGrid::GetTileCoordinates(const sf::Vector2f& position) const
+const sf::Vector2i GameGrid::GetTileCoordinates(const sf::Vector2f& position) const
 {
 	sf::Vector2i result{ static_cast<int>(position.x / m_TileSize.x), static_cast<int>(position.y / m_TileSize.y) };
 	
@@ -28,7 +28,7 @@ const sf::Vector2i MapGrid::GetTileCoordinates(const sf::Vector2f& position) con
 	return result;
 }
 
-const std::vector<std::shared_ptr<Tile>> MapGrid::GetNearbyTiles(const sf::FloatRect& boundingBox) const
+const std::vector<std::shared_ptr<Tile>> GameGrid::GetNearbyTiles(const sf::FloatRect& boundingBox) const
 {
 	std::vector<std::shared_ptr<Tile>> result;
 
@@ -46,11 +46,11 @@ const std::vector<std::shared_ptr<Tile>> MapGrid::GetNearbyTiles(const sf::Float
 	return result;
 }
 
-const std::vector<BoxCollideable*> MapGrid::GetNearbyObjects(const sf::FloatRect& boundingBox) const
+const std::vector<BoxCollideable*> GameGrid::GetNearbyObjects(const sf::FloatRect& boundingBox) const
 {
 	std::vector<BoxCollideable*> result;
 
-	//
+	// Retrieve X and Y limits of the bounding box
 	const float xMin = boundingBox.left;
 	const float xMax = boundingBox.left + boundingBox.width;
 	const float yMin = boundingBox.top;

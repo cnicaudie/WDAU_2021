@@ -2,13 +2,11 @@
 
 class Tile;
 
-class MapGrid 
+class GameGrid 
 {
-friend class GameMap;
-
 public:
-	MapGrid(const sf::Vector2u& tileSize);
-	~MapGrid() = default;
+	GameGrid(const sf::Vector2u& tileSize);
+	~GameGrid() = default;
 
 	const std::vector<std::shared_ptr<Tile>> GetNearbyTiles(const sf::FloatRect& boundingBox) const;
 	const std::vector<BoxCollideable*> GetNearbyObjects(const sf::FloatRect& boundingBox) const;
@@ -49,4 +47,7 @@ private:
 	std::set<BoxCollideable*, BoxComparatorX> m_ObjectsOnMapX;
 	std::set<BoxCollideable*, BoxComparatorY> m_ObjectsOnMapY;
 
+	//====================//
+	
+	friend class GameMap;
 };

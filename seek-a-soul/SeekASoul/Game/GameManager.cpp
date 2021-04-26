@@ -145,7 +145,7 @@ const sf::Vector2u GameManager::GetLevelBounds() const
 
 const std::pair<bool, bool> GameManager::CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset) const
 {
-    return m_CollisionManager->CheckCollisions(collideable, positionOffset, m_LevelManager->GetGameMap().GetMapGrid());
+    return m_CollisionManager->CheckCollisions(collideable, positionOffset, m_LevelManager->GetGameMap().GetGameGrid());
 }
 
 void GameManager::OnEvent(const Event* evnt)
