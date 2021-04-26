@@ -6,6 +6,7 @@ class Enemy : public Entity
 {
 public:
 	Enemy(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& position);
+	~Enemy();
 
 	void Update(float deltaTime) override;
 	void OnCollision(BoxCollideable* other, CollisionDirection direction) override;

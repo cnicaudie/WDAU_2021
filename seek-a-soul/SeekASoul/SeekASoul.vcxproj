@@ -254,6 +254,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Game\Objects\Collectibles\SoulChunk.cpp" />
     <ClCompile Include="Game\Entities\Player.cpp" />
     <ClCompile Include="Game\Map\Map.cpp" />
+    <ClCompile Include="Game\Objects\MovingPlatform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UI\Button.cpp" />
     <ClCompile Include="UI\UIManager.cpp" />
@@ -306,6 +307,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Game\Entities\Player.h" />
     <ClInclude Include="Game\Map\Map.h" />
     <ClInclude Include="Engine\Maths\Maths.h" />
+    <ClInclude Include="Game\Objects\MovingPlatform.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UI\Button.h" />
     <ClInclude Include="UI\UIManager.h" />

@@ -16,14 +16,13 @@ public:
 	void OnTrigger(BoxCollideable* other) override;
 
 	inline void OpenDoor() { m_IsDoorOpen = true; };
-	inline const bool IsPlayingEndGame() const { return m_IsPlayingEndGame; };
 
 private:
 	void StartEndGame();
 
 	//====================//
 
-    sf::RectangleShape m_Rectangle;
+    sf::RectangleShape m_DoorRect;
 
 	float m_rColor;
 	float m_gColor;

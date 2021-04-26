@@ -2,7 +2,7 @@
 #include "Bullet.h"
 
 Bullet::Bullet(const std::shared_ptr<TextureManager>& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos)
-	: m_Direction(dir), m_Speed(500.f), m_Distance(0.f), m_HadImpact(false)
+	: m_Direction(dir), m_Velocity(500.f), m_TraveledDistance(0.f), m_HadImpact(false)
 {
 	sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("BULLET");
 	
@@ -20,7 +20,7 @@ Bullet::~Bullet() {}
 void Bullet::Update(float deltaTime) 
 {
 	// Compute offset to next position and check for any collision
-	sf::Vector2f positionOffset(m_Direction * m_Speed * deltaTime);
+	sf::Vector2f positionOffset(m_Direction * m_Velocity * deltaTime);
 	GameManager::GetInstance()->CheckCollision(this, positionOffset);
 	
 	m_Sprite.move(positionOffset);
@@ -28,7 +28,7 @@ void Bullet::Update(float deltaTime)
 	// Compute traveled distance
 	float offsetX = std::abs(GetCenter().x - m_Sprite.getPosition().x);
 	float offsetY = std::abs(GetCenter().y - m_Sprite.getPosition().y);
-	m_Distance += std::sqrt(offsetX * offsetX + offsetY * offsetY);
+	m_TraveledDistance += std::sqrt(offsetX * offsetX + offsetY * offsetY);
 
 	SetCenter(m_Sprite.getPosition());
 }
