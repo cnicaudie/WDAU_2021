@@ -35,7 +35,7 @@ private:
 	void MoveRight(const float scale);
 	void MoveLeft(const float scale);
 	void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
-	void CollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider);
+	void ApplyCollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider);
 	
 	void UpdateBoundingBox();
 	void UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint);
@@ -76,5 +76,5 @@ private:
 	bool m_InCeilingCollision;
 
 	bool m_IsOnMovingPlatform;
-	const MovingPlatform* m_Platform;
+	MovingPlatform* m_Platform;
 };

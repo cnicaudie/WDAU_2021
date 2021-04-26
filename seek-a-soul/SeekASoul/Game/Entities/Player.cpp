@@ -26,7 +26,7 @@ static constexpr float MOVE_SPEED_MAX = 200.0f;
 static constexpr float MOVE_SPEED_INC = 10.0f;
 static constexpr float CLIMB_SPEED = 100.0f;
 static constexpr float JUMP_FORCE = 400.0f;
-static constexpr float COLLISION_FORCE = 150.0f;
+static constexpr float COLLISION_FORCE = 250.0f;
 static constexpr float SLOWDOWN_RATE = 0.9f;
 static constexpr float GRAVITY = 9.8f;
 
@@ -94,14 +94,13 @@ void Player::Update(float deltaTime)
         UpdateSkullRollCooldown(now);
     }
     
-    // Update player's bounding box
     UpdateBoundingBox();
 
     Move(deltaTime);
-    
+
+    // If in ground and ceiling after collision check, player stays skull rolling
     if (m_InGroundCollision && m_InCeilingCollision)
     {
-        // If in ground and ceiling after collision check, player stays skull rolling
         //LOG_DEBUG("SKULL ROLL STAY");
         m_IsSkullRolling = true;
         m_LastSkullRollTime = now;
@@ -223,7 +222,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
             m_Velocity.x = -COLLISION_FORCE;
         }
         
-        if (collisionDirection & static_cast<int32_t>(CollisionDirection::TOP))
+        if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
         {
             m_Velocity.y = -COLLISION_FORCE;
         }
@@ -237,7 +236,7 @@ void Player::OnCollision(BoxCollideable* other, CollisionDirection direction)
     }
     else if (typeid(*other) == typeid(class CollideableTile))
     {
-        CollisionCorrection(collisionDirection, otherCollider);
+        ApplyCollisionCorrection(collisionDirection, otherCollider);
     }
 }
 
@@ -291,6 +290,7 @@ void Player::RenderDebugMenu(sf::RenderTarget& target)
         ImGui::SameLine();
         ImGui::Text("Y: %f", m_Velocity.y);
 
+        ImGui::Text("Jump Count : %d", m_JumpCount);
         ImGui::Text("Is on plaform ? : %d", m_IsOnMovingPlatform);
         const sf::Vector2f platformOffset = m_Platform != nullptr ? m_Platform->GetPlatformOffset() : sf::Vector2f{ 0.f, 0.f };
         ImGui::Text("Pof :");
@@ -328,6 +328,7 @@ void Player::ComputeNextPlayerState()
 
 void Player::Move(float deltaTime)
 {
+    const sf::Vector2f platformOffset = m_Platform != nullptr ? m_Platform->GetPlatformOffset() : sf::Vector2f{ 0.f, 0.f };
     sf::Vector2f tempVelocity(0.f, 0.f);
 
     // Reset in ground/ceiling collision checks
@@ -350,16 +351,14 @@ void Player::Move(float deltaTime)
         m_IsClimbing = false;
     }
     // Reset the vertical velocity if climbing but not moving
-    else if (!m_InputManager->HasAction(Action::MOVE_UP)
-        && !m_InputManager->HasAction(Action::MOVE_DOWN) 
+    else if (!m_InputManager->HasAction(Action::MOVE_UP) 
+        && !m_InputManager->HasAction(Action::MOVE_DOWN)
         && m_IsClimbing)
-    { 
+    {
         m_Velocity.y = 0.f;
     }
 
     // Check movement on X axis
-    //tempVelocity.x = m_Velocity.x;
-    const sf::Vector2f platformOffset = m_Platform != nullptr ? m_Platform->GetPlatformOffset() : sf::Vector2f{ 0.f, 0.f };
     tempVelocity.x = m_IsOnMovingPlatform ? platformOffset.x + m_Velocity.x : m_Velocity.x;
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
@@ -373,7 +372,6 @@ void Player::Move(float deltaTime)
     // Check movement on Y axis
     tempVelocity.x = 0.0f;
     tempVelocity.y = m_IsOnMovingPlatform ? platformOffset.y + m_Velocity.y : m_Velocity.y;
-    //tempVelocity.y = m_Velocity.y;
     if (!GameManager::GetInstance()->CheckCollision(this, tempVelocity * deltaTime))
     {
         m_Position += tempVelocity * deltaTime;
@@ -467,7 +465,7 @@ void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoun
     }
 }
 
-void Player::CollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider)
+void Player::ApplyCollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider)
 {
     if (collisionDirection & static_cast<int32_t>(CollisionDirection::BOTTOM))
     {
