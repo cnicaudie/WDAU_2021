@@ -102,30 +102,32 @@ const CollisionDirection CollisionManager::GetCollisionDirection(BoxCollideable*
     }
 
     // === Compute collision direction for direct collision (e.g Player is colliding with Tile)
-
-    else if (collideable.top + collideable.height > collider.top
-        && collideable.top < collider.top)
+    else 
     {
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::BOTTOM);
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_BOTTOM);
-    }
-    else if (collideable.top < collideable.top + collider.height
-        && collideable.top > collider.top)
-    {
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::TOP);
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_TOP);
-    }
-    else if (collideable.left < collider.left + collider.width
-        && collideable.left + collideable.width > collider.left + collider.width)
-    {
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::LEFT);
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_LEFT);
-    }
-    else if (collideable.left + collideable.width > collider.left
-        && collideable.left < collider.left)
-    {
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::RIGHT);
-        collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_RIGHT);
+        if (collideable.top + collideable.height > collider.top
+            && collideable.top < collider.top)
+        {
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::BOTTOM);
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_BOTTOM);
+        }
+        else if (collideable.top < collideable.top + collider.height
+            && collideable.top > collider.top)
+        {
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::TOP);
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_TOP);
+        }
+        if (collideable.left < collider.left + collider.width
+            && collideable.left + collideable.width > collider.left + collider.width)
+        {
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::LEFT);
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_LEFT);
+        }
+        else if (collideable.left + collideable.width > collider.left
+            && collideable.left < collider.left)
+        {
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::RIGHT);
+            collisionDirection |= static_cast<int32_t>(CollisionDirection::IN_RIGHT);
+        }
     }
     
     return static_cast<CollisionDirection>(collisionDirection);
