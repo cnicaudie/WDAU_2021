@@ -161,8 +161,13 @@ void LevelManager::RenderDebugMenu(sf::RenderTarget& target)
 
 void LevelManager::ChooseLevel()
 {
-	ImGui::SetNextWindowSize(ImVec2(270.f, 60.f), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowPos(ImVec2(600.f, 400.f), ImGuiCond_FirstUseEver);
+	const float menuWidth = 270.f;
+	const float menuHeight = 60.f;
+	const float menuPosX = 600.f;
+	const float menuPosY = 400.f;
+
+	ImGui::SetNextWindowSize(ImVec2(menuWidth, menuHeight), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos(ImVec2(menuPosX, menuPosY), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Select a level !");
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
 	ImGui::SliderInt("Level", &m_LevelChoice, 0, MAX_LEVEL);

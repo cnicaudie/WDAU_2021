@@ -8,22 +8,29 @@ public:
     void operator=(const UIViewModel& uiViewModel) = delete;
 
     inline const sf::Vector2f GetPlayerPosition() const { return m_PlayerPosition; };
-    inline const int GetAmmunitionsNumber() const { return m_AmmunitionsNumber; };
-    inline const int GetSoulChunksNumber() const { return m_SoulChuncksCollected; };
+    inline const int GetHealthPoints() { return m_HealthPoints; };
+    inline const int GetMaxHealthPoints() { return m_MaxHealthPoints; };
+    inline const unsigned int GetAmmunitionsNumber() const { return m_AmmunitionsNumber; };
+    inline const unsigned int GetSoulChunksNumber() const { return m_SoulChuncksCollected; };
 
 private:
     UIViewModel();
     ~UIViewModel();
 
     inline void SetPlayerPosition(const sf::Vector2f& position) { m_PlayerPosition = position; };
-    inline void SetAmmunitionsNumber(unsigned int number) { m_AmmunitionsNumber = number; };
-    inline void SetSoulChunksNumber(unsigned int number) { m_SoulChuncksCollected = number; };
+    inline void SetHealthPoints(int HP) { m_HealthPoints = HP; };
+    inline void SetMaxHealthPoints(int maxHP) { m_MaxHealthPoints = maxHP; };
+    inline void SetAmmunitionsNumber(unsigned int ammos) { m_AmmunitionsNumber = ammos; };
+    inline void SetSoulChunksNumber(unsigned int soulChunks) { m_SoulChuncksCollected = soulChunks; };
 
     //====================//
 
     static UIViewModel* m_UIViewModel; // Singleton instance
 
+    // Player infos
     sf::Vector2f m_PlayerPosition;
+    int m_HealthPoints;
+    int m_MaxHealthPoints;
     unsigned int m_AmmunitionsNumber;
     unsigned int m_SoulChuncksCollected;
 
