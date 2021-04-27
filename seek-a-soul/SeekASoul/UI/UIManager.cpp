@@ -38,7 +38,6 @@ UIManager::UIManager(sf::RenderWindow* window)
 void UIManager::InitTexts(const sf::Vector2f& WINDOW_CENTER)
 {
     // === In Game UI
-
     m_AmmunitionsText.setFont(m_MainFont);
     m_AmmunitionsText.setCharacterSize(25);
     m_AmmunitionsText.setFillColor(sf::Color::Red);
@@ -49,6 +48,14 @@ void UIManager::InitTexts(const sf::Vector2f& WINDOW_CENTER)
     m_SoulChunksText.setFillColor(sf::Color::Cyan);
     m_SoulChunksText.setPosition(WINDOW_CENTER.x * 1.6f, WINDOW_CENTER.y * 0.15f);
 
+    // === Main Menu
+    m_MainTitle.setFont(m_MainFont);
+    m_MainTitle.setCharacterSize(80);
+    m_MainTitle.setFillColor(sf::Color::White);
+    m_MainTitle.setString("Seek A Soul");
+    m_MainTitle.setStyle(sf::Text::Bold);
+    m_MainTitle.setPosition(WINDOW_CENTER.x - (m_MainTitle.getGlobalBounds().width / 2), WINDOW_CENTER.y * 0.15f);
+
     // === End Level/Game Menu
 
     m_EndGameText.setFont(m_MainFont);
@@ -56,14 +63,13 @@ void UIManager::InitTexts(const sf::Vector2f& WINDOW_CENTER)
     m_EndGameText.setFillColor(sf::Color::Green);
     m_EndGameText.setString("YOU WON !!!");
     m_EndGameText.setStyle(sf::Text::Bold);
-    float textWidth = m_EndGameText.getGlobalBounds().width;
-    float textHeight = m_EndGameText.getGlobalBounds().height;
-    m_EndGameText.setPosition(WINDOW_CENTER.x - (textWidth / 2), WINDOW_CENTER.y - (textHeight / 2));
+    m_EndGameText.setPosition(WINDOW_CENTER.x - (m_EndGameText.getGlobalBounds().width / 2)
+        , WINDOW_CENTER.y - (m_EndGameText.getGlobalBounds().height / 2));
 }
 
 void UIManager::InitButtons(const sf::Vector2f& WINDOW_CENTER)
 {
-    const float BUTTONS_OFFSET = 200.f;
+    const float BUTTONS_OFFSET = 150.f;
 
     // === Main Menu
 
@@ -190,6 +196,7 @@ void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     if (m_ToggleMainMenu) 
     {
+        target.draw(m_MainTitle);
         target.draw(m_StartButton);
         target.draw(m_ChooseLevelButton);
         target.draw(m_CloseButton);

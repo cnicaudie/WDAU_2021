@@ -36,6 +36,7 @@ private:
     Button m_StartButton;
     Button m_ChooseLevelButton;
     Button m_CloseButton;
+    sf::Text m_MainTitle;
 
     // === End Level/Game Menu
     bool m_IsPlayingEndGame;
