@@ -1,24 +1,30 @@
 #pragma once
 
-class InputManager;
-
-class Game
+namespace SeekASoul
 {
-public:
-    Game(const char* windowTitle);
-    virtual ~Game();
+    namespace Engine
+    {
+        class InputManager;
 
-    void RunGameLoop();
+        class Game
+        {
+        public:
+            Game(const char* windowTitle);
+            virtual ~Game();
 
-protected:
-    virtual void Update(float deltaTime) = 0;
-    virtual void UpdateGUI(float deltaTime) = 0;
-    virtual void Render(sf::RenderTarget& target) = 0;
-    virtual void RenderGUI(sf::RenderTarget& target) = 0;
-    virtual void RenderDebugMenu(sf::RenderTarget& target) = 0;
+            void RunGameLoop();
 
-    //====================//
+        protected:
+            virtual void Update(float deltaTime) = 0;
+            virtual void UpdateGUI(float deltaTime) = 0;
+            virtual void Render(sf::RenderTarget& target) = 0;
+            virtual void RenderGUI(sf::RenderTarget& target) = 0;
+            virtual void RenderDebugMenu(sf::RenderTarget& target) = 0;
 
-    sf::RenderWindow m_Window;
-    std::shared_ptr<InputManager> m_InputManager;
-};
+            //====================//
+
+            sf::RenderWindow m_Window;
+            std::shared_ptr<InputManager> m_InputManager;
+        };
+    }
+}

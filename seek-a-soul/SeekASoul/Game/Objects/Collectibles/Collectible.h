@@ -1,15 +1,21 @@
 #pragma once
 
-class Collectible : public BoxCollideable 
+namespace SeekASoul
 {
-public:
-	Collectible();
-	virtual ~Collectible();
+	namespace Gameplay
+	{
+		class Collectible : public Engine::BoxCollideable
+		{
+		public:
+			Collectible();
+			virtual ~Collectible();
 
-	void OnTrigger(BoxCollideable* other) override;
+			void OnTrigger(Engine::BoxCollideable* other) override;
 
-	inline const bool WasCollected() const { return m_WasCollected; };
+			inline const bool WasCollected() const { return m_WasCollected; };
 
-protected:
-	bool m_WasCollected;
-};
+		protected:
+			bool m_WasCollected;
+		};
+	}
+}

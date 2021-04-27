@@ -2,13 +2,19 @@
 
 #include "Binding.h"
 
-class KeyboardBinding : public Binding
+namespace SeekASoul
 {
-public:
-	KeyboardBinding(const sf::Keyboard::Key& key);
+	namespace Engine
+	{
+		class KeyboardBinding : public Binding
+		{
+		public:
+			KeyboardBinding(const sf::Keyboard::Key& key);
 
-	bool operator==(Binding* other) override;
+			bool operator==(Binding* other) override;
 
-private:
-	sf::Keyboard::Key m_Key;
-};
+		private:
+			sf::Keyboard::Key m_Key;
+		};
+	}
+}

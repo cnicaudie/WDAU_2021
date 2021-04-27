@@ -1,8 +1,14 @@
 #include <stdafx.h>
 #include "CollideableTile.h"
 
-CollideableTile::CollideableTile(float xCenterPos, float yCenterPos, float width, float height) 
-	: Tile(xCenterPos, yCenterPos, width, height)
+namespace SeekASoul
 {
-	SetTrigger(false);
+	namespace Gameplay
+	{
+		CollideableTile::CollideableTile(float xCenterPos, float yCenterPos, float width, float height) 
+			: Tile(xCenterPos, yCenterPos, width, height)
+		{
+			SetTrigger(false);
+		}
+	}
 }

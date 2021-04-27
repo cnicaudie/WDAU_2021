@@ -1,7 +1,13 @@
 #pragma once
 
-class Tile : public BoxCollideable
+namespace SeekASoul
 {
-public:
-	Tile(float xCenterPos, float yCenterPos, float width, float height);
-};
+	namespace Gameplay
+	{
+		class Tile : public Engine::BoxCollideable
+		{
+		public:
+			Tile(float xCenterPos, float yCenterPos, float width, float height);
+		};
+	}
+}

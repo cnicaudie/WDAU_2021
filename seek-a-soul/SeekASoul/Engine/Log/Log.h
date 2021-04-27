@@ -1,5 +1,8 @@
 #pragma once
 
+namespace SeekASoul 
+{
+
 #define NO_LOG          0
 #define ERROR_LEVEL     1
 #define WARNING_LEVEL   2
@@ -33,3 +36,5 @@
 #else
 #define LOG_ERROR(message) 
 #endif
+
+}

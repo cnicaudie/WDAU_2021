@@ -2,13 +2,19 @@
 
 #include "Binding.h"
 
-class JoystickButtonBinding : public Binding
+namespace SeekASoul
 {
-public:
-	JoystickButtonBinding(const unsigned int& button);
+	namespace Engine
+	{
+		class JoystickButtonBinding : public Binding
+		{
+		public:
+			JoystickButtonBinding(const unsigned int& button);
 
-	bool operator==(Binding* other) override;
+			bool operator==(Binding* other) override;
 
-private:
-	unsigned int m_Button;
-};
+		private:
+			unsigned int m_Button;
+		};
+	}
+}

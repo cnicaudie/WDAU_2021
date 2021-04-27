@@ -1,43 +1,49 @@
 #pragma once
 
-class Button : public sf::Drawable
+namespace SeekASoul
 {
-public:
-	Button(const sf::Vector2f& size);
-	~Button();
-
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	
-	inline const void SetButtonPosition(const sf::Vector2f& centerPosition) { m_ButtonRect.setPosition(centerPosition); };
-	inline const void SetButtonTextFont(const sf::Font& font) { m_ButtonText.setFont(font); };
-	inline const void SetButtonTextString(const std::string& text) { m_ButtonText.setString(text); };
-	inline const void SetButtonTextPosition(const sf::Vector2f& centerPosition)
+	namespace UI
 	{
-		float textWidth = m_ButtonText.getGlobalBounds().width;
-		float textHeight = m_ButtonText.getGlobalBounds().height;
+		class Button : public sf::Drawable
+		{
+		public:
+			Button(const sf::Vector2f& size);
+			~Button();
 
-		// Center the text on the button
-		m_ButtonText.setPosition({
-			centerPosition.x - (textWidth / 2.f),
-			centerPosition.y - textHeight
-		});
+			void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	
+			inline const void SetButtonPosition(const sf::Vector2f& centerPosition) { m_ButtonRect.setPosition(centerPosition); };
+			inline const void SetButtonTextFont(const sf::Font& font) { m_ButtonText.setFont(font); };
+			inline const void SetButtonTextString(const std::string& text) { m_ButtonText.setString(text); };
+			inline const void SetButtonTextPosition(const sf::Vector2f& centerPosition)
+			{
+				float textWidth = m_ButtonText.getGlobalBounds().width;
+				float textHeight = m_ButtonText.getGlobalBounds().height;
+
+				// Center the text on the button
+				m_ButtonText.setPosition({
+					centerPosition.x - (textWidth / 2.f),
+					centerPosition.y - textHeight
+				});
+			}
+
+			inline const bool WasClicked() const { return m_WasClicked; };
+			inline void ResetClickStatus() { m_WasClicked = false; };
+
+		private:
+			void OnEvent(const Engine::Event* evnt);
+	
+			inline void CheckClick(const sf::Vector2f& clickPosition) 
+			{
+				m_WasClicked = m_ButtonRect.getGlobalBounds().contains(clickPosition);
+			};
+
+			//====================//
+
+			sf::RectangleShape m_ButtonRect;
+			sf::Text m_ButtonText;
+
+			bool m_WasClicked;
+		};
 	}
-
-	inline const bool WasClicked() const { return m_WasClicked; };
-	inline void ResetClickStatus() { m_WasClicked = false; };
-
-private:
-	void OnEvent(const Event* evnt);
-	
-	inline void CheckClick(const sf::Vector2f& clickPosition) 
-	{
-		m_WasClicked = m_ButtonRect.getGlobalBounds().contains(clickPosition);
-	};
-
-	//====================//
-
-	sf::RectangleShape m_ButtonRect;
-	sf::Text m_ButtonText;
-
-	bool m_WasClicked;
-};
+}

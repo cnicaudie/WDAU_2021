@@ -2,23 +2,29 @@
 
 #include "Event.h"
 
-class LevelEvent : public Event
+namespace SeekASoul
 {
-public:
-	LevelEvent(LevelStatus levelStatus) : Event(EventType::LEVEL), m_LevelStatus(levelStatus) {};
-
-	virtual bool operator==(const Event& other) const override
+	namespace Engine
 	{
-		if (const LevelEvent* otherLevelEvent = dynamic_cast<const LevelEvent*>(&other))
+		class LevelEvent : public Event
 		{
-			return m_LevelStatus == otherLevelEvent->m_LevelStatus;
-		}
+		public:
+			LevelEvent(SeekASoul::Gameplay::LevelStatus levelStatus) : Event(EventType::LEVEL), m_LevelStatus(levelStatus) {};
 
-		return false;
-	};
+			virtual bool operator==(const Event& other) const override
+			{
+				if (const LevelEvent* otherLevelEvent = dynamic_cast<const LevelEvent*>(&other))
+				{
+					return m_LevelStatus == otherLevelEvent->m_LevelStatus;
+				}
 
-	inline const LevelStatus GetLevelStatus() const { return m_LevelStatus; };
+				return false;
+			};
+
+			inline const SeekASoul::Gameplay::LevelStatus GetLevelStatus() const { return m_LevelStatus; };
 	
-private:
-	LevelStatus m_LevelStatus;
-};
+		private:
+			SeekASoul::Gameplay::LevelStatus m_LevelStatus;
+		};
+	}
+}

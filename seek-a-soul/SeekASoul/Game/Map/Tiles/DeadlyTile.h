@@ -2,8 +2,14 @@
 
 #include "CollideableTile.h"
 
-class DeadlyTile : public CollideableTile
+namespace SeekASoul
 {
-public:
-	DeadlyTile(float xCenterPos, float yCenterPos, float width, float height);
-};
+	namespace Gameplay
+	{
+		class DeadlyTile : public CollideableTile
+		{
+		public:
+			DeadlyTile(float xCenterPos, float yCenterPos, float width, float height);
+		};
+	}
+}

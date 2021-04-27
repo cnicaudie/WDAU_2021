@@ -1,55 +1,64 @@
 #pragma once
 
-class BoxCollideable;
-
-class CameraManager : public sf::Drawable
+namespace SeekASoul
 {
-public:
-	CameraManager(sf::RenderWindow* window);
-
-	void Update(float deltaTime);
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	namespace Engine 
+	{
+		class BoxCollideable;
+	}
 	
-	inline void RenderDebugMenu(sf::RenderTarget& target)
+	namespace Gameplay
 	{
-		ImGui::Checkbox("Show Camera Zones", &m_DisplayCameraZones);
-	};
+		class CameraManager : public sf::Drawable
+		{
+		public:
+			CameraManager(sf::RenderWindow* window);
+
+			void Update(float deltaTime);
+			void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	
-	inline void SetFixedPoint(const sf::Vector2f& fixedPoint) 
-	{
-		m_FixedPoint = fixedPoint;
-		m_CameraMode = CameraMode::CENTERING;
-	};
+			inline void RenderDebugMenu(sf::RenderTarget& target)
+			{
+				ImGui::Checkbox("Show Camera Zones", &m_DisplayCameraZones);
+			};
 	
-	inline void SetBoxToFollow(const BoxCollideable* boxToFollow)
-	{
-		m_BoxToFollow = boxToFollow;
-		m_CameraMode = CameraMode::FOLLOW;
-	};
+			inline void SetFixedPoint(const sf::Vector2f& fixedPoint) 
+			{
+				m_FixedPoint = fixedPoint;
+				m_CameraMode = CameraMode::CENTERING;
+			};
+	
+			inline void SetBoxToFollow(const Engine::BoxCollideable* boxToFollow)
+			{
+				m_BoxToFollow = boxToFollow;
+				m_CameraMode = CameraMode::FOLLOW;
+			};
 
-private:
-	void MoveCameraView(const sf::Vector2f& offset);
-	void FollowBox(float deltaTime, const sf::FloatRect& hardZone, const sf::FloatRect& softZone);
-	void RecenterCamera(float deltaTime);
+		private:
+			void MoveCameraView(const sf::Vector2f& offset);
+			void FollowBox(float deltaTime, const sf::FloatRect& hardZone, const sf::FloatRect& softZone);
+			void RecenterCamera(float deltaTime);
 
-	//====================//
+			//====================//
 
-	enum class CameraMode // TODO : make it smaller since there are not a lot of options
-	{
-		FIXED		= 0,
-		CENTERING	= 1,
-		FOLLOW		= 2
-	} m_CameraMode;
+			enum class CameraMode // TODO : make it smaller since there are not a lot of options
+			{
+				FIXED		= 0,
+				CENTERING	= 1,
+				FOLLOW		= 2
+			} m_CameraMode;
 
-	sf::RenderWindow* m_Window;
-	sf::View m_CameraView;
+			sf::RenderWindow* m_Window;
+			sf::View m_CameraView;
 
-	sf::Vector2f m_FixedPoint;
+			sf::Vector2f m_FixedPoint;
 
-	const BoxCollideable* m_BoxToFollow;
-	sf::RectangleShape m_HardMoveZone;
-	sf::RectangleShape m_SoftMoveZone;
-	bool m_ExitedHardZone;
+			const Engine::BoxCollideable* m_BoxToFollow;
+			sf::RectangleShape m_HardMoveZone;
+			sf::RectangleShape m_SoftMoveZone;
+			bool m_ExitedHardZone;
 
-	bool m_DisplayCameraZones;
-};
+			bool m_DisplayCameraZones;
+		};
+	}
+}
