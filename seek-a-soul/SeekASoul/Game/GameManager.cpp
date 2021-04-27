@@ -96,7 +96,11 @@ void GameManager::RenderGUI(sf::RenderTarget& target)
 
 void GameManager::RenderDebugMenu(sf::RenderTarget& target)
 {
-    ImGui::SetNextWindowSize(ImVec2(250.f, 250.f), ImGuiCond_FirstUseEver);
+    const float menuWidth = 250.f;
+    const float menuHeight = 250.f;
+
+    ImGui::SetNextWindowSize(ImVec2(menuWidth, menuHeight), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(0.f, 0.f), ImGuiCond_FirstUseEver);
     ImGui::Begin("Debug Menu (Press F1 to close)");
     ImGui::Text("FPS : %d", m_FramesPerSecond);
     ImGui::Text("Game Status : ");
