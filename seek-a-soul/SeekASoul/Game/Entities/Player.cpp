@@ -81,6 +81,8 @@ void Player::Reset(const sf::Vector2f& position, bool restart)
     }
     
     // Update UIViewModel values
+    UIViewModel::GetInstance()->SetHealthPoints(m_HealthPoints);
+    UIViewModel::GetInstance()->SetMaxHealthPoints(MAX_HEALTH_POINTS);
     UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
     UIViewModel::GetInstance()->SetSoulChunksNumber(m_SoulChunksCollected);
 }
@@ -523,6 +525,8 @@ void Player::Damage()
     }
 
     m_LastDamageTime = Time::GetCurrentTimeAsMilliseconds();
+
+    UIViewModel::GetInstance()->SetHealthPoints(m_HealthPoints);
 }
 
 void Player::UpdateVisualDamage(uint64_t now)

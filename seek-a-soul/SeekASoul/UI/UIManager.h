@@ -17,6 +17,7 @@ private:
     void InitButtons(const sf::Vector2f& WINDOW_CENTER);
 
     void OnEvent(const Event* evnt);
+    void ShowHealthBar() const;
     void StartEndGame();
 
     //====================//
@@ -29,7 +30,6 @@ private:
     // === In Game UI
     sf::Text m_AmmunitionsText;
     sf::Text m_SoulChunksText;
-    // TODO : Health bar
     
     // === Main Menu
     bool m_ToggleMainMenu;

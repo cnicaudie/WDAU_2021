@@ -76,7 +76,9 @@ void Game::RunGameLoop()
 
         Update(deltaTime);
         Render(m_Window);
+#if _DEBUG
         RenderDebugMenu(m_Window);
+#endif
 
         UpdateGUI(deltaTime);
         RenderGUI(m_Window);

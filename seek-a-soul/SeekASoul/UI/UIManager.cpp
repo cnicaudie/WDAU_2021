@@ -198,6 +198,7 @@ void UIManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(m_AmmunitionsText);
         target.draw(m_SoulChunksText);
+        ShowHealthBar();
 
         if (m_IsPlayingEndGame) 
         {
@@ -233,6 +234,22 @@ void UIManager::OnEvent(const Event* evnt)
             }
         }
     }
+}
+
+void UIManager::ShowHealthBar() const
+{
+    const float menuWidth = 270.f;
+    const float menuHeight = 60.f;
+
+    const int HP = UIViewModel::GetInstance()->GetHealthPoints();
+    const int maxHP = UIViewModel::GetInstance()->GetMaxHealthPoints();
+    const float healthProgress = static_cast<float>(HP) / static_cast<float>(maxHP);
+
+    ImGui::SetNextWindowSize(ImVec2(menuWidth, menuHeight), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(m_GUIView.getCenter().x - (menuWidth / 2.f), m_GUIView.getCenter().y * 0.05f), ImGuiCond_FirstUseEver);
+    ImGui::Begin("Player's HP");
+    ImGui::ProgressBar(healthProgress, ImVec2(static_cast<float>(-FLT_MIN), 0.0f), std::to_string(HP).c_str());
+    ImGui::End();
 }
 
 void UIManager::StartEndGame() 
