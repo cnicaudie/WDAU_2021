@@ -44,9 +44,6 @@
     <ClCompile Include="Game\Objects\Door.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Map\GameGrid.cpp">
-      <Filter>Game\Map</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Map\GameMap.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
@@ -137,6 +134,9 @@
     <ClCompile Include="Game\Events\LevelEvent.cpp">
       <Filter>Game\Events</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Collision\GameGrid.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -175,9 +175,6 @@
     </ClInclude>
     <ClInclude Include="Game\Objects\Door.h">
       <Filter>Game\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Map\GameGrid.h">
-      <Filter>Game\Map</Filter>
     </ClInclude>
     <ClInclude Include="Game\Map\GameMap.h">
       <Filter>Game\Map</Filter>
@@ -289,6 +286,9 @@
     </ClInclude>
     <ClInclude Include="Game\Events\LevelEvent.h">
       <Filter>Game\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\GameGrid.h">
+      <Filter>Engine\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

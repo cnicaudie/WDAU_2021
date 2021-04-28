@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Game/Map/GameGrid.h>
+#include <Engine/Collision/GameGrid.h>
 
 namespace SeekASoul
 {
@@ -11,7 +11,7 @@ namespace SeekASoul
 		public:
 			CollisionManager();
 
-			const std::pair<bool, bool> CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const Gameplay::GameGrid& mapGrid) const;
+			const std::pair<bool, bool> CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const GameGrid& grid) const;
 			const CollisionDirection GetCollisionDirection(BoxCollideable* collideable, BoxCollideable* collider) const;
 		};
 	}

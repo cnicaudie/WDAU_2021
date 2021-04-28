@@ -8,7 +8,7 @@ namespace SeekASoul
     {
         CollisionManager::CollisionManager() {}
         
-        const std::pair<bool, bool> CollisionManager::CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const Gameplay::GameGrid& mapGrid) const
+        const std::pair<bool, bool> CollisionManager::CheckCollisions(BoxCollideable* collideable, const sf::Vector2f& positionOffset, const GameGrid& grid) const
         {
             bool hasCollidedWithTile = false;
             bool hasCollidedWithObject = false;
@@ -36,16 +36,16 @@ namespace SeekASoul
             sf::FloatRect quadBoundingBox = quad.getGlobalBounds();
     
             // Check collision with tiles
-            std::vector<std::shared_ptr<Gameplay::Tile>> nearbyTiles = mapGrid.GetNearbyTiles(quadBoundingBox);
+            std::vector<std::shared_ptr<BoxCollideable>> nearbyTiles = grid.GetNearbyTiles(quadBoundingBox);
     
-            for (const std::shared_ptr<Gameplay::Tile>& tile : nearbyTiles)
+            for (const std::shared_ptr<BoxCollideable>& tile : nearbyTiles)
             {
                 // Check if collideable triggered the tile 
                 if (tile->IsTrigger())
                 {
                     if (tile->Contains(collideable->GetCenter())) 
                     {
-                        collideable->OnTrigger(static_cast<BoxCollideable*>(tile.get()));
+                        collideable->OnTrigger(tile.get());
                         // Uncomment next line when implementing portal tiles or whatever
                         //tile->OnTrigger(collideable);
                     }
@@ -54,27 +54,27 @@ namespace SeekASoul
                 else if (quadBoundingBox.intersects(tile->GetBoundingBox())) 
                 {
                     hasCollidedWithTile = true;
-                    collideable->OnCollision(static_cast<BoxCollideable*>(tile.get()), GetCollisionDirection(collideable, tile.get()));
+                    collideable->OnCollision(tile.get(), GetCollisionDirection(collideable, tile.get()));
                     // Uncomment next line when implementing breakable tiles or whatever
                     //tile->OnCollision(collideable, GetCollisionDirection(tile.get(), collideable));
                 }
             }
 
             // Check collision with other objects on the map (static/dynamic)
-            std::vector<BoxCollideable*> nearbyObjects = mapGrid.GetNearbyObjects(quadBoundingBox);
+            std::vector<std::shared_ptr<BoxCollideable>> nearbyObjects = grid.GetNearbyObjects(quadBoundingBox);
     
-            for (BoxCollideable* object : nearbyObjects)
+            for (const std::shared_ptr<BoxCollideable>& object : nearbyObjects)
             {
                 if (object->IsTrigger() && collideable->Contains(object->GetCenter()))
                 {
-                    collideable->OnTrigger(object);
+                    collideable->OnTrigger(object.get());
                     object->OnTrigger(collideable);
                 }
                 else if (collideable->IsColliding(*object))
                 {
                     hasCollidedWithObject = true;
-                    collideable->OnCollision(object, GetCollisionDirection(collideable, object));
-                    object->OnCollision(collideable, GetCollisionDirection(object, collideable));
+                    collideable->OnCollision(object.get(), GetCollisionDirection(collideable, object.get()));
+                    object->OnCollision(collideable, GetCollisionDirection(object.get(), collideable));
                 }
             }
     

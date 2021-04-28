@@ -1,11 +1,14 @@
 #include <stdafx.h>
 #include "GameMap.h"
+#include <Game/Entities/Enemy.h>
+#include <Game/Objects/Door.h>
+#include <Game/Objects/Collectibles/SoulChunk.h>
+#include <Game/Objects/MovingPlatform.h>
 #include <Game/Map/Tiles/Tile.h>
 #include <Game/Map/Tiles/TileType.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Map/Tiles/DeadlyTile.h>
-#include <Game/Objects/Collectibles/SoulChunk.h>
 
 namespace SeekASoul
 {
@@ -18,7 +21,7 @@ namespace SeekASoul
             , m_TileSet(textureManager->GetTextureFromName("TILESET"))
             , m_MapGrid(TILE_SIZE)
             , m_Player{ inputManager, textureManager }
-            , m_Door{{ 0.f, 0.f }, { 0.f, 0.f }}
+            , m_Door{ std::make_shared<Door>(sf::Vector2f(0.f, 0.f), sf::Vector2f(0.f, 0.f)) }
         {
             LOG_INFO("GameMap created !");
         }
@@ -28,7 +31,7 @@ namespace SeekASoul
         void GameMap::Update(float deltaTime) 
         {
             // Update Door
-            m_Door.Update(deltaTime);
+            m_Door->Update(deltaTime);
 
             // Update Player
             m_Player.Update(deltaTime);
@@ -46,34 +49,40 @@ namespace SeekASoul
             target.draw(m_BackgroundTileMap, states); // Draw the vertex array
 
             // === Draw other objects
-            for (const std::unique_ptr<SoulChunk>& s : m_SoulChunks)
+            for (const std::shared_ptr<SoulChunk>& s : m_SoulChunks)
             {
                 target.draw(*s);
             }
 
-            for (const MovingPlatform& platform : m_MovingPlatforms)
+            for (const std::shared_ptr<MovingPlatform>& platform : m_MovingPlatforms)
             {
-                target.draw(platform);
+                target.draw(*platform);
             }
 
-            target.draw(m_Door);
+            target.draw(*m_Door);
 
             // === Draw entities
-            for (const Enemy& enemy : m_Enemies)
+            for (const std::shared_ptr<Enemy>& enemy : m_Enemies)
             {
-                target.draw(enemy);
+                target.draw(*enemy);
             }
 
             target.draw(m_Player);
+        }
+
+        void GameMap::RenderDebugMenu(sf::RenderTarget& target)
+        {
+            m_Door->RenderDebugMenu(target);
+            m_Player.RenderDebugMenu(target);
         }
 
         void GameMap::UpdateEnemies(float deltaTime)
         {
             for (auto it = m_Enemies.begin(); it < m_Enemies.end(); it++)
             {   
-                it->Update(deltaTime);
+                (*it)->Update(deltaTime);
         
-                if (it->IsDead())
+                if ((*it)->IsDead())
                 {
                     it = m_Enemies.erase(it);
                     if (it == m_Enemies.end()) { break; }
@@ -91,7 +100,7 @@ namespace SeekASoul
 
                     if (m_SoulChunks.size() == 0)
                     {
-                        m_Door.OpenDoor();
+                        m_Door->OpenDoor();
                     }
 
                     if (it == m_SoulChunks.end()) { break; }
@@ -105,9 +114,9 @@ namespace SeekASoul
 
         void GameMap::UpdateMovingPlatforms(float deltaTime) 
         {
-            for (MovingPlatform& platform : m_MovingPlatforms)
+            for (const std::shared_ptr<MovingPlatform>& platform : m_MovingPlatforms)
             {
-                platform.Update(deltaTime);
+                platform->Update(deltaTime);
             }
         }
 
@@ -117,16 +126,13 @@ namespace SeekASoul
             m_BackgroundTileMap.setPrimitiveType(sf::Quads);
             m_BackgroundTileMap.resize(static_cast<size_t>(levelSize.x) * static_cast<size_t>(levelSize.y) * 4);
     
-            // Clear the map grid if necessary
-            if (!m_MapGrid.m_TileGrid.empty())
-            {
-                m_MapGrid.m_TileGrid.clear();
-            }
+            // Clear the map grid
+            m_MapGrid.Clear();
 
             // Populate the vertex array, with one quad per tile
             for (unsigned int i = 0; i < levelSize.x; ++i) 
             {
-                std::vector<std::shared_ptr<Tile>> tileLine;
+                std::vector<std::shared_ptr<Engine::BoxCollideable>> tileLine;
 
                 for (unsigned int j = 0; j < levelSize.y; ++j)
                 {
@@ -141,7 +147,7 @@ namespace SeekASoul
                     CreateTile(tileNumber, tileLine, i, j, levelSize);
                 }
 
-                m_MapGrid.m_TileGrid.push_back(tileLine);
+                m_MapGrid.AddTileLineOnGrid(tileLine);
             }
 
             return true;
@@ -165,7 +171,7 @@ namespace SeekASoul
             quad[3].texCoords = sf::Vector2f(static_cast<float>(tu * TILE_SIZE.x), static_cast<float>((tv + 1) * TILE_SIZE.y));
         }
 
-        void GameMap::CreateTile(int tileNumber, std::vector<std::shared_ptr<Tile>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize)
+        void GameMap::CreateTile(int tileNumber, std::vector<std::shared_ptr<Engine::BoxCollideable>>& tileLine, unsigned int i, unsigned int j, const sf::Vector2u& levelSize)
         {
             TileType tileType = static_cast<TileType>(tileNumber);
             unsigned int xCenter = (TILE_SIZE.x / 2) + i * TILE_SIZE.x;
@@ -258,8 +264,8 @@ namespace SeekASoul
                     std::stof(enemyInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
                 };
 
-                Enemy& enemy = m_Enemies.emplace_back(m_TextureManager, enemyPosition);
-                m_MapGrid.AddObjectOnMap(&enemy);
+                std::shared_ptr<Enemy>& enemy = m_Enemies.emplace_back(std::make_shared<Enemy>(m_TextureManager, enemyPosition));
+                m_MapGrid.AddObjectOnGrid(enemy);
             }
         }
 
@@ -280,8 +286,8 @@ namespace SeekASoul
                     std::stof(soulChunkInfo.at(1)) * TILE_SIZE.y + (TILE_SIZE.y / 2)
                 };
 
-                const std::unique_ptr<SoulChunk>& soulChunk = m_SoulChunks.emplace_back(std::make_unique<SoulChunk>(m_TextureManager, soulChunkPosition));
-                m_MapGrid.AddObjectOnMap(soulChunk.get());
+                std::shared_ptr<SoulChunk>& soulChunk = m_SoulChunks.emplace_back(std::make_shared<SoulChunk>(m_TextureManager, soulChunkPosition));
+                m_MapGrid.AddObjectOnGrid(soulChunk);
             }
         }
 
@@ -314,8 +320,8 @@ namespace SeekASoul
                     std::stof(platformInfo.at(5))
                 };
         
-                MovingPlatform& platform = m_MovingPlatforms.emplace_back(platformStartPosition, platformEndPosition, platformSize);
-                m_MapGrid.AddObjectOnMap(&platform);
+                std::shared_ptr<MovingPlatform>& platform = m_MovingPlatforms.emplace_back(std::make_shared<MovingPlatform>(platformStartPosition, platformEndPosition, platformSize));
+                m_MapGrid.AddObjectOnGrid(platform);
             }
         }
 
@@ -335,8 +341,8 @@ namespace SeekASoul
                 std::stof(doorInfo.at(3))
             };
 
-            m_Door = Door(doorPosition, doorSize);
-            m_MapGrid.AddObjectOnMap(&m_Door);
+            m_Door = std::make_shared<Door>(doorPosition, doorSize);
+            m_MapGrid.AddObjectOnGrid(m_Door);
         }
     }
 }

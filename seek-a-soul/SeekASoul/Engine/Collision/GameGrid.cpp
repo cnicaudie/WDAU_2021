@@ -1,10 +1,9 @@
 #include <stdafx.h>
 #include "GameGrid.h"
-#include <Game/Map/Tiles/Tile.h>
 
 namespace SeekASoul
 {
-	namespace Gameplay
+	namespace Engine
 	{
 		GameGrid::GameGrid(const sf::Vector2u& tileSize)
 			: m_TileSize(tileSize)
@@ -32,9 +31,9 @@ namespace SeekASoul
 			return result;
 		}
 
-		const std::vector<std::shared_ptr<Tile>> GameGrid::GetNearbyTiles(const sf::FloatRect& boundingBox) const
+		const std::vector<std::shared_ptr<BoxCollideable>> GameGrid::GetNearbyTiles(const sf::FloatRect& boundingBox) const
 		{
-			std::vector<std::shared_ptr<Tile>> result;
+			std::vector<std::shared_ptr<BoxCollideable>> result;
 
 			sf::Vector2i startPoint = GetTileCoordinates({ boundingBox.left, boundingBox.top });
 			sf::Vector2i endPoint = GetTileCoordinates({ boundingBox.left + boundingBox.width, boundingBox.top + boundingBox.height });
@@ -50,9 +49,9 @@ namespace SeekASoul
 			return result;
 		}
 
-		const std::vector<Engine::BoxCollideable*> GameGrid::GetNearbyObjects(const sf::FloatRect& boundingBox) const
+		const std::vector<std::shared_ptr<BoxCollideable>> GameGrid::GetNearbyObjects(const sf::FloatRect& boundingBox) const
 		{
-			std::vector<Engine::BoxCollideable*> result;
+			std::vector<std::shared_ptr<BoxCollideable>> result;
 
 			// Retrieve X and Y limits of the bounding box
 			const float xMin = boundingBox.left;
@@ -61,22 +60,22 @@ namespace SeekASoul
 			const float yMax = boundingBox.top + boundingBox.height;
 
 			// Find closest box to xMin and yMin in both set
-			auto const& posX = std::find_if(m_ObjectsOnMapX.begin(), m_ObjectsOnMapX.end(), [&](Engine::BoxCollideable* boxPtr)
+			auto const& posX = std::find_if(m_ObjectsOnGridX.begin(), m_ObjectsOnGridX.end(), [&](std::shared_ptr<BoxCollideable> boxPtr)
 				{
 					// If left side of the object is outside, we still take it into account
 					return boxPtr->GetBoundingBox().left + boxPtr->GetBoundingBox().width > xMin;
 				});
 
-			auto const& posY = std::find_if(m_ObjectsOnMapY.begin(), m_ObjectsOnMapY.end(), [&](Engine::BoxCollideable* boxPtr)
+			auto const& posY = std::find_if(m_ObjectsOnGridY.begin(), m_ObjectsOnGridY.end(), [&](std::shared_ptr<BoxCollideable> boxPtr)
 				{
 					// If top side of the object is outside, we still take it into account
 					return boxPtr->GetBoundingBox().top + boxPtr->GetBoundingBox().height > yMin;
 				});
 
 			// Add objects between the bounds of the bounding box to the nearby objects vector
-			if (posX != m_ObjectsOnMapX.end()) 
+			if (posX != m_ObjectsOnGridX.end())
 			{
-				for (auto it = posX; it != m_ObjectsOnMapX.end(); it++)
+				for (auto it = posX; it != m_ObjectsOnGridX.end(); it++)
 				{
 					// If left side of the object is still inside, we still take it into account
 					if ((*it)->GetBoundingBox().left < xMax)
@@ -86,9 +85,9 @@ namespace SeekASoul
 				}
 			}
 
-			if (posY != m_ObjectsOnMapY.end())
+			if (posY != m_ObjectsOnGridY.end())
 			{
-				for (auto it = posY; it != m_ObjectsOnMapY.end(); it++)
+				for (auto it = posY; it != m_ObjectsOnGridY.end(); it++)
 				{
 					// If top side of the object is still inside, we still take it into account
 					if ((*it)->GetBoundingBox().top < yMax)
