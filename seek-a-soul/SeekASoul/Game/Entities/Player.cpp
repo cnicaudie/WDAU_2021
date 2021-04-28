@@ -4,11 +4,11 @@
 #include <Engine/Event/EventTypes/ActionEvent.h>
 #include <Engine/Maths/Maths.h>
 #include <Engine/Time/Time.h>
+#include <Game/Events/LevelEvent.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/Collectibles/SoulChunk.h>
-#include <Engine/Event/EventTypes/LevelEvent.h>
 #include <Game/Objects/MovingPlatform.h>
 
 namespace SeekASoul
@@ -645,7 +645,7 @@ namespace SeekASoul
             m_HealthState = HealthState::DEAD;
             m_AnimationSprite.setColor(sf::Color::Red);
 
-            std::shared_ptr<Engine::LevelEvent> eventType = std::make_shared<Engine::LevelEvent>(LevelStatus::FAILURE);
+            std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(LevelStatus::FAILURE);
             Engine::EventManager::GetInstance()->Fire(eventType);
         }
     }

@@ -1,8 +1,8 @@
 #include <stdafx.h>
 #include "GameManager.h"
 #include <Engine/Event/Listener/EventListener.h>
-#include <Engine/Event/EventTypes/LevelEvent.h>
 #include <Engine/Collision/CollisionManager.h>
+#include <Game/Events/LevelEvent.h>
 #include <Game/Camera/CameraManager.h>
 #include <Game/Level/LevelManager.h>
 #include <UI/UIManager.h>
@@ -36,7 +36,7 @@ namespace SeekASoul
 
             // Configure EventListeners
             Engine::EventListener<GameManager, Engine::Event> listenerEvent(this, &GameManager::OnEvent);
-            Engine::EventListener<GameManager, Engine::LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
+            Engine::EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
             Engine::EventManager::GetInstance()->AddListener(listenerEvent);
             Engine::EventManager::GetInstance()->AddListener(listenerLevelEvent);
         }
@@ -44,7 +44,7 @@ namespace SeekASoul
         GameManager::~GameManager()
         {
             Engine::EventListener<GameManager, Engine::Event> listenerEvent(this, &GameManager::OnEvent);
-            Engine::EventListener<GameManager, Engine::LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
+            Engine::EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
             Engine::EventManager::GetInstance()->RemoveListener(listenerEvent);
             Engine::EventManager::GetInstance()->RemoveListener(listenerLevelEvent);
 
@@ -167,7 +167,7 @@ namespace SeekASoul
                 LOG_INFO("GAME OVER !!!");
                 m_CurrentState = GameState::OVER;
             }
-            else if (const Engine::LevelEvent* actionEvent = dynamic_cast<const Engine::LevelEvent*>(evnt))
+            else if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
             {
                 if (actionEvent->GetLevelStatus() == LevelStatus::RESTART)
                 {

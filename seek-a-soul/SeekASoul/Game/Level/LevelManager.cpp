@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include "LevelManager.h"
 #include <Engine/Resources/FileReader.h>
-#include <Engine/Event/EventTypes/LevelEvent.h>
+#include <Game/Events/LevelEvent.h>
 
 namespace SeekASoul
 {
@@ -17,7 +17,7 @@ namespace SeekASoul
 		{
 			// Configure EventListeners
 			Engine::EventListener<LevelManager, Engine::Event> listenerEvent(this, &LevelManager::OnEvent);
-			Engine::EventListener<LevelManager, Engine::LevelEvent> listenerLevelEvent(this, &LevelManager::OnEvent);
+			Engine::EventListener<LevelManager, LevelEvent> listenerLevelEvent(this, &LevelManager::OnEvent);
 			Engine::EventManager::GetInstance()->AddListener(listenerEvent);
 			Engine::EventManager::GetInstance()->AddListener(listenerLevelEvent);
 		}
@@ -25,7 +25,7 @@ namespace SeekASoul
 		LevelManager::~LevelManager()
 		{
 			Engine::EventListener<LevelManager, Engine::Event> listenerEvent(this, &LevelManager::OnEvent);
-			Engine::EventListener<LevelManager, Engine::LevelEvent> listenerLevelEvent(this, &LevelManager::OnEvent);
+			Engine::EventListener<LevelManager, LevelEvent> listenerLevelEvent(this, &LevelManager::OnEvent);
 			Engine::EventManager::GetInstance()->RemoveListener(listenerEvent);
 			Engine::EventManager::GetInstance()->RemoveListener(listenerLevelEvent);
 		}
@@ -75,7 +75,7 @@ namespace SeekASoul
 				LoadLevel(false);
 				LOG_INFO("Done!");
 			}
-			else if (const Engine::LevelEvent* actionEvent = dynamic_cast<const Engine::LevelEvent*>(evnt))
+			else if (const LevelEvent* actionEvent = dynamic_cast<const LevelEvent*>(evnt))
 			{
 				switch(actionEvent->GetLevelStatus()) 
 				{
@@ -156,7 +156,7 @@ namespace SeekASoul
 			if (ImGui::Button("Restart"))
 			{
 				m_CurrentLevel = m_LevelChoice;
-				std::shared_ptr<Engine::LevelEvent> levelEvent = std::make_shared<Engine::LevelEvent>(LevelStatus::RESTART);
+				std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::RESTART);
 				Engine::EventManager::GetInstance()->Fire(levelEvent);
 			}
 

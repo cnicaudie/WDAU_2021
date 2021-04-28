@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include "UIManager.h"
 #include <sstream>
-#include <Engine/Event/EventTypes/LevelEvent.h>
+#include <Game/Events/LevelEvent.h>
 
 namespace SeekASoul
 {
@@ -34,7 +34,7 @@ namespace SeekASoul
 
             // Configure EventListeners
             Engine::EventListener<UIManager, Engine::Event> listenerGameOver(this, &UIManager::OnEvent);
-            Engine::EventListener<UIManager, Engine::LevelEvent> listenerLevelEnd(this, &UIManager::OnEvent);
+            Engine::EventListener<UIManager, Gameplay::LevelEvent> listenerLevelEnd(this, &UIManager::OnEvent);
             Engine::EventManager::GetInstance()->AddListener(listenerGameOver);
             Engine::EventManager::GetInstance()->AddListener(listenerLevelEnd);
         }
@@ -113,7 +113,7 @@ namespace SeekASoul
         {
             // Remove listeners
             Engine::EventListener<UIManager, Engine::Event> listenerGameOver(this, &UIManager::OnEvent);
-            Engine::EventListener<UIManager, Engine::LevelEvent> listenerLevelEnd(this, &UIManager::OnEvent);
+            Engine::EventListener<UIManager, Gameplay::LevelEvent> listenerLevelEnd(this, &UIManager::OnEvent);
             Engine::EventManager::GetInstance()->RemoveListener(listenerGameOver);
             Engine::EventManager::GetInstance()->RemoveListener(listenerLevelEnd);
         }
@@ -151,7 +151,7 @@ namespace SeekASoul
             
                     if (m_WentBackToMenu)
                     {
-                        std::shared_ptr<Engine::LevelEvent> levelEvent = std::make_shared<Engine::LevelEvent>(Gameplay::LevelStatus::RESTART);
+                        std::shared_ptr<Gameplay::LevelEvent> levelEvent = std::make_shared<Gameplay::LevelEvent>(Gameplay::LevelStatus::RESTART);
                         Engine::EventManager::GetInstance()->Fire(levelEvent);
                         m_WentBackToMenu = false;
                     }
@@ -165,7 +165,7 @@ namespace SeekASoul
                 {
                     m_ChooseLevelButton.ResetClickStatus();
 
-                    std::shared_ptr<Engine::LevelEvent> levelEvent = std::make_shared<Engine::LevelEvent>(Gameplay::LevelStatus::SELECT);
+                    std::shared_ptr<Gameplay::LevelEvent> levelEvent = std::make_shared<Gameplay::LevelEvent>(Gameplay::LevelStatus::SELECT);
                     Engine::EventManager::GetInstance()->Fire(levelEvent);
                 }
                 else if (m_CloseButton.WasClicked())
@@ -182,7 +182,7 @@ namespace SeekASoul
                     m_RestartButton.ResetClickStatus();
                     m_IsPlayingEndGame = false;
 
-                    std::shared_ptr<Engine::LevelEvent> levelEvent = std::make_shared<Engine::LevelEvent>(Gameplay::LevelStatus::RESTART);
+                    std::shared_ptr<Gameplay::LevelEvent> levelEvent = std::make_shared<Gameplay::LevelEvent>(Gameplay::LevelStatus::RESTART);
                     Engine::EventManager::GetInstance()->Fire(levelEvent);
                 }
                 else if (m_BackToMenuButton.WasClicked())
@@ -226,7 +226,7 @@ namespace SeekASoul
             {
                 StartEndGame();
             }
-            else if (const Engine::LevelEvent* actionEvent = dynamic_cast<const Engine::LevelEvent*>(evnt))
+            else if (const Gameplay::LevelEvent* actionEvent = dynamic_cast<const Gameplay::LevelEvent*>(evnt))
             {
                 switch (actionEvent->GetLevelStatus()) 
                 {

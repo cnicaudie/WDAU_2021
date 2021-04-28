@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include "Door.h"
 #include <Game/Entities/Player.h>
-#include <Engine/Event/EventTypes/LevelEvent.h>
+#include <Game/Events/LevelEvent.h>
 
 namespace SeekASoul
 {
@@ -55,7 +55,7 @@ namespace SeekASoul
 			if (player != nullptr && m_IsDoorOpen && !m_IsPlayingEndGame)
 			{	
 				StartEndGame();
-				std::shared_ptr<Engine::LevelEvent> eventType = std::make_shared<Engine::LevelEvent>(LevelStatus::SUCCESS);
+				std::shared_ptr<LevelEvent> eventType = std::make_shared<LevelEvent>(LevelStatus::SUCCESS);
 				Engine::EventManager::GetInstance()->Fire(eventType);
 			}
 		}
