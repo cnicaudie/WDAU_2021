@@ -24,6 +24,31 @@ namespace SeekASoul
 				m_ObjectsOnGridY.insert(object);
 			}
 
+			inline void RemoveObjectOnGrid(std::shared_ptr<BoxCollideable> object) 
+			{
+				auto const& posX = std::find_if(m_ObjectsOnGridX.begin(), m_ObjectsOnGridX.end()
+					, [&](std::shared_ptr<BoxCollideable> other)
+					{
+						return *object == *other;
+					});
+
+				if (posX != m_ObjectsOnGridX.end())
+				{
+					m_ObjectsOnGridX.erase(posX);
+				}
+
+				auto const& posY = std::find_if(m_ObjectsOnGridY.begin(), m_ObjectsOnGridY.end()
+					, [&](std::shared_ptr<BoxCollideable> other)
+					{
+						return *object == *other;
+					});
+
+				if (posY != m_ObjectsOnGridY.end())
+				{
+					m_ObjectsOnGridY.erase(posY);
+				}
+			}
+
 			inline void Clear()
 			{
 				m_TileGrid.clear();

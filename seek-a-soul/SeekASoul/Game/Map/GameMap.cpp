@@ -84,6 +84,7 @@ namespace SeekASoul
         
                 if ((*it)->IsDead())
                 {
+                    m_MapGrid.RemoveObjectOnGrid(*it);
                     it = m_Enemies.erase(it);
                     if (it == m_Enemies.end()) { break; }
                 }
@@ -96,6 +97,7 @@ namespace SeekASoul
             {
                 if ((*it)->WasCollected())
                 {
+                    m_MapGrid.RemoveObjectOnGrid(*it);
                     it = m_SoulChunks.erase(it);
 
                     if (m_SoulChunks.size() == 0)
