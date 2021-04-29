@@ -1,68 +1,50 @@
 #pragma once
 
-#include <Game/Action.h>
-#include <Engine/Event/EventTypes/ActionEvent.h>
-
-class Binding;
-
-class InputManager 
+namespace SeekASoul
 {
-public:
-	InputManager();
-	~InputManager();
-
-	void Update();
-	inline void RenderDebugMenu(sf::RenderTarget& target) 
+	namespace Engine
 	{
-		if (ImGui::CollapsingHeader("Mouse position"))
+		class ActionEvent;
+		class Binding;
+		class IAction;
+
+		class InputManager 
 		{
-			ImGui::Text("Game :");
-			ImGui::SameLine();
-			ImGui::Text("X: %f", m_GameMousePosition.x);
-			ImGui::SameLine();
-			ImGui::Text("Y: %f", m_GameMousePosition.y);
-			ImGui::Text("GUI :");
-			ImGui::SameLine(); 
-			ImGui::Text("X: %f", m_GUIMousePosition.x);
-			ImGui::SameLine();
-			ImGui::Text("Y: %f", m_GUIMousePosition.y);
-		}
-	};
+		public:
+			InputManager();
+			~InputManager();
 
-	void ManageInputEvents(const sf::Event& event);
+			void AddActionBinding(std::shared_ptr<Binding> binding, std::shared_ptr<IAction> action);
 
-	void AddAction(Binding* key);
-	void RemoveAction(Binding* key);
+			void Update();
+			void RenderDebugMenu(sf::RenderTarget& target);
+			void ManageInputEvents(const sf::Event& event);
 
-	inline bool HasAction(Action action) const
-	{
-		auto it = std::find_if(m_CurrentActions.begin(), m_CurrentActions.end(), [&](const std::shared_ptr<ActionEvent> actionEvent)
+			void AddAction(std::shared_ptr<Binding> binding);
+			void RemoveAction(std::shared_ptr<Binding> binding);
+			bool HasAction(IAction* action) const;
+
+			inline void UpdateMousePosition(const sf::RenderWindow& gameWindow, bool isInGame)
 			{
-				return actionEvent->GetActionType() == action;
-			});
-		
-		return it != m_CurrentActions.end();
+				const sf::Vector2f& mousePosition = gameWindow.mapPixelToCoords(sf::Mouse::getPosition(gameWindow));
+
+				if (isInGame) 
+				{
+					m_GameMousePosition = mousePosition;
+				} 
+				else 
+				{
+					m_GUIMousePosition = mousePosition;
+				}
+			};
+
+		private:
+			std::vector<std::shared_ptr<ActionEvent>> m_CurrentActions;
+			std::map<std::shared_ptr<Binding>, std::shared_ptr<IAction>> m_ActionBinding;
+
+			sf::Vector2f m_GameMousePosition;
+			sf::Vector2f m_GUIMousePosition;
+			sf::Vector2f m_AimJoystickPosition;
+		};
 	}
-
-	inline void UpdateMousePosition(const sf::RenderWindow& gameWindow, bool isInGame)
-	{
-		const sf::Vector2f& mousePosition = gameWindow.mapPixelToCoords(sf::Mouse::getPosition(gameWindow));
-
-		if (isInGame) 
-		{
-			m_GameMousePosition = mousePosition;
-		} 
-		else 
-		{
-			m_GUIMousePosition = mousePosition;
-		}
-	};
-
-private:
-	std::vector<std::shared_ptr<ActionEvent>> m_CurrentActions;
-	std::map<Binding*, Action> m_ActionBinding;
-
-	sf::Vector2f m_GameMousePosition;
-	sf::Vector2f m_GUIMousePosition;
-	sf::Vector2f m_AimJoystickPosition;
-};
+}

@@ -44,9 +44,6 @@
     <ClCompile Include="Game\Objects\Door.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Map\GameGrid.cpp">
-      <Filter>Game\Map</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Map\GameMap.cpp">
       <Filter>Game\Map</Filter>
     </ClCompile>
@@ -113,9 +110,6 @@
     <ClCompile Include="UI\UIViewModel.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Event\EventTypes\LevelEvent.cpp">
-      <Filter>Engine\Event\EventTypes</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Level\LevelManager.cpp">
       <Filter>Game\Level</Filter>
     </ClCompile>
@@ -136,6 +130,18 @@
     </ClCompile>
     <ClCompile Include="Game\Objects\MovingPlatform.cpp">
       <Filter>Game\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Events\LevelEvent.cpp">
+      <Filter>Game\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collision\GameGrid.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\IAction.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Actions\Action.cpp">
+      <Filter>Game\Actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,9 +164,6 @@
     <ClInclude Include="UI\UIManager.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Action.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Input\InputManager.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
@@ -175,9 +178,6 @@
     </ClInclude>
     <ClInclude Include="Game\Objects\Door.h">
       <Filter>Game\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Map\GameGrid.h">
-      <Filter>Game\Map</Filter>
     </ClInclude>
     <ClInclude Include="Game\Map\GameMap.h">
       <Filter>Game\Map</Filter>
@@ -263,9 +263,6 @@
     <ClInclude Include="Engine\Resources\FileReader.h">
       <Filter>Engine\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Event\EventTypes\LevelEvent.h">
-      <Filter>Engine\Event\EventTypes</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Level\LevelManager.h">
       <Filter>Game\Level</Filter>
     </ClInclude>
@@ -289,6 +286,24 @@
     </ClInclude>
     <ClInclude Include="Game\Objects\MovingPlatform.h">
       <Filter>Game\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Events\LevelEvent.h">
+      <Filter>Game\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\GameGrid.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\IAction.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Actions\Action.h">
+      <Filter>Game\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Actions\ActionType.h">
+      <Filter>Game\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Actions\JoystickButton.h">
+      <Filter>Engine\Input\Bindings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -360,6 +375,12 @@
     </Filter>
     <Filter Include="Game\Objects\Collectibles">
       <UniqueIdentifier>{8f329f8c-7685-48db-b416-9dea2ddef466}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Events">
+      <UniqueIdentifier>{1b6f4389-79b9-47ed-9c7f-3d1bf45148a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Actions">
+      <UniqueIdentifier>{572553d1-2899-495d-9858-6706fd31d9eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

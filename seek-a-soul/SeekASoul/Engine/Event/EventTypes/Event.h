@@ -2,18 +2,24 @@
 
 #include "EventType.h"
 
-class Event
+namespace SeekASoul
 {
-public:
-	Event(EventType eventType) : m_EventType(eventType) {};
-	
-	virtual bool operator==(const Event& other) const
+	namespace Engine
 	{
-		return m_EventType == other.m_EventType;
-	};
+		class Event
+		{
+		public:
+			Event(EventType eventType) : m_EventType(eventType) {};
+	
+			virtual bool operator==(const Event& other) const
+			{
+				return m_EventType == other.m_EventType;
+			};
 
-	inline const EventType GetEventType() const { return m_EventType; };
+			inline const EventType GetEventType() const { return m_EventType; };
 
-private:
-	EventType m_EventType;
-};
+		private:
+			EventType m_EventType;
+		};
+	}
+}

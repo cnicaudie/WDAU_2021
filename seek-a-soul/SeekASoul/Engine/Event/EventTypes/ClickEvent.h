@@ -1,22 +1,30 @@
 #pragma once
 
-class ClickEvent : public Event 
+#include "Event.h"
+
+namespace SeekASoul
 {
-public:
-	ClickEvent(const sf::Vector2f& clickPosition) : Event(EventType::CLICK), m_ClickPosition(clickPosition) {};
-
-	virtual bool operator==(const Event& other) const override
+	namespace Engine
 	{
-		if (const ClickEvent* otherClickEvent = dynamic_cast<const ClickEvent*>(&other))
+		class ClickEvent : public Event 
 		{
-			return m_ClickPosition == otherClickEvent->m_ClickPosition;
-		}
+		public:
+			ClickEvent(const sf::Vector2f& clickPosition) : Event(EventType::CLICK), m_ClickPosition(clickPosition) {};
 
-		return false;
-	};
+			virtual bool operator==(const Event& other) const override
+			{
+				if (const ClickEvent* otherClickEvent = dynamic_cast<const ClickEvent*>(&other))
+				{
+					return m_ClickPosition == otherClickEvent->m_ClickPosition;
+				}
 
-	inline const sf::Vector2f GetClickPosition() const { return m_ClickPosition; };
+				return false;
+			};
+
+			inline const sf::Vector2f GetClickPosition() const { return m_ClickPosition; };
 	
-private:
-	sf::Vector2f m_ClickPosition;
-};
+		private:
+			sf::Vector2f m_ClickPosition;
+		};
+	}
+}

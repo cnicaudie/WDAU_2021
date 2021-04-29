@@ -1,14 +1,21 @@
 #pragma once
 
 #include "Binding.h"
+#include <Game/Actions/JoystickButton.h>
 
-class JoystickButtonBinding : public Binding
+namespace SeekASoul
 {
-public:
-	JoystickButtonBinding(const unsigned int& button);
+	namespace Engine
+	{
+		class JoystickButtonBinding : public Binding
+		{
+		public:
+			JoystickButtonBinding(const JoystickButton button);
 
-	bool operator==(Binding* other) override;
+			bool operator==(Binding* other) override;
 
-private:
-	unsigned int m_Button;
-};
+		private:
+			JoystickButton m_Button;
+		};
+	}
+}

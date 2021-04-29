@@ -1,33 +1,39 @@
 #pragma once
 
-class Animated
+namespace SeekASoul
 {
-public:
-	Animated(const sf::Vector2i& spriteSize, const sf::Texture& texture);
-
-	void PlayAnimation(int animationState);
-	inline void FlipSprite(bool flip)
+	namespace Engine
 	{
-		if (flip) 
+		class Animated
 		{
-			m_AnimationSprite.scale(-1.f, 1.f);
-		}
-		else 
-		{
-			m_AnimationSprite.scale(1.f, 1.f);
-		}
-	};
+		public:
+			Animated(const sf::Vector2i& spriteSize, const sf::Texture& texture);
 
-	void SetAnimatedSpritePosition(const sf::Vector2f& position);
+			void PlayAnimation(int animationState);
+			inline void FlipSprite(bool flip)
+			{
+				if (flip) 
+				{
+					m_AnimationSprite.scale(-1.f, 1.f);
+				}
+				else 
+				{
+					m_AnimationSprite.scale(1.f, 1.f);
+				}
+			};
 
-protected:
-	sf::Sprite m_AnimationSprite;
+			void SetAnimatedSpritePosition(const sf::Vector2f& position);
 
-private:
-	sf::Texture m_TextureSheet;
+		protected:
+			sf::Sprite m_AnimationSprite;
+
+		private:
+			sf::Texture m_TextureSheet;
 	
-	sf::Vector2i m_SpriteSize;
-	sf::IntRect m_SpriteFrame;
+			sf::Vector2i m_SpriteSize;
+			sf::IntRect m_SpriteFrame;
 
-	sf::Clock m_Clock;
-};
+			sf::Clock m_Clock;
+		};
+	}
+}
