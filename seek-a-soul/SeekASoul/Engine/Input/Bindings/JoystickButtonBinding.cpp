@@ -5,7 +5,7 @@ namespace SeekASoul
 {
 	namespace Engine
 	{
-		JoystickButtonBinding::JoystickButtonBinding(const unsigned int& button) : m_Button(button) {}
+		JoystickButtonBinding::JoystickButtonBinding(const JoystickButton button) : m_Button(button) {}
 
 		bool JoystickButtonBinding::operator==(Binding* other)
 		{

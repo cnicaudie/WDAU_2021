@@ -4,7 +4,7 @@ namespace SeekASoul
 {
 	namespace Gameplay
 	{
-		enum class Action
+		enum class ActionType
 		{
 			NONE		= 0,
 			MOVE_LEFT	= 1,
@@ -13,9 +13,8 @@ namespace SeekASoul
 			MOVE_DOWN	= 4,
 			SKULL_ROLL	= 5,
 			SHOOT		= 6,
-			AIM			= 7,
-			AIM_X		= 8,
-			AIM_Y		= 9
+			AIM_X		= 7,
+			AIM_Y		= 8
 		};
 	}
 }

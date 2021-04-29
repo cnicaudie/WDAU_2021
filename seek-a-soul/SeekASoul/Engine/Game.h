@@ -15,6 +15,8 @@ namespace SeekASoul
             void RunGameLoop();
 
         protected:
+            virtual void InitBindings() = 0;
+
             virtual void Update(float deltaTime) = 0;
             virtual void UpdateGUI(float deltaTime) = 0;
             virtual void Render(sf::RenderTarget& target) = 0;

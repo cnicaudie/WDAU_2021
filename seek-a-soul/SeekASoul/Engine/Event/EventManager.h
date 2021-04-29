@@ -7,6 +7,8 @@ namespace SeekASoul
 {
 	namespace Engine
 	{
+		class Event;
+
 		class EventManager 
 		{
 		public:

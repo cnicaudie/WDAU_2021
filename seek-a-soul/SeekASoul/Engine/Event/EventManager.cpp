@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "EventManager.h"
+#include <Engine/Event/EventTypes/Event.h>
 
 namespace SeekASoul
 {

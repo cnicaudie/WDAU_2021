@@ -1,11 +1,16 @@
 #include <stdafx.h>
 #include "GameManager.h"
+#include <Engine/Input/Bindings/KeyboardBinding.h>
+#include <Engine/Input/Bindings/JoystickButtonBinding.h>
+#include <Engine/Input/Bindings/JoystickAxisBinding.h>
+#include <Engine/Input/Bindings/MouseBinding.h>
 #include <Engine/Event/Listener/EventListener.h>
 #include <Engine/Collision/CollisionManager.h>
 #include <Game/Events/LevelEvent.h>
 #include <Game/Camera/CameraManager.h>
 #include <Game/Level/LevelManager.h>
 #include <UI/UIManager.h>
+#include <Game/Actions/Action.h>
 
 namespace SeekASoul
 {
@@ -34,11 +39,94 @@ namespace SeekASoul
         {   
             m_CameraManager->SetBoxToFollow(&(m_LevelManager->GetPlayerOnMap()));
 
+            InitBindings();
+
             // Configure EventListeners
             Engine::EventListener<GameManager, Engine::Event> listenerEvent(this, &GameManager::OnEvent);
             Engine::EventListener<GameManager, LevelEvent> listenerLevelEvent(this, &GameManager::OnEvent);
             Engine::EventManager::GetInstance()->AddListener(listenerEvent);
             Engine::EventManager::GetInstance()->AddListener(listenerLevelEvent);
+        }
+
+        void GameManager::InitBindings()
+        {
+            // TODO : Make a default bindings file to parse at construction
+
+            // === MOVE UP
+            
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::Up)
+                , std::make_shared<Action>(ActionType::MOVE_UP));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::Z)
+                , std::make_shared<Action>(ActionType::MOVE_UP));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickButtonBinding>(Engine::JoystickButton::TOP_RIGHT)
+                , std::make_shared<Action>(ActionType::MOVE_UP));
+
+            // === MOVE DOWN
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::Down)
+                , std::make_shared<Action>(ActionType::MOVE_DOWN));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::S)
+                , std::make_shared<Action>(ActionType::MOVE_DOWN));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickButtonBinding>(Engine::JoystickButton::TOP_LEFT)
+                , std::make_shared<Action>(ActionType::MOVE_DOWN));
+
+            // === MOVE RIGHT
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::Right)
+                , std::make_shared<Action>(ActionType::MOVE_RIGHT));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::D)
+                , std::make_shared<Action>(ActionType::MOVE_RIGHT));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::X, true)
+                , std::make_shared<Action>(ActionType::MOVE_RIGHT));
+
+            // === MOVE LEFT
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::Left)
+                , std::make_shared<Action>(ActionType::MOVE_LEFT));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::Q)
+                , std::make_shared<Action>(ActionType::MOVE_LEFT));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::X, false)
+                , std::make_shared<Action>(ActionType::MOVE_LEFT));
+
+            // === SKULL ROLL
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::KeyboardBinding>(sf::Keyboard::Space)
+                , std::make_shared<Action>(ActionType::SKULL_ROLL));
+            
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickButtonBinding>(Engine::JoystickButton::RIGHT_RIGHT)
+                , std::make_shared<Action>(ActionType::SKULL_ROLL));
+
+            // === SHOOT
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::MouseBinding>(sf::Mouse::Button::Right)
+                , std::make_shared<Action>(ActionType::SHOOT));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::Z, true)
+                , std::make_shared<Action>(ActionType::SHOOT));
+
+            // === AIM X
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::U, true)
+                , std::make_shared<Action>(ActionType::AIM_X));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::U, false)
+                , std::make_shared<Action>(ActionType::AIM_X));
+
+            // === AIM Y
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::V, true)
+                , std::make_shared<Action>(ActionType::AIM_Y));
+
+            m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::V, false)
+                , std::make_shared<Action>(ActionType::AIM_Y));
         }
 
         GameManager::~GameManager()

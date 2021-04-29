@@ -1,13 +1,12 @@
 #pragma once
 
-#include <Game/Action.h>
-#include <Engine/Event/EventTypes/ActionEvent.h>
-
 namespace SeekASoul
 {
 	namespace Engine
 	{
+		class ActionEvent;
 		class Binding;
+		class IAction;
 
 		class InputManager 
 		{
@@ -15,38 +14,15 @@ namespace SeekASoul
 			InputManager();
 			~InputManager();
 
-			void Update();
-			inline void RenderDebugMenu(sf::RenderTarget& target) 
-			{
-				if (ImGui::CollapsingHeader("Mouse position"))
-				{
-					ImGui::Text("Game :");
-					ImGui::SameLine();
-					ImGui::Text("X: %f", m_GameMousePosition.x);
-					ImGui::SameLine();
-					ImGui::Text("Y: %f", m_GameMousePosition.y);
-					ImGui::Text("GUI :");
-					ImGui::SameLine(); 
-					ImGui::Text("X: %f", m_GUIMousePosition.x);
-					ImGui::SameLine();
-					ImGui::Text("Y: %f", m_GUIMousePosition.y);
-				}
-			};
+			void AddActionBinding(std::shared_ptr<Binding> binding, std::shared_ptr<IAction> action);
 
+			void Update();
+			void RenderDebugMenu(sf::RenderTarget& target);
 			void ManageInputEvents(const sf::Event& event);
 
-			void AddAction(Binding* key);
-			void RemoveAction(Binding* key);
-
-			inline bool HasAction(Gameplay::Action action) const
-			{
-				auto it = std::find_if(m_CurrentActions.begin(), m_CurrentActions.end(), [&](const std::shared_ptr<ActionEvent> actionEvent)
-					{
-						return actionEvent->GetActionType() == action;
-					});
-		
-				return it != m_CurrentActions.end();
-			}
+			void AddAction(std::shared_ptr<Binding> binding);
+			void RemoveAction(std::shared_ptr<Binding> binding);
+			bool HasAction(IAction* action) const;
 
 			inline void UpdateMousePosition(const sf::RenderWindow& gameWindow, bool isInGame)
 			{
@@ -64,7 +40,7 @@ namespace SeekASoul
 
 		private:
 			std::vector<std::shared_ptr<ActionEvent>> m_CurrentActions;
-			std::map<Binding*, Gameplay::Action> m_ActionBinding;
+			std::map<std::shared_ptr<Binding>, std::shared_ptr<IAction>> m_ActionBinding;
 
 			sf::Vector2f m_GameMousePosition;
 			sf::Vector2f m_GUIMousePosition;

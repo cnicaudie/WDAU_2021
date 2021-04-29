@@ -10,6 +10,7 @@
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/Collectibles/SoulChunk.h>
 #include <Game/Objects/MovingPlatform.h>
+#include <Game/Actions/Action.h>
 
 namespace SeekASoul
 {
@@ -134,52 +135,54 @@ namespace SeekASoul
         {
             if (const Engine::ActionEvent* actionEvent = dynamic_cast<const Engine::ActionEvent*>(evnt))
             {
-                switch (actionEvent->GetActionType()) 
+                if (actionEvent->IsAim()) 
                 {
-                    case Action::SHOOT: 
+                    UpdateShootDirection(actionEvent->GetActionDirection(), actionEvent->IsPointActionDirection());
+                }
+                else 
+                {
+                    const Action* action = dynamic_cast<Action*>(actionEvent->GetAction());
+                    switch (action->GetActionType())
                     {
-                        Shoot();
-                        break;
-                    }
+                        case ActionType::SHOOT: 
+                        {
+                            Shoot();
+                            break;
+                        }
 
-                    case Action::SKULL_ROLL:
-                    {
-                        SkullRoll();
-                        break;
-                    }
+                        case ActionType::SKULL_ROLL:
+                        {
+                            SkullRoll();
+                            break;
+                        }
 
-                    case Action::MOVE_UP:
-                    {
-                        MoveUp();
-                        break;
-                    }
+                        case ActionType::MOVE_UP:
+                        {
+                            MoveUp();
+                            break;
+                        }
 
-                    case Action::MOVE_DOWN:
-                    {
-                        MoveDown();
-                        break;
-                    }
+                        case ActionType::MOVE_DOWN:
+                        {
+                            MoveDown();
+                            break;
+                        }
 
-                    case Action::MOVE_RIGHT:
-                    {
-                        MoveRight(actionEvent->GetActionScale());
-                        break;
-                    }
+                        case ActionType::MOVE_RIGHT:
+                        {
+                            MoveRight(actionEvent->GetActionScale());
+                            break;
+                        }
 
-                    case Action::MOVE_LEFT:
-                    {
-                        MoveLeft(actionEvent->GetActionScale());
-                        break;
-                    }
+                        case ActionType::MOVE_LEFT:
+                        {
+                            MoveLeft(actionEvent->GetActionScale());
+                            break;
+                        }
 
-                    case Action::AIM: 
-                    {
-                        UpdateShootDirection(actionEvent->GetActionDirection(), actionEvent->IsPointActionDirection());
-                        break;
+                        default:
+                            break;
                     }
-
-                    default:
-                        break;
                 }
             }
         }
@@ -195,7 +198,8 @@ namespace SeekASoul
                 && !(collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::IN_TOP)))
             {
                 //LOG_DEBUG("ON PLATFORM");
-                if (!m_InputManager->HasAction(Action::MOVE_UP)) 
+                Action moveUp(ActionType::MOVE_UP);
+                if (!m_InputManager->HasAction(&moveUp))
                 {
                     m_Velocity.y = 0.f;
                 }
@@ -331,6 +335,11 @@ namespace SeekASoul
 
         void Player::Move(float deltaTime)
         {
+            Action moveUp(ActionType::MOVE_UP);
+            Action moveDown(ActionType::MOVE_DOWN);
+            Action moveRight(ActionType::MOVE_RIGHT);
+            Action moveLeft(ActionType::MOVE_LEFT);
+
             const sf::Vector2f platformOffset = m_Platform != nullptr ? m_Platform->GetPlatformOffset() : sf::Vector2f{ 0.f, 0.f };
             sf::Vector2f tempVelocity(0.f, 0.f);
 
@@ -342,8 +351,8 @@ namespace SeekASoul
             m_Velocity.y += GRAVITY;
     
             // If player isn't moving, he starts to slow down
-            if (!m_InputManager->HasAction(Action::MOVE_RIGHT)
-                && !m_InputManager->HasAction(Action::MOVE_LEFT)) 
+            if (!m_InputManager->HasAction(&moveRight)
+                && !m_InputManager->HasAction(&moveLeft))
             {
                 m_Velocity.x *= SLOWDOWN_RATE;
             }
@@ -354,8 +363,8 @@ namespace SeekASoul
                 m_IsClimbing = false;
             }
             // Reset the vertical velocity if climbing but not moving
-            else if (!m_InputManager->HasAction(Action::MOVE_UP) 
-                && !m_InputManager->HasAction(Action::MOVE_DOWN)
+            else if (!m_InputManager->HasAction(&moveUp)
+                && !m_InputManager->HasAction(&moveDown)
                 && m_IsClimbing)
             {
                 m_Velocity.y = 0.f;

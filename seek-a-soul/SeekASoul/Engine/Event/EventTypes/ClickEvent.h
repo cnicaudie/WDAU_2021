@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Event.h"
+
 namespace SeekASoul
 {
 	namespace Engine

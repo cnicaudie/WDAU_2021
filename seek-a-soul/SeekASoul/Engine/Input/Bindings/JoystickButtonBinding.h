@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Binding.h"
+#include <Game/Actions/JoystickButton.h>
 
 namespace SeekASoul
 {
@@ -9,12 +10,12 @@ namespace SeekASoul
 		class JoystickButtonBinding : public Binding
 		{
 		public:
-			JoystickButtonBinding(const unsigned int& button);
+			JoystickButtonBinding(const JoystickButton button);
 
 			bool operator==(Binding* other) override;
 
 		private:
-			unsigned int m_Button;
+			JoystickButton m_Button;
 		};
 	}
 }

@@ -41,6 +41,7 @@ namespace SeekASoul
             GameManager();
             ~GameManager();
 
+            void InitBindings() override;
             void OnEvent(const Engine::Event* evnt);
 
             //====================//

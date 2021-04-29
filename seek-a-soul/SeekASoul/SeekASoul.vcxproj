@@ -225,6 +225,8 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Engine\Event\EventTypes\ActionEvent.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\ClickEvent.cpp" />
     <ClCompile Include="Engine\Event\EventTypes\Event.cpp" />
+    <ClCompile Include="Engine\Input\IAction.cpp" />
+    <ClCompile Include="Game\Actions\Action.cpp" />
     <ClCompile Include="Game\Events\LevelEvent.cpp" />
     <ClCompile Include="Engine\Event\Listener\EventListener.cpp" />
     <ClCompile Include="Engine\Event\EventManager.cpp" />
@@ -271,6 +273,9 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Event\EventTypes\ActionEvent.h" />
     <ClInclude Include="Engine\Event\EventTypes\ClickEvent.h" />
     <ClInclude Include="Engine\Event\EventTypes\Event.h" />
+    <ClInclude Include="Engine\Input\IAction.h" />
+    <ClInclude Include="Game\Actions\Action.h" />
+    <ClInclude Include="Game\Actions\JoystickButton.h" />
     <ClInclude Include="Game\Events\LevelEvent.h" />
     <ClInclude Include="Engine\Event\Listener\EventListener.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />
@@ -287,7 +292,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Resources\FileReader.h" />
     <ClInclude Include="Engine\Resources\TextureManager.h" />
     <ClInclude Include="Engine\Time\Time.h" />
-    <ClInclude Include="Game\Action.h" />
+    <ClInclude Include="Game\Actions\ActionType.h" />
     <ClInclude Include="Game\Camera\CameraManager.h" />
     <ClInclude Include="Game\Entities\Entity.h" />
     <ClInclude Include="Game\Level\LevelStatus.h" />
