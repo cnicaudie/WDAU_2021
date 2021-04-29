@@ -275,7 +275,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Engine\Event\EventTypes\Event.h" />
     <ClInclude Include="Engine\Input\IAction.h" />
     <ClInclude Include="Game\Actions\Action.h" />
-    <ClInclude Include="Game\Actions\JoystickButton.h" />
+    <ClInclude Include="Engine\Input\Bindings\JoystickButton.h" />
     <ClInclude Include="Game\Events\LevelEvent.h" />
     <ClInclude Include="Engine\Event\Listener\EventListener.h" />
     <ClInclude Include="Engine\Event\EventManager.h" />

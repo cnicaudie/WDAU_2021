@@ -302,7 +302,7 @@
     <ClInclude Include="Game\Actions\ActionType.h">
       <Filter>Game\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Actions\JoystickButton.h">
+    <ClInclude Include="Engine\Input\Bindings\JoystickButton.h">
       <Filter>Engine\Input\Bindings</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Binding.h"
-#include <Game/Actions/JoystickButton.h>
+#include <Engine/Input/Bindings/JoystickButton.h>
 
 namespace SeekASoul
 {
