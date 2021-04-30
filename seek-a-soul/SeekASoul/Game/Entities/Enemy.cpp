@@ -3,7 +3,7 @@
 #include "Player.h"
 #include <Engine/Time/Time.h>
 #include <Engine/Maths/Maths.h>
-#include <Game/Objects/Bullet.h>
+#include <Game/Objects/Bone.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 
 namespace SeekASoul
@@ -60,7 +60,7 @@ namespace SeekASoul
 
 			if ((m_HealthState == HealthState::OK)
 				&& ((player != nullptr && player->IsAttacking()) 
-					|| (typeid(*other) == typeid(class Bullet))))
+					|| (typeid(*other) == typeid(class Bone))))
 			{
 				Damage();
 			}	

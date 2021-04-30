@@ -38,7 +38,7 @@
     <ClCompile Include="Engine\Collision\BoxCollideable.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\Bullet.cpp">
+    <ClCompile Include="Game\Objects\Bone.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Game\Objects\Door.cpp">
@@ -173,7 +173,7 @@
     <ClInclude Include="Engine\Collision\BoxCollideable.h">
       <Filter>Engine\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\Bullet.h">
+    <ClInclude Include="Game\Objects\Bone.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Game\Objects\Door.h">

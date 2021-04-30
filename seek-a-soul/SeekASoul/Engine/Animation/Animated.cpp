@@ -15,11 +15,9 @@ namespace SeekASoul
 			m_Clock.restart();
 		}
 
-		void Animated::PlayAnimation(int animationState)
+		void Animated::PlayAnimation(const int animationState, const float animationRate)
 		{
-			const float ANIMATION_RATE = 0.1f;
-
-			if (m_Clock.getElapsedTime().asSeconds() >= ANIMATION_RATE)
+			if (m_Clock.getElapsedTime().asSeconds() >= animationRate)
 			{
 				m_SpriteFrame.top = animationState * m_SpriteSize.y;
 				m_SpriteFrame.left += m_SpriteSize.x;

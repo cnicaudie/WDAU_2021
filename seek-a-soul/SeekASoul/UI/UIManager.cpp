@@ -44,13 +44,13 @@ namespace SeekASoul
             // === In Game UI
             m_AmmunitionsText.setFont(m_MainFont);
             m_AmmunitionsText.setCharacterSize(25);
-            m_AmmunitionsText.setFillColor(sf::Color::Red);
-            m_AmmunitionsText.setPosition(WINDOW_CENTER.x * 1.6f, WINDOW_CENTER.y * 0.05f);
+            m_AmmunitionsText.setFillColor(sf::Color::White);
+            m_AmmunitionsText.setPosition(WINDOW_CENTER.x * 1.5f, WINDOW_CENTER.y * 0.05f);
 
             m_SoulChunksText.setFont(m_MainFont);
             m_SoulChunksText.setCharacterSize(25);
             m_SoulChunksText.setFillColor(sf::Color::Cyan);
-            m_SoulChunksText.setPosition(WINDOW_CENTER.x * 1.6f, WINDOW_CENTER.y * 0.15f);
+            m_SoulChunksText.setPosition(WINDOW_CENTER.x * 1.5f, WINDOW_CENTER.y * 0.15f);
 
             // === Main Menu
             m_MainTitle.setFont(m_MainFont);
@@ -122,7 +122,7 @@ namespace SeekASoul
         {
             // Update texts
             std::stringstream stream;
-            stream << "Bullets left : " << UIViewModel::GetInstance()->GetAmmunitionsNumber();
+            stream << "Bones ammos : " << UIViewModel::GetInstance()->GetAmmunitionsNumber();
             m_AmmunitionsText.setString(stream.str());
     
             // Clear the stream content

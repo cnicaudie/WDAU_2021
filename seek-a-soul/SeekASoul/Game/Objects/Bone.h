@@ -1,13 +1,15 @@
 #pragma once
 
+#include <Engine/Animation/Animated.h>
+
 namespace SeekASoul
 {
 	namespace Gameplay
 	{
-		class Bullet : public sf::Drawable, public Engine::BoxCollideable {
+		class Bone : public sf::Drawable, public Engine::BoxCollideable, public Engine::Animated {
 		public: 
-			Bullet(const std::shared_ptr<Engine::TextureManager>& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos);
-			~Bullet();
+			Bone(const std::shared_ptr<Engine::TextureManager>& textureManager, const sf::Vector2f& dir, const sf::Vector2f pos);
+			~Bone();
 	
 			void Update(float deltaTime);
 			void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -17,8 +19,6 @@ namespace SeekASoul
 			inline const bool HadImpact() const { return m_HadImpact; };
 
 		private:
-			sf::Sprite m_Sprite;
-
 			sf::Vector2f m_Direction;
 			float m_Velocity;
 			float m_TraveledDistance;

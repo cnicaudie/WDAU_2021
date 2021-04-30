@@ -104,13 +104,13 @@ namespace SeekASoul
             m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickButtonBinding>(Engine::JoystickButton::RIGHT_RIGHT)
                 , std::make_shared<Action>(ActionType::SKULL_ROLL));
 
-            // === SHOOT
+            // === BONE THROW
 
             m_InputManager->AddActionBinding(std::make_shared<Engine::MouseBinding>(sf::Mouse::Button::Right)
-                , std::make_shared<Action>(ActionType::SHOOT));
+                , std::make_shared<Action>(ActionType::BONE_THROW));
 
             m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::Z, true)
-                , std::make_shared<Action>(ActionType::SHOOT));
+                , std::make_shared<Action>(ActionType::BONE_THROW));
 
             // === AIM X
 
