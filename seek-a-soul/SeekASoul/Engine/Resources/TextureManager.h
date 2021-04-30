@@ -2,22 +2,28 @@
 
 #include <string>
 
-class TextureManager 
+namespace SeekASoul
 {
-public:
-	TextureManager();
-
-	inline const sf::Texture& GetTextureFromName(const std::string& name) const
+	namespace Engine
 	{
-		return m_Textures.at(name);
-	}
+		class TextureManager 
+		{
+		public:
+			TextureManager();
 
-	inline const sf::Vector2f GetTextureSizeFromName(const std::string& name) const 
-	{
-		const sf::Vector2f size(static_cast<float>(m_Textures.at(name).getSize().x), static_cast<float>(m_Textures.at(name).getSize().y));
-		return size;
-	}
+			inline const sf::Texture& GetTextureFromName(const std::string& name) const
+			{
+				return m_Textures.at(name);
+			}
 
-private:
-	std::map<std::string, sf::Texture> m_Textures;
-};
+			inline const sf::Vector2f GetTextureSizeFromName(const std::string& name) const 
+			{
+				const sf::Vector2f size(static_cast<float>(m_Textures.at(name).getSize().x), static_cast<float>(m_Textures.at(name).getSize().y));
+				return size;
+			}
+
+		private:
+			std::map<std::string, sf::Texture> m_Textures;
+		};
+	}
+}

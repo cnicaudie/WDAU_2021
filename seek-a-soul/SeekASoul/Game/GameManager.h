@@ -1,45 +1,68 @@
 #pragma once
 
-class UIManager;
-class LevelManager;
-class CameraManager;
-class CollisionManager;
-
-class GameManager : public Game
+namespace SeekASoul
 {
-public:
-    static GameManager* GetInstance();
-    GameManager(const GameManager& gameManager) = delete;
-    void operator=(const GameManager& gameManager) = delete;
+    namespace UI 
+    {
+        class UIManager;
+    }
 
-    void Update(float deltaTime) override;
-    void UpdateGUI(float deltaTime) override;
-    void Render(sf::RenderTarget& target) override;
-    void RenderGUI(sf::RenderTarget& target) override;
-    void RenderDebugMenu(sf::RenderTarget& target) override;
+    namespace Engine 
+    {
+        class CollisionManager;
+    }
 
-    const bool CheckCollision(BoxCollideable* collideable, const sf::Vector2f& positionOffset) const;
-    const sf::Vector2u GetLevelBounds() const;
+    namespace Gameplay
+    {
+        class LevelManager;
+        class CameraManager;
 
-private:
-    GameManager();
-    ~GameManager();
+        class GameManager : public Engine::Game
+        {
+        public:
+            static GameManager* GetInstance();
+            GameManager(const GameManager& gameManager) = delete;
+            void operator=(const GameManager& gameManager) = delete;
 
-    void OnEvent(const Event* evnt);
-    void StartEndGame();
+            void Update(float deltaTime) override;
+            void UpdateGUI(float deltaTime) override;
+            void Render(sf::RenderTarget& target) override;
+            void RenderGUI(sf::RenderTarget& target) override;
+            void RenderDebugMenu(sf::RenderTarget& target) override;
 
-    //====================//
-
-    static GameManager* m_GameManager; // Singleton instance
-
-    std::shared_ptr<TextureManager> m_TextureManager;
-    std::unique_ptr<UIManager> m_UIManager;
-    std::unique_ptr<LevelManager> m_LevelManager;
-    std::unique_ptr<CameraManager> m_CameraManager;
-    std::unique_ptr<CollisionManager> m_CollisionManager;
+            const std::pair<bool, bool> CheckCollisions(Engine::BoxCollideable* collideable, const sf::Vector2f& positionOffset) const;
+            const sf::Vector2u GetLevelBounds() const;
     
-    bool m_IsGameOver;
+            inline const bool IsGameOver() const { return m_CurrentState == GameState::OVER; }
+            inline const bool HasGameStarted() const { return m_CurrentState != GameState::NOT_STARTED; }
+            inline void ResetGameState() { m_CurrentState = GameState::NOT_STARTED; };
 
-    sf::Clock m_FPSUpdateClock;
-    int m_FramesPerSecond; // For Debug purposes
-};
+        private:
+            GameManager();
+            ~GameManager();
+
+            void InitBindings() override;
+            void OnEvent(const Engine::Event* evnt);
+
+            //====================//
+
+            static GameManager* m_GameManager; // Singleton instance
+
+            std::shared_ptr<Engine::TextureManager> m_TextureManager;
+            std::unique_ptr<Engine::CollisionManager> m_CollisionManager;
+            std::unique_ptr<UI::UIManager> m_UIManager;
+            std::unique_ptr<LevelManager> m_LevelManager;
+            std::unique_ptr<CameraManager> m_CameraManager;
+    
+            enum class GameState
+            {
+                NOT_STARTED = 0,
+                PLAYING     = 1,
+                OVER        = 2
+            } m_CurrentState;
+
+            sf::Clock m_FPSUpdateClock;
+            int m_FramesPerSecond; // For Debug purposes
+        };
+    }
+}

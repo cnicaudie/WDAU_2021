@@ -2,8 +2,14 @@
 
 #include "Tile.h"
 
-class ClimbableTile : public Tile
+namespace SeekASoul
 {
-public:
-	ClimbableTile(float xCenterPos, float yCenterPos, float width, float height);
-};
+	namespace Gameplay
+	{
+		class ClimbableTile : public Tile
+		{
+		public:
+			ClimbableTile(float xCenterPos, float yCenterPos, float width, float height);
+		};
+	}
+}

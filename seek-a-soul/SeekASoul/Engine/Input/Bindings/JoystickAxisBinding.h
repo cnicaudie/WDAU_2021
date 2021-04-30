@@ -2,17 +2,23 @@
 
 #include "Binding.h"
 
-class JoystickAxisBinding : public Binding
+namespace SeekASoul
 {
-public:
-	JoystickAxisBinding(const sf::Joystick::Axis& axis, const bool isPositive, const float axisPosition = 0.f);
+	namespace Engine
+	{
+		class JoystickAxisBinding : public Binding
+		{
+		public:
+			JoystickAxisBinding(const sf::Joystick::Axis& axis, const bool isPositive, const float axisPosition = 0.f);
 
-	bool operator==(Binding* other) override;
+			bool operator==(Binding* other) override;
 
-	inline const float GetAxisPosition() const { return m_AxisPosition; };
+			inline const float GetAxisPosition() const { return m_AxisPosition; };
 
-private:
-	sf::Joystick::Axis m_Axis;
-	bool m_IsPositive;
-	float m_AxisPosition;
-};
+		private:
+			sf::Joystick::Axis m_Axis;
+			bool m_IsPositive;
+			float m_AxisPosition;
+		};
+	}
+}

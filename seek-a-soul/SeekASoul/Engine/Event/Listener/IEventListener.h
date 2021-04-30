@@ -1,10 +1,16 @@
 #pragma once
 
-class Event;
-
-class IEventListener 
+namespace SeekASoul
 {
-public: 
-	virtual bool operator==(IEventListener* other) const = 0;
-	virtual void Fire(Event* evnt) const = 0;
-};
+	namespace Engine
+	{
+		class Event;
+
+		class IEventListener 
+		{
+		public: 
+			virtual bool operator==(IEventListener* other) const = 0;
+			virtual void Fire(Event* evnt) const = 0;
+		};
+	}
+}

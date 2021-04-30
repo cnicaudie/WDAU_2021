@@ -1,7 +1,13 @@
 #pragma once
 
-class Binding
+namespace SeekASoul 
 {
-public:
-	virtual bool operator==(Binding* other) = 0;
-};
+	namespace Engine 
+	{
+		class Binding
+		{
+		public:
+			virtual bool operator==(Binding* other) = 0;
+		};
+	}
+}

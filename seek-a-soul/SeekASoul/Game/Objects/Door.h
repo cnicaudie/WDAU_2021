@@ -1,29 +1,39 @@
 #pragma once
 
-class Door : public sf::Drawable, public BoxCollideable
+namespace SeekASoul
 {
-public:
-	Door(float xCenterPos, float yCenterPos, float width, float height);
-	~Door();
+	namespace Gameplay
+	{
+		class Door : public sf::Drawable, public Engine::BoxCollideable
+		{
+		public:
+			Door(const sf::Vector2f& centerPosition, const sf::Vector2f& size);
+			~Door();
 
-	void Update(float deltaTime);
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	void OnTrigger(BoxCollideable* other) override;
+			void Update(float deltaTime);
+			void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+			void RenderDebugMenu(sf::RenderTarget& target) 
+			{
+				ImGui::Checkbox("Open Door", &m_IsDoorOpen);
+			};
+	
+			void OnTrigger(Engine::BoxCollideable* other) override;
 
-	inline void OpenDoor() { m_IsDoorOpen = true; };
-	inline const bool IsPlayingEndGame() const { return m_IsPlayingEndGame; };
+			inline void OpenDoor() { m_IsDoorOpen = true; };
 
-private:
-	void StartEndGame();
+		private:
+			void StartEndGame();
 
-	//====================//
+			//====================//
 
-    sf::RectangleShape m_Rectangle;
+			sf::RectangleShape m_DoorRect;
 
-	float m_rColor;
-	float m_gColor;
-	float m_bColor;
+			float m_rColor;
+			float m_gColor;
+			float m_bColor;
 
-	bool m_IsDoorOpen;
-	bool m_IsPlayingEndGame;
-};
+			bool m_IsDoorOpen;
+			bool m_IsPlayingEndGame;
+		};
+	}
+}

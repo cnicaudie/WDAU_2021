@@ -3,11 +3,17 @@
 #include <cstdint>
 #include <chrono>
 
-namespace Time 
+namespace SeekASoul
 {
-	static const int64_t GetCurrentTimeAsMilliseconds() 
+	namespace Engine
 	{
-		auto currentTime = std::chrono::system_clock::now().time_since_epoch();
-		return std::chrono::duration_cast<std::chrono::milliseconds>(currentTime).count();
+		namespace Time 
+		{
+			static const int64_t GetCurrentTimeAsMilliseconds() 
+			{
+				auto currentTime = std::chrono::system_clock::now().time_since_epoch();
+				return std::chrono::duration_cast<std::chrono::milliseconds>(currentTime).count();
+			}
+		}
 	}
 }
