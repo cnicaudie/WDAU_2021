@@ -534,6 +534,7 @@ namespace SeekASoul
 
             if (m_HealthPoints <= 0)
             {
+                m_HealthPoints = 0;
                 Die();
             }
 
