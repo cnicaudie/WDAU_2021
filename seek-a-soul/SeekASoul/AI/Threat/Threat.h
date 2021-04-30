@@ -1,6 +1,7 @@
 #pragma once
 
-#include <AI/Threat/ThreatLevel.h>
+#include "ThreatLevel.h"
+#include "ThreatTeam.h"
 
 namespace SeekASoul
 {
@@ -9,12 +10,18 @@ namespace SeekASoul
 		class Threat 
 		{
 		public:
-			Threat(ThreatLevel threatLevel); // TODO : Team system ?
+			Threat(ThreatLevel threatLevel, ThreatTeam teamName);
+			~Threat();
 
+			virtual const bool operator==(Threat* other) const = 0;
+
+			inline void SetThreatLevel(ThreatLevel threatLevel) { m_ThreatLevel = threatLevel; };
 			inline const ThreatLevel GetThreatLevel() const { return m_ThreatLevel; };
+			inline const ThreatTeam GetTeamName() const { return m_TeamName; };
 
 		private:
 			ThreatLevel m_ThreatLevel;
+			ThreatTeam m_TeamName;
 		};
 	}
 }

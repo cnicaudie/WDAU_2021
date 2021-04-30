@@ -13,7 +13,7 @@ namespace SeekASoul
 			AIManager(const AIManager& aiManager) = delete;
 			void operator=(const AIManager& aiManager) = delete;
 
-			void UpdateStrategies();
+			void Update();
 
 			void Register(AIEntity* ai);
 			void Unregister(AIEntity* ai);
@@ -21,6 +21,8 @@ namespace SeekASoul
 		private:
 			AIManager();
 			~AIManager();
+
+			void UpdateStrategies();
 
 			//====================//
 

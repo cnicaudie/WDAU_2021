@@ -9,13 +9,22 @@ namespace SeekASoul
 		class ThreatManager 
 		{
 		public:
-			ThreatManager();
+			static ThreatManager* GetInstance();
+			ThreatManager(const ThreatManager& threatManager) = delete;
+			void operator=(const ThreatManager& threatManager) = delete;
 
-			void RegisterThreat(const Threat& threat);
-			void UnregisterThreat(const Threat& threat);
+			void RegisterThreat(Threat* threat, sf::Vector2f* threatPosition);
+			void UnregisterThreat(Threat* threat);
 
 		private:
-			std::vector<Threat> m_Threats;
+			ThreatManager();
+			~ThreatManager();
+
+			//====================//
+
+			static ThreatManager* m_ThreatManager; // Singleton instance
+
+			std::map<Threat*, sf::Vector2f*> m_Threats;
 		};
 	}
 }

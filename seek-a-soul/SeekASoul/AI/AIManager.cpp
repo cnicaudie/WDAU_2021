@@ -29,6 +29,11 @@ namespace SeekASoul
 			delete m_AIManager;
 		}
 
+		void AIManager::Update() 
+		{
+			UpdateStrategies();
+		}
+
 		void AIManager::UpdateStrategies()
 		{
 			for (AIEntity* ai : m_AIs) 
@@ -67,7 +72,7 @@ namespace SeekASoul
 		
 		void AIManager::Unregister(AIEntity* ai)
 		{
-			auto const& pos = std::find_if(m_AIs.begin(), m_AIs.end(), [&](AIEntity* other) { return *ai == *other; });
+			auto const& pos = std::find_if(m_AIs.begin(), m_AIs.end(), [&](AIEntity* other) { return *ai == other; });
 
 			if (pos != m_AIs.end())
 			{

@@ -12,11 +12,21 @@ namespace SeekASoul
 		class AIEntity : public AIAction, public Threat
 		{
 		public:
-			AIEntity(std::unique_ptr<AIStrategy> strategy);
-			
-			virtual const bool operator==(const AIEntity& other) 
+			AIEntity(const ThreatTeam& teamName);
+			~AIEntity();
+
+			virtual const bool operator==(Threat* other) const override
 			{
-				m_ID == other.m_ID;
+				AIEntity* otherAIEntity = dynamic_cast<AIEntity*>(other);
+
+				if (otherAIEntity != nullptr)
+				{
+					return m_ID == otherAIEntity->m_ID;
+				}
+				else
+				{
+					return false;
+				}
 			}
 
 		private:

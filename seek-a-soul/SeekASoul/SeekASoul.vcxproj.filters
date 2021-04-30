@@ -356,6 +356,9 @@
     <ClInclude Include="AI\AIActionType.h">
       <Filter>AI</Filter>
     </ClInclude>
+    <ClInclude Include="AI\Threat\ThreatTeam.h">
+      <Filter>AI\Threat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">

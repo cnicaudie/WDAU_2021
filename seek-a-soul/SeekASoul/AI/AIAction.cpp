@@ -57,6 +57,8 @@ namespace SeekASoul
 					return m_CanMoveRight;
 				}
 			}
+
+			return false;
 		}
 	}
 }
