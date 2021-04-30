@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include "Door.h"
+#include <Game/GameplayIncludes.h>
 #include <Game/Entities/Player.h>
-#include <Game/Events/LevelEvent.h>
 
 namespace SeekASoul
 {

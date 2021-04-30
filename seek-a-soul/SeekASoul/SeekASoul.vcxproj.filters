@@ -305,6 +305,9 @@
     <ClInclude Include="Engine\Input\Bindings\JoystickButton.h">
       <Filter>Engine\Input\Bindings</Filter>
     </ClInclude>
+    <ClInclude Include="Game\GameplayIncludes.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">

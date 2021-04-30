@@ -1,4 +1,5 @@
 #include <stdafx.h>
+#include <Game/GameManager.h>
 
 int main()
 {

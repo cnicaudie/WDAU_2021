@@ -1,6 +1,6 @@
 #include <stdafx.h>
-#include <Engine/Maths/Maths.h>
 #include "MovingPlatform.h"
+#include <Engine/Maths/Maths.h>
 
 namespace SeekASoul
 {

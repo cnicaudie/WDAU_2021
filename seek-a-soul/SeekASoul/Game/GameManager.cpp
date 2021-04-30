@@ -6,11 +6,10 @@
 #include <Engine/Input/Bindings/MouseBinding.h>
 #include <Engine/Event/Listener/EventListener.h>
 #include <Engine/Collision/CollisionManager.h>
-#include <Game/Events/LevelEvent.h>
+#include <Game/GameplayIncludes.h>
 #include <Game/Camera/CameraManager.h>
 #include <Game/Level/LevelManager.h>
 #include <UI/UIManager.h>
-#include <Game/Actions/Action.h>
 
 namespace SeekASoul
 {

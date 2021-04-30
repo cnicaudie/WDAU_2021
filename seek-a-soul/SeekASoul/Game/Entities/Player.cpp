@@ -4,13 +4,12 @@
 #include <Engine/Event/EventTypes/ActionEvent.h>
 #include <Engine/Maths/Maths.h>
 #include <Engine/Time/Time.h>
-#include <Game/Events/LevelEvent.h>
+#include <Game/GameplayIncludes.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/Collectibles/SoulChunk.h>
 #include <Game/Objects/MovingPlatform.h>
-#include <Game/Actions/Action.h>
 
 namespace SeekASoul
 {

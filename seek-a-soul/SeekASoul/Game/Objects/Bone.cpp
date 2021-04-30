@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "Bone.h"
+#include <Game/GameplayIncludes.h>
 
 namespace SeekASoul
 {

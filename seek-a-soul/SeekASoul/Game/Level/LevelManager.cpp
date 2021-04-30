@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include "LevelManager.h"
 #include <Engine/Resources/FileReader.h>
-#include <Game/Events/LevelEvent.h>
+#include <Game/GameplayIncludes.h>
 
 namespace SeekASoul
 {

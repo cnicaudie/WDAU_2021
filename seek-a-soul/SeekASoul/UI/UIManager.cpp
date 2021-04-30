@@ -1,7 +1,10 @@
 #include <stdafx.h>
 #include "UIManager.h"
-#include <sstream>
+#include <Game/GameManager.h>
+#include <Game/Level/LevelStatus.h>
 #include <Game/Events/LevelEvent.h>
+#include <UI/UIViewModel.h>
+#include <sstream>
 
 namespace SeekASoul
 {

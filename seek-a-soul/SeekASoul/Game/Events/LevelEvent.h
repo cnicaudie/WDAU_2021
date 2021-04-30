@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine/Event/EventTypes/Event.h>
+#include <Game/Level/LevelStatus.h>
 
 namespace SeekASoul
 {
