@@ -279,6 +279,7 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="AI\AIManager.h" />
     <ClInclude Include="AI\Strategies\AIPatrol.h" />
     <ClInclude Include="AI\Strategies\AIStrategy.h" />
+    <ClInclude Include="AI\Strategies\AIStrategyType.h" />
     <ClInclude Include="AI\Threat\Threat.h" />
     <ClInclude Include="AI\Threat\ThreatManager.h" />
     <ClInclude Include="AI\Threat\ThreatLevel.h" />

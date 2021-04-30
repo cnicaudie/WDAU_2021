@@ -2,6 +2,7 @@
 
 #include "AIAction.h"
 #include <AI/Threat/Threat.h>
+#include <AI/Strategies/AIStrategyType.h>
 
 namespace SeekASoul
 {
@@ -15,6 +16,8 @@ namespace SeekASoul
 			AIEntity(const ThreatTeam& teamName);
 			~AIEntity();
 
+			void SetStrategy(AIStrategyType strategyType) { m_Strategy = strategyType; };
+			
 			virtual const bool operator==(Threat* other) const override
 			{
 				AIEntity* otherAIEntity = dynamic_cast<AIEntity*>(other);
@@ -28,6 +31,9 @@ namespace SeekASoul
 					return false;
 				}
 			}
+
+		protected:
+			AIStrategyType m_Strategy;
 
 		private:
 			int m_ID;

@@ -7,29 +7,40 @@ namespace SeekASoul
 	{
 		AIAction::AIAction() 
 			: m_CurrentAction(AIActionType::NONE)
+			, m_PreviousAction(AIActionType::NONE)
 			, m_CanMoveUp(false)
 			, m_CanMoveDown(false)
 			, m_CanMoveLeft(false)
 			, m_CanMoveRight(false)
 		{}
 
+		void AIAction::Stop() 
+		{
+			m_PreviousAction = m_CurrentAction;
+			m_CurrentAction = AIActionType::NONE;
+		}
+
 		void AIAction::MoveUp()
 		{
+			m_PreviousAction = m_CurrentAction; 
 			m_CurrentAction = AIActionType::MOVE_UP;
 		}
 
 		void AIAction::MoveDown()
 		{
+			m_PreviousAction = m_CurrentAction;
 			m_CurrentAction = AIActionType::MOVE_DOWN;
 		}
 
 		void AIAction::MoveLeft()
 		{
+			m_PreviousAction = m_CurrentAction;
 			m_CurrentAction = AIActionType::MOVE_LEFT;
 		}
 
 		void AIAction::MoveRight()
 		{
+			m_PreviousAction = m_CurrentAction;
 			m_CurrentAction = AIActionType::MOVE_RIGHT;
 		}
 

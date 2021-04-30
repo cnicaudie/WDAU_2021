@@ -10,6 +10,9 @@
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/Collectibles/SoulChunk.h>
 #include <Game/Objects/MovingPlatform.h>
+#include <AI/Threat/ThreatLevel.h>
+#include <AI/Threat/ThreatTeam.h>
+#include <AI/Threat/ThreatManager.h>
 
 namespace SeekASoul
 {
@@ -37,6 +40,7 @@ namespace SeekASoul
         Player::Player(const std::shared_ptr<Engine::InputManager>& inputManager, const std::shared_ptr<Engine::TextureManager>& textureManager)
             : Entity(textureManager, { 50.f, 50.f }, MAX_HEALTH_POINTS)
             , Animated(PLAYER_SPRITE_SIZE, textureManager->GetTextureFromName("PLAYER_SHEET"))
+            , AI::Threat(AI::ThreatLevel::CALM, AI::ThreatTeam::A)
             , m_InputManager{ inputManager }
             , m_CurrentState(PlayerState::IDLE)
             , m_JumpCount(1)
@@ -59,6 +63,17 @@ namespace SeekASoul
             // Configure an EventListener for action events
             Engine::EventListener<Player, Engine::ActionEvent> listener(this, &Player::OnEvent);
             Engine::EventManager::GetInstance()->AddListener(listener);
+
+            // Register threat
+            AI::ThreatManager::GetInstance()->RegisterThreat(this, &m_Position);
+        }
+        
+        Player::~Player() 
+        {
+            Engine::EventListener<Player, Engine::ActionEvent> listener(this, &Player::OnEvent);
+            Engine::EventManager::GetInstance()->RemoveListener(listener);
+
+            AI::ThreatManager::GetInstance()->UnregisterThreat(this);
         }
 
         void Player::Reset(const sf::Vector2f& position, bool restart)
@@ -283,6 +298,7 @@ namespace SeekASoul
         {
             if (ImGui::CollapsingHeader("Player Menu"))
             {
+                ImGui::Text("ThreatLevel : %d", static_cast<int>(GetThreatLevel()));
                 ImGui::Checkbox("Infinite Ammos", &m_InfiniteAmmos);
                 ImGui::Text("Pos :");
                 ImGui::SameLine();

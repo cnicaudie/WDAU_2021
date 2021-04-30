@@ -6,9 +6,12 @@
 #include <Engine/Input/Bindings/MouseBinding.h>
 #include <Engine/Event/Listener/EventListener.h>
 #include <Engine/Collision/CollisionManager.h>
+#include <AI/Threat/ThreatManager.h>
+#include <AI/AIManager.h>
 #include <Game/GameplayIncludes.h>
 #include <Game/Camera/CameraManager.h>
 #include <Game/Level/LevelManager.h>
+#include <Game/Actions/Action.h>
 #include <UI/UIManager.h>
 
 namespace SeekASoul
@@ -161,6 +164,10 @@ namespace SeekASoul
                     m_InputManager->Update();
                 }
             }
+
+            // Update AI elements
+            AI::AIManager::GetInstance()->Update();
+            AI::ThreatManager::GetInstance()->Update();
         }
 
         void GameManager::UpdateGUI(float deltaTime)

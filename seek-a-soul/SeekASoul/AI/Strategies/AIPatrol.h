@@ -12,6 +12,8 @@ namespace SeekASoul
 			AIPatrol();
 
 			virtual void ExecuteStrategy(AIEntity* ai) const override;
+
+			virtual AIStrategyType GetStrategyType() const override { return AIStrategyType::PATROL; };
 		};
 	}
 }

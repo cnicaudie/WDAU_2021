@@ -13,6 +13,7 @@ namespace SeekASoul
 
 			virtual const bool CanDoAction(AIActionType action) const;
 
+			virtual void Stop();
 			virtual void MoveUp();
 			virtual void MoveDown();
 			virtual void MoveLeft();
@@ -21,6 +22,7 @@ namespace SeekASoul
 			// void Attack();
 
 		protected:
+			AIActionType m_PreviousAction;
 			AIActionType m_CurrentAction;
 			bool m_CanMoveUp;
 			bool m_CanMoveDown;

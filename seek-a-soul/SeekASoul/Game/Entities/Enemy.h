@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Entity.h"
+#include <AI/AIEntity.h>
 
 namespace SeekASoul
 {
 	namespace Gameplay
 	{
-		class Enemy : public Entity
+		class Enemy : public Entity, public AI::AIEntity
 		{
 		public:
 			Enemy(const std::shared_ptr<Engine::TextureManager>& textureManager, const sf::Vector2f& position);

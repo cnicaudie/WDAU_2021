@@ -20,6 +20,10 @@ namespace SeekASoul
 			{
 				ai->MoveLeft();
 			}
+			else 
+			{
+				ai->Stop();
+			}
 		}
 	}
 }

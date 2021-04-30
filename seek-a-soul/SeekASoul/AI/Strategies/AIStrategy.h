@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AIStrategyType.h"
 #include <AI/AIEntity.h>
 
 namespace SeekASoul 
@@ -10,6 +11,7 @@ namespace SeekASoul
 		{
 		public:
 			virtual void ExecuteStrategy(AIEntity* ai) const = 0;
+			virtual AIStrategyType GetStrategyType() const { return AIStrategyType::NONE; };
 		};
 	}
 }

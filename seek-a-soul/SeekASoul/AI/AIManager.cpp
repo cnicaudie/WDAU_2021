@@ -42,14 +42,16 @@ namespace SeekASoul
 				{
 					case ThreatLevel::CALM:
 					{
-						// TODO
+						ai->SetStrategy(AIStrategyType::NONE);
+						ai->Stop();
 						break;
 					}
 
 					case ThreatLevel::ALERT:
 					{
-						AIPatrol test;
-						test.ExecuteStrategy(ai);
+						AIPatrol patrolStrategy;
+						ai->SetStrategy(patrolStrategy.GetStrategyType());
+						patrolStrategy.ExecuteStrategy(ai);
 						break;
 					}
 

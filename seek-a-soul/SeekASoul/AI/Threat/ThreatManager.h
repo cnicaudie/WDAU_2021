@@ -13,12 +13,16 @@ namespace SeekASoul
 			ThreatManager(const ThreatManager& threatManager) = delete;
 			void operator=(const ThreatManager& threatManager) = delete;
 
+			void Update();
+
 			void RegisterThreat(Threat* threat, sf::Vector2f* threatPosition);
 			void UnregisterThreat(Threat* threat);
 
 		private:
 			ThreatManager();
 			~ThreatManager();
+
+			void UpdateThreats();
 
 			//====================//
 
