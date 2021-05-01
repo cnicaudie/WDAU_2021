@@ -362,6 +362,9 @@
     <ClInclude Include="AI\Strategies\AIStrategyType.h">
       <Filter>AI\Strategies</Filter>
     </ClInclude>
+    <ClInclude Include="Common\ActionHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -447,6 +450,9 @@
     </Filter>
     <Filter Include="AI\Pathfinding">
       <UniqueIdentifier>{7d66abba-0707-432e-bb06-c499f025efa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{c90e8328-851e-4654-8ed3-17f5b36f65c5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

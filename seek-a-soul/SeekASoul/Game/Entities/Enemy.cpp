@@ -9,7 +9,7 @@
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <AI/Threat/ThreatTeam.h>
 #include <AI/Threat/ThreatManager.h>
-#include <AI/AIActionType.h> // TODO : Make helper and remove that
+#include <Common/ActionHelper.h>
 
 namespace SeekASoul
 {
@@ -117,34 +117,36 @@ namespace SeekASoul
 
 		void Enemy::Move(float deltaTime) 
 		{
+			ActionType previousOrder = SeekASoul::Common::ToGameAction(m_PreviousAction);
+			ActionType actionOrder = SeekASoul::Common::ToGameAction(m_CurrentAction);
 			sf::Vector2f tempVelocity(0.f, 0.f);
 
 			// Apply gravity
 			m_Velocity.y += GRAVITY; // put the gravity const in Entity
 	
-			// TODO : Have a helper to convert AI action into gameplay action (if possible) 
-			// and use this instead of the AI enum
-			if (m_CurrentAction == AI::AIActionType::MOVE_RIGHT) 
-			{
-				m_Velocity.x = MOVE_SPEED;
-			}
-			else if (m_CurrentAction == AI::AIActionType::MOVE_LEFT)
-			{
-				m_Velocity.x = -MOVE_SPEED;
-			}
-			else 
+			// Configure velocity according to AI action order
+			if (actionOrder == ActionType::NONE) 
 			{
 				m_Velocity.x = 0.f;
 			}
-			
-			if (m_Strategy == AI::AIStrategyType::PATROL
-				&& m_CurrentAction != AI::AIActionType::NONE 
-				&& m_PreviousAction != AI::AIActionType::NONE
-				&& m_CurrentAction != m_PreviousAction) 
+			else 
 			{
-				m_Velocity.y = -STAY_ON_PLATFORM_FORCE;
-			}
+				if (actionOrder == ActionType::MOVE_RIGHT)
+				{
+					m_Velocity.x = MOVE_SPEED;
+				}
+				else if (actionOrder == ActionType::MOVE_LEFT)
+				{
+					m_Velocity.x = -MOVE_SPEED;
+				}
 
+				if (m_Strategy == AI::AIStrategyType::PATROL && actionOrder != previousOrder
+					&& previousOrder != ActionType::NONE)
+				{
+					m_Velocity.y = -STAY_ON_PLATFORM_FORCE;
+				}
+			}
+			
 			// Check movement on X axis
 			tempVelocity.x = m_Velocity.x;
 			if (!GameManager::GetInstance()->CheckCollisions(this, tempVelocity * deltaTime).first)
@@ -161,12 +163,12 @@ namespace SeekASoul
 				{
 					m_IsGrounded = false;
 					
-					if (m_CurrentAction == AI::AIActionType::MOVE_RIGHT)
+					if (actionOrder == ActionType::MOVE_RIGHT)
 					{
 						m_CanMoveRight = false;
 						m_CanMoveLeft = true;
 					}
-					else if (m_CurrentAction == AI::AIActionType::MOVE_LEFT)
+					else if (actionOrder == ActionType::MOVE_LEFT)
 					{
 						m_CanMoveRight = true;
 						m_CanMoveLeft = false;
