@@ -67,10 +67,13 @@ namespace SeekASoul
 		void ThreatManager::RegisterThreat(Threat* threat, sf::Vector2f* threatPosition) 
 		{
 			m_Threats.emplace(threat, threatPosition);
+			LOG_DEBUG("Registered threat : " << typeid(*threat).name());
 		}
 
 		void ThreatManager::UnregisterThreat(Threat* threat) 
 		{
+			LOG_DEBUG("Unregistered threat : " << typeid(*threat).name());
+
 			auto const& pos = std::find_if(m_Threats.begin(), m_Threats.end(), [&](std::pair<Threat*, sf::Vector2f*> other)
 				{ 
 					return *threat == other.first; 

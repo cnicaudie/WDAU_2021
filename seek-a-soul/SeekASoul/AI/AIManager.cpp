@@ -70,10 +70,12 @@ namespace SeekASoul
 		void AIManager::Register(AIEntity* ai)
 		{
 			m_AIs.push_back(ai);
+			LOG_DEBUG("Registered AI : " << typeid(*ai).name());
 		}
 		
 		void AIManager::Unregister(AIEntity* ai)
 		{
+			LOG_DEBUG("Unregistered AI : " << typeid(*ai).name());
 			auto const& pos = std::find_if(m_AIs.begin(), m_AIs.end(), [&](AIEntity* other) { return *ai == other; });
 
 			if (pos != m_AIs.end())
