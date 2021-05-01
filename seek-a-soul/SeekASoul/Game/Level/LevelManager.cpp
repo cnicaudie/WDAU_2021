@@ -7,7 +7,7 @@ namespace SeekASoul
 {
 	namespace Gameplay
 	{
-		static constexpr unsigned int MAX_LEVEL = 1;
+		static constexpr unsigned int MAX_LEVEL = 2;
 
 		LevelManager::LevelManager(const std::shared_ptr<Engine::InputManager>& inputManager, const std::shared_ptr<Engine::TextureManager>& textureManager)
 			: m_TextureManager{ textureManager }
