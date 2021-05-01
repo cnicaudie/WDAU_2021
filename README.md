@@ -22,4 +22,4 @@ Seek A Soul is a 2D platformer where you embody a skeleton who has lost its soul
 - L2 to shoot ;
 - O to roll.
 
-*Note : these bindings where tested with the PS3 Dualshock controller, if you test with another one, some bindings may be different.*
+*Note : these bindings where tested with the PS3 Dualshock controller, if you test with another one, some of them might be different.*

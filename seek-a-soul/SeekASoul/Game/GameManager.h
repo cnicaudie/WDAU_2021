@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Engine/Game.h>
+
 namespace SeekASoul
 {
     namespace UI 

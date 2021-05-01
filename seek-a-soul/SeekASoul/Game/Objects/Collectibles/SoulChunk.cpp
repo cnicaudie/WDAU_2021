@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include "SoulChunk.h"
-#include <Game/Entities/Player.h>
 
 namespace SeekASoul
 {

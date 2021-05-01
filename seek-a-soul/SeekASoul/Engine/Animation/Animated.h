@@ -9,7 +9,8 @@ namespace SeekASoul
 		public:
 			Animated(const sf::Vector2i& spriteSize, const sf::Texture& texture);
 
-			void PlayAnimation(int animationState);
+			void PlayAnimation(const int animationState, const float animationRate = 0.1f);
+
 			inline void FlipSprite(bool flip)
 			{
 				if (flip) 

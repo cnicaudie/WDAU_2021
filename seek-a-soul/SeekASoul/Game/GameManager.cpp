@@ -6,11 +6,10 @@
 #include <Engine/Input/Bindings/MouseBinding.h>
 #include <Engine/Event/Listener/EventListener.h>
 #include <Engine/Collision/CollisionManager.h>
-#include <Game/Events/LevelEvent.h>
+#include <Game/GameplayIncludes.h>
 #include <Game/Camera/CameraManager.h>
 #include <Game/Level/LevelManager.h>
 #include <UI/UIManager.h>
-#include <Game/Actions/Action.h>
 
 namespace SeekASoul
 {
@@ -104,13 +103,13 @@ namespace SeekASoul
             m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickButtonBinding>(Engine::JoystickButton::RIGHT_RIGHT)
                 , std::make_shared<Action>(ActionType::SKULL_ROLL));
 
-            // === SHOOT
+            // === BONE THROW
 
             m_InputManager->AddActionBinding(std::make_shared<Engine::MouseBinding>(sf::Mouse::Button::Right)
-                , std::make_shared<Action>(ActionType::SHOOT));
+                , std::make_shared<Action>(ActionType::BONE_THROW));
 
             m_InputManager->AddActionBinding(std::make_shared<Engine::JoystickAxisBinding>(sf::Joystick::Axis::Z, true)
-                , std::make_shared<Action>(ActionType::SHOOT));
+                , std::make_shared<Action>(ActionType::BONE_THROW));
 
             // === AIM X
 

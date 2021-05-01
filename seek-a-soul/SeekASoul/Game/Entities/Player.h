@@ -2,7 +2,7 @@
 
 #include "Entity.h"
 #include <Engine/Animation/Animated.h>
-#include <Game/Objects/Bullet.h>
+#include <Game/Objects/Bone.h>
 
 namespace SeekASoul
 {
@@ -47,11 +47,11 @@ namespace SeekASoul
 			void ApplyCollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider);
 	
 			void UpdateBoundingBox();
-			void UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint);
-			void Shoot();
+			void UpdateThrowDirection(const sf::Vector2f& direction, const bool isPoint);
+			void ThrowBone();
 			void SkullRoll();
 			void UpdateSkullRollCooldown(uint64_t now);
-			void ManageBullets(float deltaTime);
+			void ManageBones(float deltaTime);
 			void Die();
 	
 			//====================//
@@ -64,7 +64,7 @@ namespace SeekASoul
 				MOVING			= 1, 
 				SKULL_ROLLING	= 2, 
 				CLIMBING		= 3, 
-				SHOOTING		= 4
+				THROWING		= 4
 			} m_CurrentState;
 	
 			unsigned int m_SoulChunksCollected;
@@ -73,10 +73,10 @@ namespace SeekASoul
 			bool m_CanClimb;
 			bool m_IsSkullRolling; // TODO : Use player state instead
 			uint64_t m_LastSkullRollTime;
-			uint64_t m_LastShootTime;
+			uint64_t m_LastThrowTime;
 
-			sf::Vector2f m_ShootDirection;
-			std::vector<Bullet> m_Bullets;
+			sf::Vector2f m_ThrowDirection;
+			std::vector<Bone> m_Bones;
 			bool m_InfiniteAmmos;
 			unsigned int m_AmmunitionsNumber;
 

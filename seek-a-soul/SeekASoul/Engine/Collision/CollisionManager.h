@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine/Collision/GameGrid.h>
+#include "CollisionDirection.h"
 
 namespace SeekASoul
 {

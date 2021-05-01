@@ -4,13 +4,12 @@
 #include <Engine/Event/EventTypes/ActionEvent.h>
 #include <Engine/Maths/Maths.h>
 #include <Engine/Time/Time.h>
-#include <Game/Events/LevelEvent.h>
+#include <Game/GameplayIncludes.h>
 #include <Game/Map/Tiles/CollideableTile.h>
 #include <Game/Map/Tiles/ClimbableTile.h>
 #include <Game/Map/Tiles/DeadlyTile.h>
 #include <Game/Objects/Collectibles/SoulChunk.h>
 #include <Game/Objects/MovingPlatform.h>
-#include <Game/Actions/Action.h>
 
 namespace SeekASoul
 {
@@ -18,14 +17,14 @@ namespace SeekASoul
     {
         static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
 
-        static constexpr uint64_t SHOOT_COOLDOWN = 400;
+        static constexpr uint64_t THROW_COOLDOWN = 400;
         static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
         static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
 
         static constexpr unsigned int MAX_HEALTH_POINTS = 200;
         static constexpr unsigned int MAX_AMMUNITIONS = 20;
 
-        static constexpr float MAX_BULLET_RANGE = 400.f;
+        static constexpr float MAX_BONE_RANGE = 400.f;
 
         static constexpr float MOVE_SPEED_MAX = 200.0f;
         static constexpr float MOVE_SPEED_INC = 10.0f;
@@ -46,9 +45,9 @@ namespace SeekASoul
             , m_CanClimb(false)
             , m_IsSkullRolling(false)
             , m_LastSkullRollTime(0)
-            , m_LastShootTime(0)
-            , m_ShootDirection{ 0.f, 0.f }
-            , m_Bullets{}
+            , m_LastThrowTime(0)
+            , m_ThrowDirection{ 0.f, 0.f }
+            , m_Bones{}
             , m_InfiniteAmmos(false)
             , m_InGroundCollision(false)
             , m_InCeilingCollision(false)
@@ -82,7 +81,7 @@ namespace SeekASoul
                 m_SoulChunksCollected > 0 ? m_SoulChunksCollected -= 2 : m_SoulChunksCollected = 0;
 
                 m_LastSkullRollTime = 0;
-                m_LastShootTime = 0;
+                m_LastThrowTime = 0;
             }
     
             // Update UIViewModel values
@@ -124,7 +123,7 @@ namespace SeekASoul
             }
 
             // Update bullets and check for impacts
-            ManageBullets(deltaTime);
+            ManageBones(deltaTime);
 
             // Update player's animation
             ComputeNextPlayerState();
@@ -137,16 +136,16 @@ namespace SeekASoul
             {
                 if (actionEvent->IsAim()) 
                 {
-                    UpdateShootDirection(actionEvent->GetActionDirection(), actionEvent->IsPointActionDirection());
+                    UpdateThrowDirection(actionEvent->GetActionDirection(), actionEvent->IsPointActionDirection());
                 }
                 else 
                 {
                     const Action* action = dynamic_cast<Action*>(actionEvent->GetAction());
                     switch (action->GetActionType())
                     {
-                        case ActionType::SHOOT: 
+                        case ActionType::BONE_THROW:
                         {
-                            Shoot();
+                            ThrowBone();
                             break;
                         }
 
@@ -274,7 +273,7 @@ namespace SeekASoul
         {
             target.draw(m_AnimationSprite);
 
-            for (const Bullet& b : m_Bullets) 
+            for (const Bone& b : m_Bones)
             {
                 target.draw(b);
             }
@@ -535,6 +534,7 @@ namespace SeekASoul
 
             if (m_HealthPoints <= 0)
             {
+                m_HealthPoints = 0;
                 Die();
             }
 
@@ -564,7 +564,7 @@ namespace SeekASoul
             }
         }
 
-        void Player::UpdateShootDirection(const sf::Vector2f& direction, const bool isPoint) 
+        void Player::UpdateThrowDirection(const sf::Vector2f& direction, const bool isPoint) 
         {
             sf::Vector2f shootDirection = direction;
 
@@ -575,18 +575,18 @@ namespace SeekASoul
 
             Engine::Maths::NormalizeVector(shootDirection);
 
-            m_ShootDirection = shootDirection;
+            m_ThrowDirection = shootDirection;
         }
 
-        void Player::Shoot()
+        void Player::ThrowBone()
         {
             uint64_t now = Engine::Time::GetCurrentTimeAsMilliseconds();
 
-            if (Engine::Maths::GetDifference(now, m_LastShootTime) >= SHOOT_COOLDOWN
+            if (Engine::Maths::GetDifference(now, m_LastThrowTime) >= THROW_COOLDOWN
                 && (m_InfiniteAmmos || m_AmmunitionsNumber > 0)
                 && !m_IsSkullRolling) 
             {
-                m_Bullets.emplace_back(m_TextureManager, m_ShootDirection, m_Position);
+                m_Bones.emplace_back(m_TextureManager, m_ThrowDirection, m_Position);
         
                 if (!m_InfiniteAmmos) 
                 {
@@ -594,7 +594,7 @@ namespace SeekASoul
                     UI::UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
                 }
 
-                m_LastShootTime = now;
+                m_LastThrowTime = now;
             }
         }
 
@@ -627,24 +627,24 @@ namespace SeekASoul
             }
         }
 
-        void Player::ManageBullets(float deltaTime)
+        void Player::ManageBones(float deltaTime)
         {
             // Update the bullets
-            for (Bullet& b : m_Bullets) 
+            for (Bone& b : m_Bones)
             {
                 b.Update(deltaTime);
             }
 
             // Check for impact
-            int bulletIndex = 0;
-            for (Bullet& b : m_Bullets) 
+            int boneIndex = 0;
+            for (Bone& b : m_Bones)
             {
-                if (b.GetDistanceTraveled() > MAX_BULLET_RANGE || b.HadImpact()) 
+                if (b.GetDistanceTraveled() > MAX_BONE_RANGE || b.HadImpact()) 
                 {
-                    m_Bullets.erase(m_Bullets.begin() + bulletIndex);
+                    m_Bones.erase(m_Bones.begin() + boneIndex);
                 }
 
-                bulletIndex++;
+                boneIndex++;
             }
         }
 
