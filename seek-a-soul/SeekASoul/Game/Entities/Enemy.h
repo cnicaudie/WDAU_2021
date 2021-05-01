@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Entity.h"
+#include <Engine/Animation/Animated.h>
 #include <AI/AIEntity.h>
 
 namespace SeekASoul
 {
 	namespace Gameplay
 	{
-		class Enemy : public Entity, public AI::AIEntity
+		class Enemy : public Entity, public Engine::Animated, public AI::AIEntity
 		{
 		public:
 			Enemy(const std::shared_ptr<Engine::TextureManager>& textureManager, const sf::Vector2f& position);
@@ -24,10 +25,6 @@ namespace SeekASoul
 
 		private:
 			void Move(float deltaTime);
-
-			//====================//
-
-			sf::Sprite m_Sprite;
 		};
 	}
 }

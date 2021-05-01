@@ -15,25 +15,20 @@ namespace SeekASoul
 {
 	namespace Gameplay
 	{
+		static const sf::Vector2i ENEMY_SPRITE_SIZE{ 58, 50 };
+
 		static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 		static constexpr float MOVE_SPEED = 100.0f;
-		static constexpr float STAY_ON_PLATFORM_FORCE = 45.0f;
+		static constexpr float STAY_ON_PLATFORM_FORCE = 50.0f;
 		static constexpr float GRAVITY = 9.8f;
 
 		Enemy::Enemy(const std::shared_ptr<Engine::TextureManager>& textureManager, const sf::Vector2f& position)
 			: Entity(textureManager, position, 50)
+			, Engine::Animated(ENEMY_SPRITE_SIZE, textureManager->GetTextureFromName("ENEMY_SHEET"))
 			, AI::AIEntity(AI::ThreatTeam::B)
 		{
-			// Init sprite
-			sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("ENEMY");
-
-			m_Sprite.setTexture(textureManager->GetTextureFromName("ENEMY"));
-			m_Sprite.setOrigin(textureSize * 0.5f);
-			m_Sprite.setPosition(m_Position);
-			m_Sprite.setScale(0.8f, 0.8f);
-
-			SetBoundingBox(m_Position, textureSize * 0.8f);
-
+			SetBoundingBox(m_Position, static_cast<sf::Vector2f>(ENEMY_SPRITE_SIZE));
+			
 			// Register threat
 			AI::ThreatManager::GetInstance()->RegisterThreat(this, &m_Position);
 
@@ -63,6 +58,7 @@ namespace SeekASoul
 			}
 
 			Move(deltaTime);
+			PlayAnimation(0);
 		}
 
 		void Enemy::OnCollision(Engine::BoxCollideable* other, Engine::CollisionDirection direction)
@@ -111,7 +107,7 @@ namespace SeekASoul
 		{
 			if (!(m_HealthState == HealthState::DEAD))
 			{
-				target.draw(m_Sprite);
+				target.draw(m_AnimationSprite);
 			}
 		}
 
@@ -119,6 +115,9 @@ namespace SeekASoul
 		{
 			ActionType previousOrder = SeekASoul::Common::ToGameAction(m_PreviousAction);
 			ActionType actionOrder = SeekASoul::Common::ToGameAction(m_CurrentAction);
+			//LOG_DEBUG("ThreatLevel : " << static_cast<int>(GetThreatLevel()));
+			//LOG_DEBUG("Current action : " << static_cast<int>(m_CurrentAction));
+			//LOG_DEBUG("L : " << m_CanMoveLeft << " / R : " << m_CanMoveRight);
 			sf::Vector2f tempVelocity(0.f, 0.f);
 
 			// Apply gravity
@@ -180,14 +179,14 @@ namespace SeekASoul
 
 			// Apply new position
 			SetCenter(m_Position);
-			m_Sprite.setPosition(m_Position);
+			SetAnimatedSpritePosition(m_Position);
 		}
 
 		void Enemy::Damage() 
 		{
 			LOG_INFO("Enemy was damaged !");
 
-			m_Sprite.setColor(sf::Color::Red);
+			m_AnimationSprite.setColor(sf::Color::Green);
 			m_HealthState = HealthState::DAMAGED;
 			m_HealthPoints -= static_cast<unsigned int>(Engine::Maths::GetRandom(5.f, 15.f));
 	
@@ -205,7 +204,7 @@ namespace SeekASoul
 			if (Engine::Maths::GetDifference(now, m_LastDamageTime) >= DAMAGE_COOLDOWN)
 			{
 				m_HealthState = HealthState::OK;
-				m_Sprite.setColor(sf::Color::White);
+				m_AnimationSprite.setColor(sf::Color::White);
 			}
 		}
 	}

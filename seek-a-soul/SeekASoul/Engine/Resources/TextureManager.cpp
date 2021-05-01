@@ -7,9 +7,9 @@ namespace SeekASoul
 	{
 		TextureManager::TextureManager() 
 		{
-			sf::Texture enemy;
-			enemy.loadFromFile(".\\Assets\\Sprites\\Enemy.png");
-			m_Textures.emplace("ENEMY", enemy);
+			sf::Texture enemy_sheet;
+			enemy_sheet.loadFromFile(".\\Assets\\Sprites\\EnemySheet.png");
+			m_Textures.emplace("ENEMY_SHEET", enemy_sheet);
 			
 			sf::Texture player_sheet;
 			player_sheet.loadFromFile(".\\Assets\\Sprites\\SkeletonSheet.png");
