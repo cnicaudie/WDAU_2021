@@ -222,6 +222,9 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="AI\AIAction.cpp" />
     <ClCompile Include="AI\AIEntity.cpp" />
     <ClCompile Include="AI\AIManager.cpp" />
+    <ClCompile Include="AI\Pathfinding\Graph.cpp" />
+    <ClCompile Include="AI\Pathfinding\Node.cpp" />
+    <ClCompile Include="AI\Pathfinding\Pathfinder.cpp" />
     <ClCompile Include="AI\Strategies\AIPatrol.cpp" />
     <ClCompile Include="AI\Strategies\AIStrategy.cpp" />
     <ClCompile Include="AI\Threat\Threat.cpp" />
@@ -277,6 +280,10 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="AI\AIActionType.h" />
     <ClInclude Include="AI\AIEntity.h" />
     <ClInclude Include="AI\AIManager.h" />
+    <ClInclude Include="AI\Pathfinding\Edge.h" />
+    <ClInclude Include="AI\Pathfinding\Graph.h" />
+    <ClInclude Include="AI\Pathfinding\Node.h" />
+    <ClInclude Include="AI\Pathfinding\Pathfinder.h" />
     <ClInclude Include="AI\Strategies\AIPatrol.h" />
     <ClInclude Include="AI\Strategies\AIStrategy.h" />
     <ClInclude Include="AI\Strategies\AIStrategyType.h" />

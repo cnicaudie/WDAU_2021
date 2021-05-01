@@ -164,6 +164,15 @@
     <ClCompile Include="AI\Strategies\AIPatrol.cpp">
       <Filter>AI\Strategies</Filter>
     </ClCompile>
+    <ClCompile Include="AI\Pathfinding\Graph.cpp">
+      <Filter>AI\Pathfinding</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Pathfinding\Node.cpp">
+      <Filter>AI\Pathfinding</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Pathfinding\Pathfinder.cpp">
+      <Filter>AI\Pathfinding</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -364,6 +373,18 @@
     </ClInclude>
     <ClInclude Include="Common\ActionHelper.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Pathfinding\Graph.h">
+      <Filter>AI\Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Pathfinding\Node.h">
+      <Filter>AI\Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Pathfinding\Pathfinder.h">
+      <Filter>AI\Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Pathfinding\Edge.h">
+      <Filter>AI\Pathfinding</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
