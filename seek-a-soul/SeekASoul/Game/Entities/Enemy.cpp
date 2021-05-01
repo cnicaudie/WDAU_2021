@@ -6,6 +6,7 @@
 #include <Game/GameplayIncludes.h>
 #include <Game/Objects/Bone.h>
 #include <Game/Map/Tiles/CollideableTile.h>
+#include <Game/Map/Tiles/DeadlyTile.h>
 #include <AI/Threat/ThreatTeam.h>
 #include <AI/Threat/ThreatManager.h>
 #include <AI/AIActionType.h> // TODO : Make helper and remove that
@@ -78,8 +79,8 @@ namespace SeekASoul
 				Damage();
 			}	
 
-			if (typeid(*other) == typeid(class CollideableTile))
-			{
+			if (typeid(*other) == typeid(class CollideableTile) || typeid(*other) == typeid(class DeadlyTile))
+			{	
 				if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::BOTTOM))
 				{
 					m_IsGrounded = true;
