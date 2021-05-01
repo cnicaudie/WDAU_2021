@@ -11,15 +11,15 @@ Seek A Soul is a 2D platformer where you embody a skeleton who has lost its soul
 ### PC (Mouse + Keyboard)
 - Arrow keys or ZQSD (AZERTY keyboard) for Left/Right/Up/Down movements ;
 - Mouse to aim
-- Right click to shoot ;
-- Space to roll. 
+- Right click to throw a bone ;
+- Space to skull roll. 
 
 ### Controller (PS3)
 - Left joystick for Left/Right movements ;
 - R1 for Up movements ;
 - L1 for Down movements ;
 - Right joystick to aim ;
-- L2 to shoot ;
-- O to roll.
+- L2 to throw a bone ;
+- O to skull roll.
 
 *Note : these bindings where tested with the PS3 Dualshock controller, if you test with another one, some of them might be different.*
