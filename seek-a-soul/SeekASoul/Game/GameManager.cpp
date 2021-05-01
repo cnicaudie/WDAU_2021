@@ -166,8 +166,8 @@ namespace SeekASoul
             }
 
             // Update AI elements
-            AI::AIManager::GetInstance()->Update();
             AI::ThreatManager::GetInstance()->Update();
+            AI::AIManager::GetInstance()->Update();
         }
 
         void GameManager::UpdateGUI(float deltaTime)
