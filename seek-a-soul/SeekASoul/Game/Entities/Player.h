@@ -77,9 +77,9 @@ namespace SeekASoul
 	
 			unsigned int m_SoulChunksCollected;
 			unsigned int m_JumpCount;
-			bool m_IsClimbing; // TODO : Use player state instead
+			bool m_IsClimbing;
 			bool m_CanClimb;
-			bool m_IsSkullRolling; // TODO : Use player state instead
+			bool m_IsSkullRolling;
 			uint64_t m_LastSkullRollTime;
 			uint64_t m_LastThrowTime;
 

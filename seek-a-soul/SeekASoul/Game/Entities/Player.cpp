@@ -86,11 +86,16 @@ namespace SeekASoul
     
             if (restart) 
             {
+                m_AnimationSprite.setColor(sf::Color::White);
                 m_HealthPoints = MAX_HEALTH_POINTS;
                 m_HealthState = HealthState::OK;
                 m_CurrentState = PlayerState::IDLE;
-                m_AnimationSprite.setColor(sf::Color::White);
                 m_JumpCount = 1;
+                m_IsClimbing = false;
+                m_CanClimb = false;
+                m_IsSkullRolling = false;
+                m_IsOnMovingPlatform = false;
+                m_Platform = nullptr;
 
                 // Reset of number of soul chunks collected ? Or loose 3/4/5 soul chunks ? Random between 2 and 5 ?
                 m_SoulChunksCollected > 0 ? m_SoulChunksCollected -= 2 : m_SoulChunksCollected = 0;
@@ -331,7 +336,6 @@ namespace SeekASoul
             {
                 m_CurrentState = PlayerState::CLIMBING;
             }
-            // TODO : make an idle animation for skull roll ?
             else if (m_IsSkullRolling)
             {
                 m_CurrentState = PlayerState::SKULL_ROLLING;
