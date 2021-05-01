@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include <Engine/Animation/Animated.h>
 #include <Game/Objects/Bone.h>
+#include <AI/Threat/Threat.h>
 
 namespace SeekASoul
 {
@@ -15,10 +16,12 @@ namespace SeekASoul
 	{
 		class MovingPlatform;
 		
-		class Player : public Entity, public Engine::Animated
+		class Player : public Entity, public Engine::Animated, public AI::Threat
 		{
 		public:	
 			Player(const std::shared_ptr<Engine::InputManager>& inputManager, const std::shared_ptr<Engine::TextureManager>& textureManager);
+			~Player();
+
 			void Reset(const sf::Vector2f& position, bool restart);
 	
 			void Update(float deltaTime) override;
@@ -30,6 +33,11 @@ namespace SeekASoul
 	
 			inline const int GetNumberOfCollectedSoulChunks() const { return m_SoulChunksCollected; };
 			inline const bool IsAttacking() const { return m_IsSkullRolling; };
+
+			virtual const bool operator==(Threat* other) const override
+			{ 
+				return dynamic_cast<Player*>(other) != nullptr;
+			}
 
 		protected:
 			void Damage() override;

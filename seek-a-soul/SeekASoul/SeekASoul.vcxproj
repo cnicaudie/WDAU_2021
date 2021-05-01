@@ -219,6 +219,13 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="AI\AIAction.cpp" />
+    <ClCompile Include="AI\AIEntity.cpp" />
+    <ClCompile Include="AI\AIManager.cpp" />
+    <ClCompile Include="AI\Strategies\AIPatrol.cpp" />
+    <ClCompile Include="AI\Strategies\AIStrategy.cpp" />
+    <ClCompile Include="AI\Threat\Threat.cpp" />
+    <ClCompile Include="AI\Threat\ThreatManager.cpp" />
     <ClCompile Include="Engine\Animation\Animated.cpp" />
     <ClCompile Include="Engine\Collision\BoxCollideable.cpp" />
     <ClCompile Include="Engine\Collision\CollisionManager.cpp" />
@@ -266,6 +273,18 @@ xcopy /y /d  "$(SolutionDir)external\SFML-2.5.1\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\external\imgui-master\imgui.h" />
     <ClInclude Include="..\external\imgui-master\imgui_internal.h" />
     <ClInclude Include="..\external\imgui-sfml-master\imgui-SFML.h" />
+    <ClInclude Include="AI\AIAction.h" />
+    <ClInclude Include="AI\AIActionType.h" />
+    <ClInclude Include="AI\AIEntity.h" />
+    <ClInclude Include="AI\AIManager.h" />
+    <ClInclude Include="AI\Strategies\AIPatrol.h" />
+    <ClInclude Include="AI\Strategies\AIStrategy.h" />
+    <ClInclude Include="AI\Strategies\AIStrategyType.h" />
+    <ClInclude Include="AI\Threat\Threat.h" />
+    <ClInclude Include="AI\Threat\ThreatManager.h" />
+    <ClInclude Include="AI\Threat\ThreatLevel.h" />
+    <ClInclude Include="AI\Threat\ThreatTeam.h" />
+    <ClInclude Include="Common\ActionHelper.h" />
     <ClInclude Include="Engine\Animation\Animated.h" />
     <ClInclude Include="Engine\Collision\BoxCollideable.h" />
     <ClInclude Include="Engine\Collision\CollisionDirection.h" />

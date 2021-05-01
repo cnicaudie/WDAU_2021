@@ -6,6 +6,10 @@
 #include <Game/GameplayIncludes.h>
 #include <Game/Objects/Bone.h>
 #include <Game/Map/Tiles/CollideableTile.h>
+#include <Game/Map/Tiles/DeadlyTile.h>
+#include <AI/Threat/ThreatTeam.h>
+#include <AI/Threat/ThreatManager.h>
+#include <Common/ActionHelper.h>
 
 namespace SeekASoul
 {
@@ -13,11 +17,14 @@ namespace SeekASoul
 	{
 		static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
 		static constexpr float MOVE_SPEED = 100.0f;
+		static constexpr float STAY_ON_PLATFORM_FORCE = 45.0f;
 		static constexpr float GRAVITY = 9.8f;
 
 		Enemy::Enemy(const std::shared_ptr<Engine::TextureManager>& textureManager, const sf::Vector2f& position)
 			: Entity(textureManager, position, 50)
+			, AI::AIEntity(AI::ThreatTeam::B)
 		{
+			// Init sprite
 			sf::Vector2f textureSize = textureManager->GetTextureSizeFromName("ENEMY");
 
 			m_Sprite.setTexture(textureManager->GetTextureFromName("ENEMY"));
@@ -27,11 +34,17 @@ namespace SeekASoul
 
 			SetBoundingBox(m_Position, textureSize * 0.8f);
 
-			m_Velocity.x = MOVE_SPEED;
+			// Register threat
+			AI::ThreatManager::GetInstance()->RegisterThreat(this, &m_Position);
+
+			// Set up possible actions
+			m_CanMoveLeft = true;
+			m_CanMoveRight = true;
 		}
 
 		Enemy::~Enemy() 
 		{
+			AI::ThreatManager::GetInstance()->UnregisterThreat(this);
 			LOG_INFO("Destroyed enemy!");
 		}
 
@@ -66,8 +79,8 @@ namespace SeekASoul
 				Damage();
 			}	
 
-			if (typeid(*other) == typeid(class CollideableTile))
-			{
+			if (typeid(*other) == typeid(class CollideableTile) || typeid(*other) == typeid(class DeadlyTile))
+			{	
 				if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::BOTTOM))
 				{
 					m_IsGrounded = true;
@@ -81,13 +94,15 @@ namespace SeekASoul
 				}
 				else if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::LEFT))
 				{
-					m_Velocity.x = MOVE_SPEED;
 					m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
+					m_CanMoveLeft = false;
+					m_CanMoveRight = true;
 				}
 				else if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::RIGHT))
 				{
-					m_Velocity.x = -MOVE_SPEED;
 					m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
+					m_CanMoveLeft = true;
+					m_CanMoveRight = false;
 				}
 			}
 		}
@@ -102,11 +117,36 @@ namespace SeekASoul
 
 		void Enemy::Move(float deltaTime) 
 		{
+			ActionType previousOrder = SeekASoul::Common::ToGameAction(m_PreviousAction);
+			ActionType actionOrder = SeekASoul::Common::ToGameAction(m_CurrentAction);
 			sf::Vector2f tempVelocity(0.f, 0.f);
 
 			// Apply gravity
 			m_Velocity.y += GRAVITY; // put the gravity const in Entity
 	
+			// Configure velocity according to AI action order
+			if (actionOrder == ActionType::NONE) 
+			{
+				m_Velocity.x = 0.f;
+			}
+			else 
+			{
+				if (actionOrder == ActionType::MOVE_RIGHT)
+				{
+					m_Velocity.x = MOVE_SPEED;
+				}
+				else if (actionOrder == ActionType::MOVE_LEFT)
+				{
+					m_Velocity.x = -MOVE_SPEED;
+				}
+
+				if (m_Strategy == AI::AIStrategyType::PATROL && actionOrder != previousOrder
+					&& previousOrder != ActionType::NONE)
+				{
+					m_Velocity.y = -STAY_ON_PLATFORM_FORCE;
+				}
+			}
+			
 			// Check movement on X axis
 			tempVelocity.x = m_Velocity.x;
 			if (!GameManager::GetInstance()->CheckCollisions(this, tempVelocity * deltaTime).first)
@@ -121,10 +161,18 @@ namespace SeekASoul
 			{
 				if (m_IsGrounded) 
 				{
-					m_Velocity.x = -m_Velocity.x;
-					m_Velocity.y = -10.f; // little force to help the enemy stay on its platform
-					tempVelocity = m_Velocity;
 					m_IsGrounded = false;
+					
+					if (actionOrder == ActionType::MOVE_RIGHT)
+					{
+						m_CanMoveRight = false;
+						m_CanMoveLeft = true;
+					}
+					else if (actionOrder == ActionType::MOVE_LEFT)
+					{
+						m_CanMoveRight = true;
+						m_CanMoveLeft = false;
+					}
 				}
 
 				m_Position += tempVelocity * deltaTime;

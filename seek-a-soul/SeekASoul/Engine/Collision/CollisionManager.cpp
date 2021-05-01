@@ -65,10 +65,13 @@ namespace SeekASoul
     
             for (const std::shared_ptr<BoxCollideable>& object : nearbyObjects)
             {
-                if (object->IsTrigger() && collideable->Contains(object->GetCenter()))
+                if (object->IsTrigger())
                 {
-                    collideable->OnTrigger(object.get());
-                    object->OnTrigger(collideable);
+                    if (collideable->Contains(object->GetCenter())) 
+                    {
+                        collideable->OnTrigger(object.get());
+                        object->OnTrigger(collideable);
+                    }
                 }
                 else if (collideable->IsColliding(*object))
                 {
