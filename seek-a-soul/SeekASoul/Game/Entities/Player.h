@@ -41,9 +41,12 @@ namespace SeekASoul
 
 		protected:
 			void Damage() override;
+			void Damage(const int value);
 			void UpdateVisualDamage(uint64_t now) override;
 
 		private:
+			void SetPosition(const sf::Vector2f& position);
+
 			void OnEvent(const Engine::Event* evnt);
 			void ComputeNextPlayerState();
 			void Move(float deltaTime);
@@ -51,7 +54,8 @@ namespace SeekASoul
 			void MoveDown();
 			void MoveRight(const float scale);
 			void MoveLeft(const float scale);
-			void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
+			void CheckFallDown(float maxBoundY);
+
 			void ApplyCollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider);
 	
 			void UpdateBoundingBox();
@@ -74,7 +78,9 @@ namespace SeekASoul
 				CLIMBING		= 3, 
 				THROWING		= 4
 			} m_CurrentState;
-	
+			
+			sf::Vector2f m_StartPosition;
+
 			unsigned int m_SoulChunksCollected;
 			unsigned int m_JumpCount;
 			bool m_IsClimbing;

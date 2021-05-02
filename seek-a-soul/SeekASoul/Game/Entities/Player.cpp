@@ -78,9 +78,8 @@ namespace SeekASoul
 
         void Player::Reset(const sf::Vector2f& position, bool restart)
         {
-            m_Position = position;
-            SetCenter(m_Position);
-            SetAnimatedSpritePosition(m_Position);
+            m_StartPosition = position;
+            SetPosition(position);
     
             m_AmmunitionsNumber = MAX_AMMUNITIONS;
     
@@ -98,7 +97,7 @@ namespace SeekASoul
                 m_Platform = nullptr;
 
                 // Reset of number of soul chunks collected ? Or loose 3/4/5 soul chunks ? Random between 2 and 5 ?
-                m_SoulChunksCollected > 0 ? m_SoulChunksCollected -= 2 : m_SoulChunksCollected = 0;
+                m_SoulChunksCollected >= 2 ? m_SoulChunksCollected -= 2 : m_SoulChunksCollected = 0;
 
                 m_LastSkullRollTime = 0;
                 m_LastThrowTime = 0;
@@ -109,6 +108,13 @@ namespace SeekASoul
             UI::UIViewModel::GetInstance()->SetMaxHealthPoints(MAX_HEALTH_POINTS);
             UI::UIViewModel::GetInstance()->SetAmmunitionsNumber(m_AmmunitionsNumber);
             UI::UIViewModel::GetInstance()->SetSoulChunksNumber(m_SoulChunksCollected);
+        }
+
+        void Player::SetPosition(const sf::Vector2f& position)
+        {
+            m_Position = position;
+            SetCenter(m_Position);
+            SetAnimatedSpritePosition(m_Position);
         }
 
         void Player::Update(float deltaTime)
@@ -397,6 +403,7 @@ namespace SeekASoul
             }
             else if (m_IsOnMovingPlatform)
             {
+                // Apply platform offset anyway
                 m_Position += sf::Vector2f(platformOffset.x, 0.f) * deltaTime;
             }
 
@@ -409,16 +416,18 @@ namespace SeekASoul
             }
             else if (m_IsOnMovingPlatform)
             {
+                // Apply platform offset anyway
                 m_Position += sf::Vector2f(0.f, platformOffset.y) * deltaTime;
             }
 
-            // Clamp the player position between the bounds of the level
+            // Check if player fell down out of the level's lowest bound
             sf::Vector2u levelBounds = GameManager::GetInstance()->GetLevelBounds();
-            ClampPlayerPosition(0.f, static_cast<float>(levelBounds.x), 0.f, static_cast<float>(levelBounds.y));
+            CheckFallDown(static_cast<float>(levelBounds.y));
 
             // Apply new position
-            SetAnimatedSpritePosition(m_Position);
+            SetPosition(m_Position);
 
+            //Update UI view model
             UI::UIViewModel::GetInstance()->SetPlayerPosition(m_Position);
         }
 
@@ -471,28 +480,13 @@ namespace SeekASoul
             m_Velocity.x = fmax(m_Velocity.x - MOVE_SPEED_INC, scale * -MOVE_SPEED_MAX);
         }
 
-        void Player::ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY)
+        void Player::CheckFallDown(float maxBoundY)
         {
-            if (m_BoundingBox.left < minBoundX)
+            if (m_BoundingBox.top + m_BoundingBox.height > maxBoundY)
             {
-                m_Position.x = minBoundX + (m_BoundingBox.width / 2);
-                m_Velocity.x = 0.f;
-            }
-            else if (m_BoundingBox.left + m_BoundingBox.width > maxBoundX)
-            {
-                m_Position.x = maxBoundX - (m_BoundingBox.width / 2);
-                m_Velocity.x = 0.f;
-            }
-            else if (m_BoundingBox.top < minBoundY)
-            {
-                m_Position.y = minBoundY + (m_BoundingBox.height / 2);
-                m_Velocity.y = 0.f;
-            }
-            else if (m_BoundingBox.top + m_BoundingBox.height > maxBoundY)
-            {
-                m_JumpCount = 1;
-                m_Position.y = maxBoundY - (m_BoundingBox.height / 2);
-                m_Velocity.y = 0.f;
+                const int FALL_DOWN_DAMAGE = 50;
+                Damage(FALL_DOWN_DAMAGE);
+                m_Position = m_StartPosition;
             }
         }
 
@@ -546,11 +540,17 @@ namespace SeekASoul
 
         void Player::Damage()
         {
+            const int DEFAULT_DAMAGE = static_cast<int>(Engine::Maths::GetRandom(10.f, 15.f));
+            Damage(DEFAULT_DAMAGE);
+        }
+
+        void Player::Damage(const int value)
+        {
             LOG_INFO("Player was damaged !");
-    
+
             m_AnimationSprite.setColor(sf::Color::Red);
             m_HealthState = HealthState::DAMAGED;
-            m_HealthPoints -= static_cast<unsigned int>(Engine::Maths::GetRandom(10.f, 15.f));
+            m_HealthPoints -= value;
 
             if (m_HealthPoints <= 0)
             {
