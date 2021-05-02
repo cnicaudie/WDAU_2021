@@ -6,6 +6,8 @@ namespace SeekASoul
 {
 	namespace Gameplay
 	{
+		bool MovingPlatform::DisplayMoveBox = false;
+
 		MovingPlatform::MovingPlatform(const sf::Vector2f& startPosition, const sf::Vector2f& endPosition, const sf::Vector2f& size)
 			: m_Direction(endPosition - startPosition)
 			, m_Velocity(80.f)
@@ -35,7 +37,7 @@ namespace SeekASoul
 			// For debug purposes
 			m_MoveBox.setFillColor(sf::Color::Transparent);
 			m_MoveBox.setOutlineThickness(1);
-			m_MoveBox.setOutlineColor(sf::Color::Red);
+			m_MoveBox.setOutlineColor(sf::Color::Yellow);
 		}
 
 		void MovingPlatform::InitPlatform(const sf::Vector2f& size, const sf::Vector2f& startPosition)
@@ -91,9 +93,11 @@ namespace SeekASoul
 		void MovingPlatform::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		{
 			target.draw(m_PlatformRect);
-			// Uncomment next line to debug the move box
-			// TODO : Add a checkbox to toggle it in the debug menu
-			//target.draw(m_MoveBox);
+			
+			if (DisplayMoveBox) 
+			{
+				target.draw(m_MoveBox);
+			}
 		}
 	}
 }

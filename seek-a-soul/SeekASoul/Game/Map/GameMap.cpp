@@ -72,8 +72,9 @@ namespace SeekASoul
 
         void GameMap::RenderDebugMenu(sf::RenderTarget& target)
         {
-            m_Door->RenderDebugMenu(target);
             m_Player.RenderDebugMenu(target);
+            m_Door->RenderDebugMenu(target);
+            ImGui::Checkbox("Display platform moveBox", &MovingPlatform::DisplayMoveBox);
         }
 
         void GameMap::UpdateEnemies(float deltaTime)

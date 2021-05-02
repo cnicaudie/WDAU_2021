@@ -14,6 +14,10 @@ namespace SeekASoul
 			void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 			inline const sf::Vector2f GetPlatformOffset() const { return m_Velocity * m_Direction; };
+		
+			//====================//
+
+			static bool DisplayMoveBox;
 
 		private:
 			void InitMoveBox(const sf::Vector2f& startPosition, const sf::Vector2f& endPosition, const sf::Vector2f& size);
