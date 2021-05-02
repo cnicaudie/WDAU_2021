@@ -55,6 +55,7 @@ namespace SeekASoul
 				if (m_CurrentState == LevelState::OVER
 					|| (m_CurrentState == LevelState::LOADING && m_CurrentLevel > MAX_LEVEL))
 				{
+					m_CurrentLevel = MAX_LEVEL;
 					std::shared_ptr<Engine::Event> eventType = std::make_shared<Engine::Event>(Engine::EventType::END_GAME);
 					Engine::EventManager::GetInstance()->Fire(eventType);
 				}
