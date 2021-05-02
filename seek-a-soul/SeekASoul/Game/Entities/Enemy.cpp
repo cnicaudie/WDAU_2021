@@ -17,7 +17,7 @@ namespace SeekASoul
 	{
 		static const sf::Vector2i ENEMY_SPRITE_SIZE{ 58, 50 };
 
-		static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
+		static constexpr uint64_t DAMAGE_COOLDOWN = 800;
 		static constexpr float MOVE_SPEED = 100.0f;
 		static constexpr float STAY_ON_PLATFORM_FORCE = 50.0f;
 		static constexpr float GRAVITY = 9.8f;
