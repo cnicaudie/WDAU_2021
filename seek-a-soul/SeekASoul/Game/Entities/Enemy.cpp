@@ -45,7 +45,7 @@ namespace SeekASoul
 
 		void Enemy::Update(float deltaTime) 
 		{
-			if (m_HealthState == HealthState::DEAD)
+			if (m_HealthState == HealthState::DEAD || GameManager::GetInstance()->IsGameOver())
 			{
 				return;
 			}

@@ -119,7 +119,7 @@ namespace SeekASoul
 
         void Player::Update(float deltaTime)
         {
-            if (m_HealthState == HealthState::DEAD)
+            if (m_HealthState == HealthState::DEAD || GameManager::GetInstance()->IsGameOver())
             {
                 return;
             }
