@@ -39,6 +39,12 @@ namespace SeekASoul
 				std::uniform_real_distribution<float> dist(minValue, maxValue);
 				return dist(mt);
 			}
+
+			static const bool Equals(const sf::Vector2f& vector1, const sf::Vector2f& vector2, const float margin = 0.f)
+			{
+				return (vector1.x == vector2.x + margin || vector1.x == vector2.x - margin)
+					&& (vector1.y == vector2.y + margin || vector1.y == vector2.y - margin);
+			}
 		}
 	}
 }
