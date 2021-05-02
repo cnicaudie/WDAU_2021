@@ -20,9 +20,7 @@ namespace SeekASoul
 		}
 
 		AIManager::AIManager()
-		{
-			// TODO
-		}
+		{}
 
 		AIManager::~AIManager()
 		{

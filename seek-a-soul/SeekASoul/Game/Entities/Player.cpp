@@ -96,7 +96,7 @@ namespace SeekASoul
                 m_IsOnMovingPlatform = false;
                 m_Platform = nullptr;
 
-                // Reset of number of soul chunks collected ? Or loose 3/4/5 soul chunks ? Random between 2 and 5 ?
+                // Loose 2 soul chuncks per restart
                 m_SoulChunksCollected >= 2 ? m_SoulChunksCollected -= 2 : m_SoulChunksCollected = 0;
 
                 m_LastSkullRollTime = 0;
@@ -138,7 +138,6 @@ namespace SeekASoul
             // If in ground and ceiling after collision check, player stays skull rolling
             if (m_InGroundCollision && m_InCeilingCollision)
             {
-                //LOG_DEBUG("SKULL ROLL STAY");
                 m_IsSkullRolling = true;
                 m_LastSkullRollTime = now;
             }
@@ -219,10 +218,10 @@ namespace SeekASoul
 
             MovingPlatform* platform = dynamic_cast<MovingPlatform*>(other);
 
+            // Collision with platform (player can go through the platform but stay on top of it when he's on it)
             if (platform != nullptr && collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::BOTTOM)
                 && !(collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::IN_TOP)))
             {
-                //LOG_DEBUG("ON PLATFORM");
                 Action moveUp(ActionType::MOVE_UP);
                 if (!m_InputManager->HasAction(&moveUp))
                 {
@@ -237,11 +236,11 @@ namespace SeekASoul
             // Reset platform info
             else
             {
-                //LOG_DEBUG("NOT ON PLATFORM");
                 m_Platform = nullptr;
                 m_IsOnMovingPlatform = false;
             }
 
+            // Collision with enemy
             if (typeid(*other) == typeid(class Enemy) && (m_HealthState == HealthState::OK) && !m_IsSkullRolling)
             {
                 if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::LEFT))
@@ -261,10 +260,12 @@ namespace SeekASoul
                 Damage();
             }
 
+            // Collision with a deadly tile
             if (typeid(*other) == typeid(class DeadlyTile))
             {
                 Die();
             }
+            // Collision with a collideable tile
             else if (typeid(*other) == typeid(class CollideableTile))
             {
                 ApplyCollisionCorrection(collisionDirection, otherCollider);
@@ -275,6 +276,7 @@ namespace SeekASoul
         {
             Collectible* collectible = dynamic_cast<Collectible*>(other);
 
+            // Trigger with a collectible (if not collected, collects it)
             if (collectible != nullptr && !collectible->WasCollected())
             {
                 if (typeid(*collectible).name() == typeid(class SoulChunk).name()) 
@@ -285,6 +287,7 @@ namespace SeekASoul
                 }
             }
 
+            // Trigger with a climbable tile (if on a ladder, he can climb)
             if (typeid(*other).name() == typeid(class ClimbableTile).name() && !m_IsSkullRolling)
             {
                 m_CanClimb = true;
@@ -310,7 +313,10 @@ namespace SeekASoul
             if (ImGui::CollapsingHeader("Player Menu"))
             {
                 ImGui::Text("ThreatLevel : %d", static_cast<int>(GetThreatLevel()));
+                ImGui::Text("Jump Count : %d", m_JumpCount);
+                ImGui::Text("Is on plaform ? : %d", m_IsOnMovingPlatform);
                 ImGui::Checkbox("Infinite Ammos", &m_InfiniteAmmos);
+                
                 ImGui::Text("Pos :");
                 ImGui::SameLine();
                 ImGui::Text("X: %f", m_Position.x);
@@ -322,15 +328,6 @@ namespace SeekASoul
                 ImGui::Text("X: %f", m_Velocity.x);
                 ImGui::SameLine();
                 ImGui::Text("Y: %f", m_Velocity.y);
-
-                const sf::Vector2f platformOffset = m_Platform != nullptr ? m_Platform->GetPlatformOffset() : sf::Vector2f{ 0.f, 0.f };
-                ImGui::Text("Pof :");
-                ImGui::SameLine();
-                ImGui::Text("X: %f", platformOffset.x);
-                ImGui::SameLine();
-                ImGui::Text("Y: %f", platformOffset.y);
-                ImGui::Text("Jump Count : %d", m_JumpCount);
-                ImGui::Text("Is on plaform ? : %d", m_IsOnMovingPlatform);
             }
         }
 
@@ -482,6 +479,7 @@ namespace SeekASoul
 
         void Player::CheckFallDown(float maxBoundY)
         {
+            // Player respawn at start position and get damaged if he falls down (over the level's bounds)
             if (m_BoundingBox.top + m_BoundingBox.height > maxBoundY)
             {
                 const int FALL_DOWN_DAMAGE = 50;
@@ -497,7 +495,6 @@ namespace SeekASoul
                 if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::IN_BOTTOM))
                 {
                     m_InGroundCollision = true;
-                    //LOG_DEBUG("IN BOTTOM COLLISION");
                 }
 
                 if (!m_InCeilingCollision)
@@ -506,7 +503,6 @@ namespace SeekASoul
                     m_Position.y = otherCollider.top - (m_BoundingBox.height / 2);
                     m_IsGrounded = true;
                     m_JumpCount = 1;
-                    //LOG_DEBUG("BOTTOM COLLISION");
                 }
             }
             else if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::TOP))
@@ -514,27 +510,23 @@ namespace SeekASoul
                 if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::IN_TOP))
                 {
                     m_InCeilingCollision = true;
-                    //LOG_DEBUG("IN TOP COLLISION");
                 }
 
                 if (!m_InGroundCollision)
                 {
                     m_Velocity.y = GRAVITY;
                     m_Position.y = otherCollider.top + otherCollider.height + (m_BoundingBox.height / 2);
-                    //LOG_DEBUG("TOP COLLISION");
                 }
             }
             else if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::LEFT))
             {
                 m_Velocity.x = 0.f;
                 m_Position.x = otherCollider.left + otherCollider.width + (m_BoundingBox.width / 2);
-                //LOG_DEBUG("LEFT COLLISION");
             }
             else if (collisionDirection & static_cast<int32_t>(Engine::CollisionDirection::RIGHT))
             {
                 m_Velocity.x = 0.f;
                 m_Position.x = otherCollider.left - (m_BoundingBox.width / 2);
-                //LOG_DEBUG("RIGHT COLLISION");
             }
         }
 
@@ -625,13 +617,11 @@ namespace SeekASoul
             if (m_IsSkullRolling 
                 && Engine::Maths::GetDifference(now, m_LastSkullRollTime) >= (SKULL_ROLL_COOLDOWN * 0.1f)) // avoid immediate skull roll out
             {
-                //LOG_DEBUG("SKULL ROLL OUT BY INPUT");
                 m_IsSkullRolling = false;
                 m_LastSkullRollTime = now;
             }
             else if (Engine::Maths::GetDifference(now, m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
             {
-                //LOG_DEBUG("SKULL ROLL IN");
                 m_IsSkullRolling = true;
                 m_LastSkullRollTime = now;
             }
@@ -641,7 +631,6 @@ namespace SeekASoul
         {
             if (Engine::Maths::GetDifference(now, m_LastSkullRollTime) >= SKULL_ROLL_COOLDOWN)
             {
-                //LOG_DEBUG("SKULL ROLL OUT");
                 m_IsSkullRolling = false;
                 m_LastSkullRollTime = now;
             }

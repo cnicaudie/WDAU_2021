@@ -83,9 +83,6 @@
     <ClCompile Include="Engine\Input\Bindings\JoystickAxisBinding.cpp">
       <Filter>Engine\Input\Bindings</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Log\Log.cpp">
-      <Filter>Engine\Log</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Map\Tiles\ClimbableTile.cpp">
       <Filter>Game\Map\Tiles</Filter>
     </ClCompile>

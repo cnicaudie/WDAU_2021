@@ -29,7 +29,6 @@ namespace SeekASoul
 			static AIManager* m_AIManager; // Singleton instance
 
 			std::vector<AIEntity*> m_AIs;
-			//std::vector<AIStrategy*> m_Strategies;
 		};
 	}
 }

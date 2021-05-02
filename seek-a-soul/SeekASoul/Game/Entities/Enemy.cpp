@@ -115,9 +115,6 @@ namespace SeekASoul
 		{
 			ActionType previousOrder = SeekASoul::Common::ToGameAction(m_PreviousAction);
 			ActionType actionOrder = SeekASoul::Common::ToGameAction(m_CurrentAction);
-			//LOG_DEBUG("ThreatLevel : " << static_cast<int>(GetThreatLevel()));
-			//LOG_DEBUG("Current action : " << static_cast<int>(m_CurrentAction));
-			//LOG_DEBUG("L : " << m_CanMoveLeft << " / R : " << m_CanMoveRight);
 			sf::Vector2f tempVelocity(0.f, 0.f);
 
 			// Apply gravity

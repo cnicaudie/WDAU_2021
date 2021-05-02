@@ -17,8 +17,8 @@ namespace SeekASoul
 			void RenderDebugMenu(sf::RenderTarget& target);
 	
 			inline const GameMap& GetGameMap() const { return m_GameMap; };
-			inline const sf::Vector2u GetLevelBounds() { return { m_LevelWidth * GameMap::TILE_SIZE.x, m_LevelHeight * GameMap::TILE_SIZE.y }; };
-			inline const Player& GetPlayerOnMap() { return m_GameMap.GetPlayer(); };
+			inline const sf::Vector2u GetLevelBounds() const { return { m_LevelWidth * GameMap::TILE_SIZE.x, m_LevelHeight * GameMap::TILE_SIZE.y }; };
+			inline const Player& GetPlayerOnMap() const { return m_GameMap.GetPlayer(); };
 
 		private:
 			void ChooseLevel();

@@ -13,14 +13,17 @@ namespace SeekASoul
             ~UIManager();
 
             void Update(float deltaTime);
-            void ManageButtons();
             void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
         private:
             void InitTexts(const sf::Vector2f& WINDOW_CENTER);
             void InitButtons(const sf::Vector2f& WINDOW_CENTER);
 
+            void UpdateTexts();
+            void ManageButtons();
+
             void OnEvent(const Engine::Event* evnt);
+            
             void ShowHealthBar() const;
             void StartEndGame();
 

@@ -19,9 +19,7 @@ namespace SeekASoul
 		}
 
 		ThreatManager::ThreatManager()
-		{
-			// TODO
-		}
+		{}
 
 		ThreatManager::~ThreatManager()
 		{

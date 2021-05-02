@@ -30,12 +30,8 @@ namespace SeekASoul
 
         void GameMap::Update(float deltaTime) 
         {
-            // Update Door
             m_Door->Update(deltaTime);
-
-            // Update Player
             m_Player.Update(deltaTime);
-    
             UpdateEnemies(deltaTime);
             UpdateSoulChunks(deltaTime);
             UpdateMovingPlatforms(deltaTime);

@@ -6,9 +6,7 @@ namespace SeekASoul
 	namespace AI
 	{
 		AIPatrol::AIPatrol() 
-		{
-			// TODO
-		}
+		{}
 
 		void AIPatrol::ExecuteStrategy(AIEntity* ai) const
 		{

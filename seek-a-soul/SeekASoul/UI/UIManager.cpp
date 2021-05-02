@@ -123,23 +123,25 @@ namespace SeekASoul
 
         void UIManager::Update(float deltaTime)
         {
-            // Update texts
+            // Update the view
+            m_Window->setView(m_GUIView);
+            
+            UpdateTexts();
+            ManageButtons();
+        }
+
+        void UIManager::UpdateTexts()
+        {
             std::stringstream stream;
             stream << "Bones ammos : " << UIViewModel::GetInstance()->GetAmmunitionsNumber();
             m_AmmunitionsText.setString(stream.str());
-    
+
             // Clear the stream content
             stream.str(std::string()); // resets the string content
             stream.clear(); // clears fails and eof flags
 
             stream << "Soul chunks : " << UIViewModel::GetInstance()->GetSoulChunksNumber();
             m_SoulChunksText.setString(stream.str());
-
-            // Update the view
-            m_Window->setView(m_GUIView);
-
-            // Manage buttons
-            ManageButtons();
         }
 
         void UIManager::ManageButtons()
