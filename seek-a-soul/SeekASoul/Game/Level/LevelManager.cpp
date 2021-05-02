@@ -160,6 +160,11 @@ namespace SeekASoul
 				Engine::EventManager::GetInstance()->Fire(levelEvent);
 			}
 
+			if (ImGui::Button("Load Playground"))
+			{
+				// TODO
+			}
+
 			m_GameMap.RenderDebugMenu(target);
 		};
 
