@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include <Engine/Animation/Animated.h>
 #include <Game/Objects/Bone.h>
+#include <AI/Threat/Threat.h>
 
 namespace SeekASoul
 {
@@ -15,10 +16,12 @@ namespace SeekASoul
 	{
 		class MovingPlatform;
 		
-		class Player : public Entity, public Engine::Animated
+		class Player : public Entity, public Engine::Animated, public AI::Threat
 		{
 		public:	
 			Player(const std::shared_ptr<Engine::InputManager>& inputManager, const std::shared_ptr<Engine::TextureManager>& textureManager);
+			~Player();
+
 			void Reset(const sf::Vector2f& position, bool restart);
 	
 			void Update(float deltaTime) override;
@@ -31,11 +34,19 @@ namespace SeekASoul
 			inline const int GetNumberOfCollectedSoulChunks() const { return m_SoulChunksCollected; };
 			inline const bool IsAttacking() const { return m_IsSkullRolling; };
 
+			virtual const bool operator==(Threat* other) const override
+			{ 
+				return dynamic_cast<Player*>(other) != nullptr;
+			}
+
 		protected:
 			void Damage() override;
+			void Damage(const int value);
 			void UpdateVisualDamage(uint64_t now) override;
 
 		private:
+			void SetPosition(const sf::Vector2f& position);
+
 			void OnEvent(const Engine::Event* evnt);
 			void ComputeNextPlayerState();
 			void Move(float deltaTime);
@@ -43,7 +54,8 @@ namespace SeekASoul
 			void MoveDown();
 			void MoveRight(const float scale);
 			void MoveLeft(const float scale);
-			void ClampPlayerPosition(float minBoundX, float maxBoundX, float minBoundY, float maxBoundY);
+			void CheckFallDown(float maxBoundY);
+
 			void ApplyCollisionCorrection(const int32_t& collisionDirection, sf::FloatRect& otherCollider);
 	
 			void UpdateBoundingBox();
@@ -66,12 +78,14 @@ namespace SeekASoul
 				CLIMBING		= 3, 
 				THROWING		= 4
 			} m_CurrentState;
-	
+			
+			sf::Vector2f m_StartPosition;
+
 			unsigned int m_SoulChunksCollected;
 			unsigned int m_JumpCount;
-			bool m_IsClimbing; // TODO : Use player state instead
+			bool m_IsClimbing;
 			bool m_CanClimb;
-			bool m_IsSkullRolling; // TODO : Use player state instead
+			bool m_IsSkullRolling;
 			uint64_t m_LastSkullRollTime;
 			uint64_t m_LastThrowTime;
 

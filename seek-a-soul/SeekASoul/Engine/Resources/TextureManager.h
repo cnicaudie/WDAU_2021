@@ -18,7 +18,8 @@ namespace SeekASoul
 
 			inline const sf::Vector2f GetTextureSizeFromName(const std::string& name) const 
 			{
-				const sf::Vector2f size(static_cast<float>(m_Textures.at(name).getSize().x), static_cast<float>(m_Textures.at(name).getSize().y));
+				const sf::Vector2f size(static_cast<float>(m_Textures.at(name).getSize().x)
+					, static_cast<float>(m_Textures.at(name).getSize().y));
 				return size;
 			}
 

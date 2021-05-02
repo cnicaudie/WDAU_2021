@@ -99,13 +99,13 @@ namespace SeekASoul
 
             // === End Level/Game Menu
 
-            const sf::Vector2f restartButtonPosition{ WINDOW_CENTER.x - BUTTONS_OFFSET, WINDOW_CENTER.y + BUTTONS_OFFSET };
+            const sf::Vector2f restartButtonPosition{ WINDOW_CENTER.x - 2 * BUTTONS_OFFSET, WINDOW_CENTER.y + BUTTONS_OFFSET };
             m_RestartButton.SetButtonPosition(restartButtonPosition);
             m_RestartButton.SetButtonTextFont(m_MainFont);
             m_RestartButton.SetButtonTextString("Restart");
             m_RestartButton.SetButtonTextPosition(restartButtonPosition);
 
-            const sf::Vector2f backButtonPosition{ WINDOW_CENTER.x + BUTTONS_OFFSET, WINDOW_CENTER.y + BUTTONS_OFFSET };
+            const sf::Vector2f backButtonPosition{ WINDOW_CENTER.x + 2 * BUTTONS_OFFSET, WINDOW_CENTER.y + BUTTONS_OFFSET };
             m_BackToMenuButton.SetButtonPosition(backButtonPosition);
             m_BackToMenuButton.SetButtonTextFont(m_MainFont);
             m_BackToMenuButton.SetButtonTextString("Back to menu");
@@ -123,23 +123,25 @@ namespace SeekASoul
 
         void UIManager::Update(float deltaTime)
         {
-            // Update texts
+            // Update the view
+            m_Window->setView(m_GUIView);
+            
+            UpdateTexts();
+            ManageButtons();
+        }
+
+        void UIManager::UpdateTexts()
+        {
             std::stringstream stream;
             stream << "Bones ammos : " << UIViewModel::GetInstance()->GetAmmunitionsNumber();
             m_AmmunitionsText.setString(stream.str());
-    
+
             // Clear the stream content
             stream.str(std::string()); // resets the string content
             stream.clear(); // clears fails and eof flags
 
             stream << "Soul chunks : " << UIViewModel::GetInstance()->GetSoulChunksNumber();
             m_SoulChunksText.setString(stream.str());
-
-            // Update the view
-            m_Window->setView(m_GUIView);
-
-            // Manage buttons
-            ManageButtons();
         }
 
         void UIManager::ManageButtons()
@@ -244,6 +246,13 @@ namespace SeekASoul
                     {
                         m_EndGameText.setFillColor(sf::Color::Red);
                         m_EndGameText.setString("YOU LOST...");
+                        break;
+                    }
+
+                    case Gameplay::LevelStatus::RESTART:
+                    {
+                        m_IsPlayingEndGame = false;
+                        m_ToggleMainMenu = false;
                         break;
                     }
                 }

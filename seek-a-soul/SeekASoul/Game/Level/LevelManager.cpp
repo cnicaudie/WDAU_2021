@@ -7,7 +7,7 @@ namespace SeekASoul
 {
 	namespace Gameplay
 	{
-		static constexpr unsigned int MAX_LEVEL = 1;
+		static constexpr unsigned int MAX_LEVEL = 5;
 
 		LevelManager::LevelManager(const std::shared_ptr<Engine::InputManager>& inputManager, const std::shared_ptr<Engine::TextureManager>& textureManager)
 			: m_TextureManager{ textureManager }
@@ -52,17 +52,25 @@ namespace SeekASoul
 		{
 			if (!GameManager::GetInstance()->IsGameOver())
 			{
-				if (m_CurrentState == LevelState::OVER
-					|| (m_CurrentState == LevelState::LOADING && m_CurrentLevel > MAX_LEVEL))
+				if (m_CurrentState == LevelState::OVER) 
 				{
 					std::shared_ptr<Engine::Event> eventType = std::make_shared<Engine::Event>(Engine::EventType::END_GAME);
 					Engine::EventManager::GetInstance()->Fire(eventType);
 				}
 				else if (m_CurrentState == LevelState::LOADING)
 				{
-					LOG_INFO("Loading next level...");
-					LoadLevel(false);
-					LOG_INFO("Done!");
+					if (m_CurrentLevel > MAX_LEVEL) 
+					{
+						m_CurrentLevel = MAX_LEVEL;
+						std::shared_ptr<Engine::Event> eventType = std::make_shared<Engine::Event>(Engine::EventType::END_GAME);
+						Engine::EventManager::GetInstance()->Fire(eventType);
+					}
+					else 
+					{
+						LOG_INFO("Loading next level...");
+						LoadLevel(false);
+						LOG_INFO("Done!");
+					}
 				}
 			}
 		}
@@ -158,6 +166,11 @@ namespace SeekASoul
 				m_CurrentLevel = m_LevelChoice;
 				std::shared_ptr<LevelEvent> levelEvent = std::make_shared<LevelEvent>(LevelStatus::RESTART);
 				Engine::EventManager::GetInstance()->Fire(levelEvent);
+			}
+
+			if (ImGui::Button("Load Playground"))
+			{
+				// TODO
 			}
 
 			m_GameMap.RenderDebugMenu(target);

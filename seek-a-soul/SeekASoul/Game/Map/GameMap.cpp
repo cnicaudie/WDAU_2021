@@ -30,12 +30,8 @@ namespace SeekASoul
 
         void GameMap::Update(float deltaTime) 
         {
-            // Update Door
             m_Door->Update(deltaTime);
-
-            // Update Player
             m_Player.Update(deltaTime);
-    
             UpdateEnemies(deltaTime);
             UpdateSoulChunks(deltaTime);
             UpdateMovingPlatforms(deltaTime);
@@ -72,8 +68,9 @@ namespace SeekASoul
 
         void GameMap::RenderDebugMenu(sf::RenderTarget& target)
         {
-            m_Door->RenderDebugMenu(target);
             m_Player.RenderDebugMenu(target);
+            m_Door->RenderDebugMenu(target);
+            ImGui::Checkbox("Display platform moveBox", &MovingPlatform::DisplayMoveBox);
         }
 
         void GameMap::UpdateEnemies(float deltaTime)
@@ -125,6 +122,7 @@ namespace SeekASoul
         bool GameMap::LoadTileMap(const std::vector<int>& tiles, const sf::Vector2u& levelSize)
         {
             // Resize the vertex array to fit the level size
+            m_BackgroundTileMap.clear();
             m_BackgroundTileMap.setPrimitiveType(sf::Quads);
             m_BackgroundTileMap.resize(static_cast<size_t>(levelSize.x) * static_cast<size_t>(levelSize.y) * 4);
     
