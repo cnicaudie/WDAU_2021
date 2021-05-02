@@ -20,7 +20,7 @@ namespace SeekASoul
     {
         static const sf::Vector2i PLAYER_SPRITE_SIZE{ 32, 56 };
 
-        static constexpr uint64_t THROW_COOLDOWN = 400;
+        static constexpr uint64_t THROW_COOLDOWN = 500;
         static constexpr uint64_t DAMAGE_COOLDOWN = 1000;
         static constexpr uint64_t SKULL_ROLL_COOLDOWN = 5000;
 
