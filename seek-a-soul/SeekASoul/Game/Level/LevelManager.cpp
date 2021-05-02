@@ -52,18 +52,25 @@ namespace SeekASoul
 		{
 			if (!GameManager::GetInstance()->IsGameOver())
 			{
-				if (m_CurrentState == LevelState::OVER
-					|| (m_CurrentState == LevelState::LOADING && m_CurrentLevel > MAX_LEVEL))
+				if (m_CurrentState == LevelState::OVER) 
 				{
-					m_CurrentLevel = MAX_LEVEL;
 					std::shared_ptr<Engine::Event> eventType = std::make_shared<Engine::Event>(Engine::EventType::END_GAME);
 					Engine::EventManager::GetInstance()->Fire(eventType);
 				}
 				else if (m_CurrentState == LevelState::LOADING)
 				{
-					LOG_INFO("Loading next level...");
-					LoadLevel(false);
-					LOG_INFO("Done!");
+					if (m_CurrentLevel > MAX_LEVEL) 
+					{
+						m_CurrentLevel = MAX_LEVEL;
+						std::shared_ptr<Engine::Event> eventType = std::make_shared<Engine::Event>(Engine::EventType::END_GAME);
+						Engine::EventManager::GetInstance()->Fire(eventType);
+					}
+					else 
+					{
+						LOG_INFO("Loading next level...");
+						LoadLevel(false);
+						LOG_INFO("Done!");
+					}
 				}
 			}
 		}
